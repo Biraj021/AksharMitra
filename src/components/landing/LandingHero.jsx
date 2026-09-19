@@ -1,5 +1,5 @@
 import React from 'react';
-import { Play, Sparkles, User, Star } from 'lucide-react';
+import { Play, Sparkles, User, Star, Gamepad2 } from 'lucide-react';
 import MascotMitra from '../common/MascotMitra';
 import { useProfile } from '../../context/ProfileContext';
 import { useAudio } from '../../context/AudioContext';
@@ -15,6 +15,11 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
     } else {
       onStartOnboarding();
     }
+  };
+
+  const handleGamesClick = () => {
+    playStarTwinkle();
+    setCurrentView('games');
   };
 
   return (
@@ -101,30 +106,50 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
           />
         </div>
 
-        {/* Big Tempting PLAY Button */}
-        <button
-          onClick={handlePlayClick}
-          className="btn btn-amber animate-pulse-glow"
-          style={{
-            fontSize: '1.75rem',
-            padding: '1.25rem 3.5rem',
-            borderRadius: '9999px',
-            border: '4px solid #FFFFFF',
-            boxShadow: '0 12px 28px rgba(245, 158, 11, 0.5), 0 4px 8px rgba(0,0,0,0.1)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.85rem',
-            cursor: 'pointer',
-            transform: 'scale(1.05)'
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.1)')}
-          onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
-        >
-          <Play size={32} fill="white" color="white" />
-          <span style={{ fontWeight: '800', letterSpacing: '0.04em' }}>
-            {activeProfile ? 'PLAY NOW 🚀' : "LET'S PLAY! 🚀"}
-          </span>
-        </button>
+        {/* Action Buttons: Play Quest & Remediation Games */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', width: '100%', alignItems: 'center' }}>
+          <button
+            onClick={handlePlayClick}
+            className="btn btn-amber animate-pulse-glow"
+            style={{
+              fontSize: '1.65rem',
+              padding: '1.15rem 3.25rem',
+              borderRadius: '9999px',
+              border: '4px solid #FFFFFF',
+              boxShadow: '0 12px 28px rgba(245, 158, 11, 0.5), 0 4px 8px rgba(0,0,0,0.1)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.85rem',
+              cursor: 'pointer',
+              width: '100%',
+              maxWidth: '380px'
+            }}
+          >
+            <Play size={28} fill="white" color="white" />
+            <span style={{ fontWeight: '800', letterSpacing: '0.04em' }}>
+              {activeProfile ? 'START QUEST 🚀' : "LET'S PLAY! 🚀"}
+            </span>
+          </button>
+
+          <button
+            onClick={handleGamesClick}
+            className="btn btn-primary"
+            style={{
+              fontSize: '1.1rem',
+              padding: '0.85rem 2rem',
+              borderRadius: '9999px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.6rem',
+              boxShadow: '0 4px 14px rgba(79, 70, 229, 0.3)',
+              width: '100%',
+              maxWidth: '380px'
+            }}
+          >
+            <Gamepad2 size={22} />
+            <span>🎮 Remediation Games (b/d/p/q)</span>
+          </button>
+        </div>
 
         {/* Profile Switcher / Who is Playing? */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginTop: '0.5rem' }}>

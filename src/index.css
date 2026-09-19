@@ -370,3 +370,239 @@ h1, h2, h3, h4, h5, h6 {
     display: none;
   }
 }
+
+/* ==========================================================================
+   Phase 3 Remediation Games Design Tokens & Interactive Styles
+   ========================================================================== */
+
+/* Game Container & Navigation Bar */
+.game-viewport {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-width: 860px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.game-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.game-stat-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.9rem;
+  background: white;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--border-light);
+  font-weight: 700;
+  font-size: 0.95rem;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Word Snapper Interactive Components */
+.phonics-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem 1.5rem;
+  background: white;
+  border-radius: var(--radius-xl);
+  border: 2px solid var(--border-light);
+  box-shadow: var(--shadow-card);
+  position: relative;
+  overflow: hidden;
+}
+
+.word-target-slots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin: 1rem 0;
+}
+
+.letter-slot {
+  width: 72px;
+  height: 84px;
+  border-radius: var(--radius-md);
+  border: 3px dashed #CBD5E1;
+  background: #F8FAFC;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  font-weight: 800;
+  font-family: var(--font-dyslexic);
+  color: var(--text-main);
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+}
+
+.letter-slot.filled {
+  border-style: solid;
+  border-color: #6366F1;
+  background: #EEF2FF;
+  color: #4338CA;
+  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.2);
+  transform: translateY(-2px);
+}
+
+.letter-slot.highlight-reversal {
+  border-color: #F59E0B;
+  background: #FEF3C7;
+  color: #B45309;
+  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.25);
+}
+
+.letter-slot.active-target {
+  border-color: #4F46E5;
+  background: #E0E7FF;
+  animation: pulse-glow 2s infinite;
+}
+
+/* Letter Tile Bank */
+.letter-tile-bank {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+  padding: 1.25rem;
+  background: #F8FAFC;
+  border-radius: var(--radius-lg);
+  border: 2px solid #E2E8F0;
+  width: 100%;
+}
+
+.draggable-tile {
+  width: 68px;
+  height: 76px;
+  border-radius: var(--radius-md);
+  background: white;
+  border: 2.5px solid #E2E8F0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2rem;
+  font-weight: 800;
+  font-family: var(--font-dyslexic);
+  color: #1E293B;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06), 0 2px 4px rgba(0,0,0,0.04);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  user-select: none;
+  touch-action: manipulation;
+}
+
+.draggable-tile:hover {
+  transform: translateY(-4px) scale(1.06);
+  border-color: #6366F1;
+  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.25);
+}
+
+.draggable-tile:active {
+  transform: scale(0.95);
+}
+
+.draggable-tile.is-target-letter {
+  border-color: #F59E0B;
+  background: #FFFBEB;
+  color: #B45309;
+}
+
+.draggable-tile.used {
+  opacity: 0.35;
+  pointer-events: none;
+  transform: scale(0.9);
+  border-style: dashed;
+}
+
+/* Letter Reversal Mnemonic Cue Badge */
+.mnemonic-box {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: #FEF3C7;
+  border: 1.5px solid #FDE68A;
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--radius-md);
+  color: #92400E;
+  font-size: 0.95rem;
+  font-weight: 600;
+  max-width: 520px;
+  width: 100%;
+}
+
+/* Letter Hunter Grid Styles */
+.hunter-grid-container {
+  display: grid;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+}
+
+.hunter-tile {
+  aspect-ratio: 1 / 1;
+  background: white;
+  border: 2px solid #E2E8F0;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.25rem;
+  font-weight: 800;
+  font-family: var(--font-dyslexic);
+  color: #1E293B;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  user-select: none;
+}
+
+.hunter-tile:hover {
+  transform: scale(1.05);
+  border-color: #6366F1;
+  background: #EEF2FF;
+}
+
+.hunter-tile.found {
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  border-color: #047857;
+  color: white;
+  transform: scale(0.96);
+  pointer-events: none;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+  animation: scale-up 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hunter-tile.gentle-mistake {
+  animation: wiggle 0.4s ease-in-out;
+  border-color: #F59E0B;
+  background: #FFFBEB;
+}
+
+/* Combo multiplier badge */
+.combo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: linear-gradient(135deg, #F59E0B 0%, #EA580C 100%);
+  color: white;
+  padding: 0.4rem 0.9rem;
+  border-radius: var(--radius-full);
+  font-weight: 800;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+  animation: gentle-bounce 1s infinite alternate;
+}

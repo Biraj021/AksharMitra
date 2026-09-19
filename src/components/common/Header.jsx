@@ -1,5 +1,5 @@
 import React from 'react';
-import { Volume2, VolumeX, Shield, Sparkles, Star } from 'lucide-react';
+import { Volume2, VolumeX, Shield, Sparkles, Star, Gamepad2 } from 'lucide-react';
 import { useProfile } from '../../context/ProfileContext';
 import { useAudio } from '../../context/AudioContext';
 import { SUPPORTED_LANGUAGES } from '../../data/languages';
@@ -31,6 +31,8 @@ export default function Header() {
     setShowPitchModal(true);
   };
 
+  const isBengali = activeLanguage?.id === 'bengali';
+
   return (
     <header className="header-nav">
       <div className="header-container">
@@ -45,12 +47,36 @@ export default function Header() {
           <span className="brand-icon">✨</span>
           <div>
             <h1 className="brand-title">AksharMitra</h1>
-            <p className="brand-subtitle">Smart Assistive Dyslexia & Phonics Tech</p>
+            <p className="brand-subtitle">
+              {isBengali ? 'স্মার্ট ডিসলেক্সিয়া ও ধ্বনিবিজ্ঞান প্রযুক্তি' : 'Smart Assistive Dyslexia & Phonics Tech'}
+            </p>
           </div>
         </div>
 
         {/* Header Right Actions */}
         <div className="header-actions">
+          {/* Remediation Games Button */}
+          <button
+            onClick={() => {
+              playPop();
+              setCurrentView('games');
+            }}
+            className="btn-secondary btn-pill"
+            style={{
+              padding: '0.4rem 0.85rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.35rem',
+              borderColor: '#A7F3D0',
+              background: '#ECFDF5',
+              color: '#065F46',
+              fontWeight: '700'
+            }}
+            title={isBengali ? 'গেমস জোন খেলো' : 'Play Phonics & Remediation Games'}
+          >
+            <Gamepad2 size={16} color="#059669" />
+            <span style={{ fontSize: '0.85rem' }}>{isBengali ? 'গেমস জোন' : 'Games Zone'}</span>
+          </button>
           {/* Language Selector Dropdown */}
           <select
             value={activeLanguage.id}
