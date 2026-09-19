@@ -91,7 +91,7 @@ export function AudioProvider({ children }) {
   };
 
   // Speech Synthesis wrapper (TTS)
-  const speakText = (text, lang = 'hi-IN') => {
+  const speakText = (text, lang = 'en-US') => {
     if (!voiceEnabled || !('speechSynthesis' in window)) return;
     try {
       window.speechSynthesis.cancel(); // Stop ongoing speech

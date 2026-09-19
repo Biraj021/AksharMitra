@@ -3,7 +3,8 @@ import { ArrowLeft, Sparkles, Trophy, Star, ArrowRight, Shield, Award, Play } fr
 import confetti from 'canvas-confetti';
 import LetterTracingQuest from '../../screening/LetterTracingQuest';
 import ReadAloudQuest from '../../screening/ReadAloudQuest';
-import RhymeClapQuest from '../../screening/RhymeClapQuest';
+import RhymeMatchQuest from '../../screening/RhymeMatchQuest';
+import SoundSafariQuest from '../../screening/SoundSafariQuest';
 import MascotMitra from '../common/MascotMitra';
 import { useProfile } from '../../context/ProfileContext';
 import { useAudio } from '../../context/AudioContext';
@@ -12,11 +13,12 @@ export default function ScreeningContainer() {
   const { activeProfile, setActiveProfile, setCurrentView } = useProfile();
   const { playPop, playStarTwinkle, speakText } = useAudio();
 
-  const [activeStep, setActiveStep] = useState(1); // 1: Tracing, 2: ReadAloud, 3: RhymeClap, 4: Celebration
+  const [activeStep, setActiveStep] = useState(1); // 1: Tracing, 2: ReadAloud, 3: RhymeMatch, 4: SoundSafari, 5: Celebration
   const [sessionData, setSessionData] = useState({
     tracing: [],
     readAloud: null,
-    phonological: 90
+    rhymeMatch: 95,
+    soundSafari: 95
   });
 
   const handleQuestComplete = (data) => {
@@ -27,8 +29,11 @@ export default function ScreeningContainer() {
     } else if (data.questId === 'read_aloud') {
       setSessionData((prev) => ({ ...prev, readAloud: data.result }));
       setActiveStep(3);
-    } else if (data.questId === 'phonological') {
-      setSessionData((prev) => ({ ...prev, phonological: data.score }));
+    } else if (data.questId === 'rhyme_match') {
+      setSessionData((prev) => ({ ...prev, rhymeMatch: data.score }));
+      setActiveStep(4);
+    } else if (data.questId === 'sound_safari') {
+      setSessionData((prev) => ({ ...prev, soundSafari: data.score }));
       finalizeScreening();
     }
   };
@@ -36,7 +41,7 @@ export default function ScreeningContainer() {
   // Finalize Screening & Update Profile
   const finalizeScreening = () => {
     playStarTwinkle();
-    setActiveStep(4);
+    setActiveStep(5);
 
     try {
       confetti({
@@ -51,13 +56,13 @@ export default function ScreeningContainer() {
       const updated = {
         ...activeProfile,
         screeningCompleted: true,
-        stars: (activeProfile.stars || 0) + 25,
+        stars: (activeProfile.stars || 0) + 30,
         riskLevel: 'typical', // based on evaluated thresholds
         screeningMetrics: {
           reversalIndex: 18,
-          fluencyHesitation: 22,
-          phonologicalScore: 92,
-          tracingAccuracy: 86,
+          fluencyHesitation: 20,
+          phonologicalScore: 94,
+          tracingAccuracy: 88,
           confusionsDetected: ['None significant'],
           wpm: 52,
           dateCompleted: 'Today'
@@ -66,7 +71,7 @@ export default function ScreeningContainer() {
       setActiveProfile(updated);
     }
 
-    speakText('Hooray! You earned the Master Explorer Badge!');
+    speakText('Hooray! You completed all quests and earned the Master Explorer Badge!', 'en-US');
   };
 
   return (
@@ -90,8 +95,9 @@ export default function ScreeningContainer() {
           {[
             { step: 1, label: '1. Letter Tracing 🎨' },
             { step: 2, label: '2. Read Aloud 📖' },
-            { step: 3, label: '3. Sound Beat 🥁' },
-            { step: 4, label: '4. Summary 🏆' }
+            { step: 3, label: '3. Rhyme Magic 🎵' },
+            { step: 4, label: '4. Sound Safari 🧭' },
+            { step: 5, label: '5. Summary 🏆' }
           ].map((s) => (
             <button
               key={s.step}
@@ -139,10 +145,11 @@ export default function ScreeningContainer() {
       {/* Active Quest Viewport */}
       {activeStep === 1 && <LetterTracingQuest onCompleteQuest={handleQuestComplete} />}
       {activeStep === 2 && <ReadAloudQuest onCompleteQuest={handleQuestComplete} />}
-      {activeStep === 3 && <RhymeClapQuest onCompleteQuest={handleQuestComplete} />}
+      {activeStep === 3 && <RhymeMatchQuest onCompleteQuest={handleQuestComplete} />}
+      {activeStep === 4 && <SoundSafariQuest onCompleteQuest={handleQuestComplete} />}
 
       {/* Celebratory Completion Screen */}
-      {activeStep === 4 && (
+      {activeStep === 5 && (
         <div
           className="glass-card"
           style={{
@@ -186,7 +193,7 @@ export default function ScreeningContainer() {
             Quest Master Badge Unlocked! 🏆
           </h2>
           <p style={{ fontSize: '1.05rem', color: '#B45309', fontWeight: '600', margin: '0 0 1.5rem' }}>
-            +25 Star Bonus Awarded! ⭐
+            +30 Star Bonus Awarded! ⭐
           </p>
 
           <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
