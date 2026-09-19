@@ -71,7 +71,7 @@ export default function ScreeningContainer() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', padding: '0.5rem 0' }}>
-      {/* Top Header & Progress Bar */}
+      {/* Top Header & Interactive Quest Navigation Pills */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
         <button
           onClick={() => {
@@ -85,27 +85,35 @@ export default function ScreeningContainer() {
           <span>Back to Home</span>
         </button>
 
-        {/* Quest Step Pills */}
-        <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+        {/* Free Navigation Quest Pills */}
+        <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center', flexWrap: 'wrap' }}>
           {[
-            { step: 1, label: '1. Tracing' },
-            { step: 2, label: '2. Read Aloud' },
-            { step: 3, label: '3. Rhyme Beat' }
+            { step: 1, label: '1. Letter Tracing 🎨' },
+            { step: 2, label: '2. Read Aloud 📖' },
+            { step: 3, label: '3. Sound Beat 🥁' },
+            { step: 4, label: '4. Summary 🏆' }
           ].map((s) => (
-            <div
+            <button
               key={s.step}
+              onClick={() => {
+                playPop();
+                setActiveStep(s.step);
+              }}
               style={{
-                padding: '0.35rem 0.75rem',
+                padding: '0.4rem 0.85rem',
                 borderRadius: '9999px',
-                fontSize: '0.8rem',
+                fontSize: '0.82rem',
                 fontWeight: '700',
-                background: activeStep === s.step ? '#4F46E5' : activeStep > s.step ? '#D1FAE5' : '#F1F5F9',
-                color: activeStep === s.step ? 'white' : activeStep > s.step ? '#065F46' : '#64748B',
-                transition: 'all 0.2s ease'
+                border: activeStep === s.step ? '2px solid #4F46E5' : '1.5px solid #E2E8F0',
+                background: activeStep === s.step ? '#4F46E5' : 'white',
+                color: activeStep === s.step ? 'white' : '#475569',
+                cursor: 'pointer',
+                boxShadow: activeStep === s.step ? '0 4px 12px rgba(79, 70, 229, 0.3)' : 'none',
+                transition: 'all 0.15s ease'
               }}
             >
               {s.label}
-            </div>
+            </button>
           ))}
         </div>
 
@@ -117,7 +125,7 @@ export default function ScreeningContainer() {
             border: '1px solid #C7D2FE',
             color: '#4338CA',
             borderRadius: '9999px',
-            padding: '0.3rem 0.7rem',
+            padding: '0.35rem 0.75rem',
             fontSize: '0.75rem',
             fontWeight: 'bold',
             cursor: 'pointer'
