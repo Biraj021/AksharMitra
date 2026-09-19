@@ -1,6 +1,6 @@
 import React from 'react';
 import { Volume2, ArrowRight, Trophy, Flame, Target, Puzzle, Sparkles } from 'lucide-react';
-import { useProfile } from '../../context/ProfileContext';
+import { useProfile, getAvatarEmoji } from '../../context/ProfileContext';
 import { useAudio } from '../../context/AudioContext';
 
 export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }) {
@@ -8,7 +8,7 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
   const { playPop, playStarTwinkle, speakText } = useAudio();
 
   const studentName = activeProfile?.name || 'Aarav Sharma';
-  const studentEmoji = activeProfile?.avatarEmoji || '🦊';
+  const studentEmoji = getAvatarEmoji(activeProfile?.avatarEmoji || activeProfile?.avatar);
   const starsCount = activeProfile?.stars || 55;
   const streakDays = activeProfile?.streak || 4;
 

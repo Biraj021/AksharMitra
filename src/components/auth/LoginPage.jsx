@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { UserPlus, Star, ArrowRight, Trash2, CheckCircle, Sparkles, BookOpen, Shield, Globe, Award } from 'lucide-react';
-import { useProfile } from '../../context/ProfileContext';
+import { useProfile, getAvatarEmoji } from '../../context/ProfileContext';
 import { useAudio } from '../../context/AudioContext';
 import { SUPPORTED_LANGUAGES } from '../../data/languages';
 import OnboardingModal from './OnboardingModal';
@@ -192,7 +192,7 @@ export default function LoginPage() {
                       flexShrink: 0
                     }}
                   >
-                    {profile.avatarEmoji || '🦁'}
+                    {getAvatarEmoji(profile.avatarEmoji || profile.avatar)}
                   </div>
 
                   <div style={{ flex: 1, minWidth: 0 }}>

@@ -26,7 +26,7 @@ export const SUPPORTED_LANGUAGES = [
     flagEmoji: '🐯',
     greeting: 'নমস্কার বন্ধু! আমি মিত্র।',
     subGreeting: 'এসো আজ বর্ণের মজার জগতে ঘুরে আসি!',
-    startAdventure: 'খেলা शुरू करो 🚀',
+    startAdventure: 'খেলা শুরু করো 🚀',
     demoConfusions: [
       { pair: ['ব', 'র'], name: 'Ba vs Ra (Dot confusion)' },
       { pair: ['ক', 'ধ'], name: 'Ka vs Dha (Loop confusion)' },

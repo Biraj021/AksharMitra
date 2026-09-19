@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArrowLeft, Award, CheckCircle, AlertTriangle, Printer, Sparkles, BookOpen, Volume2, Shield } from 'lucide-react';
-import { useProfile } from '../../context/ProfileContext';
+import { useProfile, getAvatarEmoji } from '../../context/ProfileContext';
 import { useAudio } from '../../context/AudioContext';
 
 export default function CompanionDashboard() {
@@ -23,18 +23,13 @@ export default function CompanionDashboard() {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', maxWidth: '640px', margin: '0 auto', textAlign: 'center', padding: '3rem 1rem' }}>
         <div className="glass-card" style={{ padding: '2.5rem', background: 'white', borderRadius: '24px' }}>
-          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>👤</div>
-          <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#1E293B', marginBottom: '0.5rem' }}>No Student Selected</h2>
-          <p style={{ fontSize: '0.85rem', color: '#64748B', marginBottom: '1.5rem' }}>Please select or create a student profile to view diagnostic reports.</p>
-          <button
-            onClick={() => {
-              playPop();
-              setCurrentView('login');
-            }}
-            className="btn-primary"
-            style={{ borderRadius: '9999px', padding: '0.75rem 1.5rem', fontWeight: 800 }}
-          >
-            Go to Student Profiles
+          <div style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>🔍</div>
+          <h2 style={{ fontSize: '1.5rem', margin: '0 0 0.5rem' }}>No Profile Selected</h2>
+          <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
+            Please log in or select a student profile from the home screen to view diagnostic metrics.
+          </p>
+          <button onClick={handleBack} className="btn btn-primary" style={{ padding: '0.65rem 1.5rem' }}>
+            Go to Home
           </button>
         </div>
       </div>
@@ -55,7 +50,7 @@ export default function CompanionDashboard() {
           style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}
         >
           <ArrowLeft size={16} />
-          <span>मुख्य पृष्ठ (Back to Main)</span>
+          <span>Back to Main</span>
         </button>
 
         <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -82,12 +77,27 @@ export default function CompanionDashboard() {
       <div className="glass-card" style={{ padding: '2rem 1.75rem', background: 'white', borderRadius: '24px' }}>
         {/* Header with Avatar & Risk Badge */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', borderBottom: '2px solid #F1F5F9', paddingBottom: '1.25rem', marginBottom: '1.5rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <div style={{ fontSize: '3rem', width: '70px', height: '70px', borderRadius: '50%', background: '#FEF3C7', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #F59E0B' }}>
-              {profile.avatarEmoji || '🦁'}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', minWidth: 0 }}>
+            <div
+              style={{
+                fontSize: '2.5rem',
+                width: '68px',
+                height: '68px',
+                borderRadius: '50%',
+                background: '#FEF3C7',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                border: '2px solid #F59E0B',
+                flexShrink: 0,
+                overflow: 'hidden',
+                lineHeight: 1
+              }}
+            >
+              {getAvatarEmoji(profile.avatarEmoji || profile.avatar)}
             </div>
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <div style={{ minWidth: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
                 <h2 style={{ fontSize: '1.5rem', margin: 0 }}>{profile.name}</h2>
                 <span className="badge badge-indigo">{profile.gradeLabel || 'Grade 2'}</span>
               </div>

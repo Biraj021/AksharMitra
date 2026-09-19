@@ -1,6 +1,6 @@
 import React from 'react';
 import { X, UserPlus, Star, ArrowRight, LogOut, CheckCircle } from 'lucide-react';
-import { useProfile } from '../../context/ProfileContext';
+import { useProfile, getAvatarEmoji } from '../../context/ProfileContext';
 import { useAudio } from '../../context/AudioContext';
 
 export default function ProfileSelectorModal({ isOpen, onClose, onAddNew }) {
@@ -74,7 +74,7 @@ export default function ProfileSelectorModal({ isOpen, onClose, onAddNew }) {
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <span style={{ fontSize: '1.75rem' }}>{p.avatarEmoji || '🦁'}</span>
+                  <span style={{ fontSize: '1.75rem' }}>{getAvatarEmoji(p.avatarEmoji || p.avatar)}</span>
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                       <span style={{ fontWeight: '700', fontSize: '1rem', color: '#1E293B' }}>

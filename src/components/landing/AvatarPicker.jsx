@@ -8,7 +8,7 @@ export default function AvatarPicker({ selectedAvatar, onSelectAvatar }) {
   return (
     <div>
       <label style={{ display: 'block', fontWeight: '700', fontSize: '0.95rem', marginBottom: '0.5rem', color: 'var(--text-main)' }}>
-        अपना जादुई अवतार चुनो (Choose Your Avatar)
+        Choose Your Magical Avatar ✨
       </label>
       <div
         style={{

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Volume2, VolumeX, Star, Globe, Eye } from 'lucide-react';
-import { useProfile } from '../../context/ProfileContext';
+import { useProfile, getAvatarEmoji } from '../../context/ProfileContext';
 import { useAudio } from '../../context/AudioContext';
 import { useDyslexia } from '../../context/DyslexiaContext';
 import { SUPPORTED_LANGUAGES } from '../../data/languages';
@@ -153,7 +153,7 @@ export default function Header({ onOpenProfileSelector }) {
               }}
               title="Switch profile or view stats"
             >
-              <span style={{ fontSize: '1.15rem' }}>{activeProfile.avatarEmoji || '🦁'}</span>
+              <span style={{ fontSize: '1.15rem' }}>{getAvatarEmoji(activeProfile.avatarEmoji || activeProfile.avatar)}</span>
               <Star size={16} fill="#F59E0B" color="#F59E0B" />
               <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#B45309' }}>
                 {activeProfile.stars || 15}

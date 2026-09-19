@@ -7,8 +7,15 @@ const ProfileContext = createContext(null);
 const STORAGE_ACTIVE_KEY = 'aksharmitra_active_profile';
 const STORAGE_PROFILES_KEY = 'aksharmitra_all_profiles_v2';
 
-const AVATAR_MAP = {
+export const AVATAR_MAP = {
   sheru: '🦁',
+  gaja: '🐘',
+  mayur: '🦚',
+  khargosh: '🐰',
+  titu: '🦜',
+  bhalu: '🐻',
+  taara: '⭐',
+  chiku: '🤖',
   mitra: '🦉',
   appu: '🐘',
   mithu: '🦜',
@@ -16,9 +23,24 @@ const AVATAR_MAP = {
   tara: '🦄'
 };
 
+export const getAvatarEmoji = (avatarIdOrEmoji) => {
+  if (!avatarIdOrEmoji) return '🦁';
+  if (AVATAR_MAP[avatarIdOrEmoji]) return AVATAR_MAP[avatarIdOrEmoji];
+  if (/\p{Extended_Pictographic}/u.test(avatarIdOrEmoji)) return avatarIdOrEmoji;
+  return '🦁';
+};
+
+const normalizeProfile = (p) => {
+  if (!p) return p;
+  return {
+    ...p,
+    avatarEmoji: getAvatarEmoji(p.avatarEmoji || p.avatar)
+  };
+};
+
 export function ProfileProvider({ children }) {
   const [activeLanguage, setActiveLanguage] = useState(() => {
-    return SUPPORTED_LANGUAGES[0]; // Default Hindi
+    return SUPPORTED_LANGUAGES[0]; // Default English
   });
 
   // Multi-profile store
@@ -28,13 +50,15 @@ export function ProfileProvider({ children }) {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          const nonDemo = parsed.filter((p) => !p.id.startsWith('demo_') && p.id !== 'aarav_demo' && p.id !== 'priya_demo');
-          return [...DEMO_PROFILES, ...nonDemo];
+          const nonDemo = parsed
+            .filter((p) => !p.id.startsWith('demo_') && p.id !== 'aarav_demo' && p.id !== 'priya_demo')
+            .map(normalizeProfile);
+          return [...DEMO_PROFILES.map(normalizeProfile), ...nonDemo];
         }
       }
     } catch (e) {}
     // Default seed with Demo Profiles
-    return [...DEMO_PROFILES];
+    return DEMO_PROFILES.map(normalizeProfile);
   });
 
   const [activeProfile, setActiveProfile] = useState(() => {
@@ -42,9 +66,9 @@ export function ProfileProvider({ children }) {
       const saved = localStorage.getItem(STORAGE_ACTIVE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (parsed?.id === 'aarav_demo') return { ...DEMO_PROFILES[0] };
-        if (parsed?.id === 'priya_demo') return { ...DEMO_PROFILES[1] };
-        return parsed;
+        if (parsed?.id === 'aarav_demo' || parsed?.id === 'demo_aarav') return normalizeProfile({ ...DEMO_PROFILES[0] });
+        if (parsed?.id === 'priya_demo' || parsed?.id === 'demo_priya') return normalizeProfile({ ...DEMO_PROFILES[1] });
+        return normalizeProfile(parsed);
       }
     } catch (e) {}
     return null;
@@ -104,18 +128,20 @@ export function ProfileProvider({ children }) {
   const switchProfile = (profileId) => {
     const found = profilesList.find((p) => p.id === profileId);
     if (found) {
-      setActiveProfile({ ...found });
-      setLanguageById(found.language || 'hindi');
-      setCurrentView(found.screeningCompleted ? 'landing' : 'screening');
-      return found;
+      const normalized = normalizeProfile(found);
+      setActiveProfile({ ...normalized });
+      setLanguageById(normalized.language || 'english');
+      setCurrentView(normalized.screeningCompleted ? 'landing' : 'screening');
+      return normalized;
     }
     return null;
   };
 
   // Create or Update Student Profile
   const createStudentProfile = ({ name, avatar, grade, languageId }) => {
-    const avatarEmoji = AVATAR_MAP[avatar] || avatar || '🦁';
+    const avatarEmoji = getAvatarEmoji(avatar);
     const gradeLabels = {
+      kg: 'KG',
       grade1: 'Class 1',
       grade2: 'Class 2',
       grade3: 'Class 3',
@@ -125,7 +151,7 @@ export function ProfileProvider({ children }) {
 
     const newProfile = {
       id: `student_${Date.now()}`,
-      name: name.trim() || 'दोस्त (Friend)',
+      name: name.trim() || 'Explorer',
       avatar: avatar || 'sheru',
       avatarEmoji: avatarEmoji,
       grade: grade || 'grade2',
@@ -210,7 +236,8 @@ export function ProfileProvider({ children }) {
         showParentModal,
         setShowParentModal,
         showPitchModal,
-        setShowPitchModal
+        setShowPitchModal,
+        getAvatarEmoji
       }}
     >
       {children}
