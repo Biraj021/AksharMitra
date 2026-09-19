@@ -5,7 +5,7 @@ export const SUPPORTED_LANGUAGES = [
     englishName: 'English',
     script: 'Latin',
     fontFamily: "'Lexend', sans-serif",
-    flagEmoji: '🇬🇧',
+    flagEmoji: '🔤',
     greeting: 'Hello friend! I am Mitra.',
     subGreeting: "Let's explore the magical world of letters and words together!",
     startAdventure: 'Start Adventure 🚀',
