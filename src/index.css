@@ -1,34 +1,39 @@
 /* ==========================================================================
-   AksharMitra Sensory Design System & Dyslexia-Friendly Tokens
+   AksharMitra — Kid-Friendly + Dyslexia-Optimised Design System v2
+   Fonts: Lexend (body, dyslexia-safe) + Fredoka (headings, kid-friendly)
    ========================================================================== */
 
 :root {
-  /* Sensory & Warm Palette */
-  --bg-primary: #FFFDF7;
-  --bg-secondary: #F8F5EE;
-  --bg-card: rgba(255, 255, 255, 0.92);
-  --bg-card-hover: rgba(255, 255, 255, 1);
+  /* Warm cream background — reduces visual glare for dyslexic readers */
+  --bg-primary: #FFFBF0;
+  --bg-secondary: #FFF5E0;
+  --bg-card: rgba(255, 255, 255, 0.96);
+  --bg-card-hover: #FFFFFF;
   --bg-accent-soft: #EEF2FF;
 
-  /* Primary Brand Colors */
+  /* Brand palette */
   --primary-50: #EEF2FF;
   --primary-100: #E0E7FF;
   --primary-500: #6366F1;
   --primary-600: #4F46E5;
   --primary-700: #4338CA;
-  --primary-gradient: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
-  --sunset-gradient: linear-gradient(135deg, #F59E0B 0%, #EA580C 100%);
-  --mint-gradient: linear-gradient(135deg, #10B981 0%, #059669 100%);
-  --lavender-gradient: linear-gradient(135deg, #A855F7 0%, #7C3AED 100%);
-  --card-gradient: linear-gradient(180deg, #FFFFFF 0%, #FBF9F3 100%);
+  --primary-gradient: linear-gradient(135deg, #6366F1 0%, #4338CA 100%);
 
-  /* Text & Legibility */
-  --text-main: #1E293B;
-  --text-muted: #64748B;
-  --text-soft: #94A3B8;
+  /* Kid-friendly accent gradients — vivid, easy to distinguish */
+  --sunset-gradient: linear-gradient(135deg, #F97316 0%, #DC2626 100%);
+  --mint-gradient: linear-gradient(135deg, #10B981 0%, #047857 100%);
+  --lavender-gradient: linear-gradient(135deg, #A855F7 0%, #7C3AED 100%);
+  --sky-gradient: linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%);
+  --amber-gradient: linear-gradient(135deg, #F59E0B 0%, #B45309 100%);
+  --card-gradient: linear-gradient(180deg, #FFFFFF 0%, #FDFAF2 100%);
+
+  /* Text — dark but not pure black (softer on dyslexic eyes) */
+  --text-main: #1A1A2E;
+  --text-muted: #4B5563;
+  --text-soft: #9CA3AF;
   --text-inverse: #FFFFFF;
 
-  /* Accent & Feedback Colors */
+  /* Feedback colours */
   --amber-gold: #F59E0B;
   --amber-soft: #FEF3C7;
   --mint-green: #10B981;
@@ -38,32 +43,35 @@
   --sky-blue: #0EA5E9;
   --sky-soft: #E0F2FE;
 
-  /* Borders & Shadows */
-  --border-light: rgba(226, 232, 240, 0.8);
-  --border-brand: rgba(99, 102, 241, 0.3);
-  --shadow-sm: 0 2px 8px rgba(99, 102, 241, 0.06);
-  --shadow-md: 0 8px 24px -4px rgba(79, 70, 229, 0.12);
-  --shadow-lg: 0 16px 36px -6px rgba(79, 70, 229, 0.18);
-  --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
-  --shadow-button: 0 4px 14px rgba(79, 70, 229, 0.35);
+  /* Borders & shadows */
+  --border-light: rgba(226, 232, 240, 0.9);
+  --border-brand: rgba(99, 102, 241, 0.35);
+  --shadow-sm: 0 2px 8px rgba(99, 102, 241, 0.08);
+  --shadow-md: 0 8px 24px -4px rgba(79, 70, 229, 0.14);
+  --shadow-lg: 0 16px 40px -6px rgba(79, 70, 229, 0.20);
+  --shadow-card: 0 6px 24px rgba(0, 0, 0, 0.05), 0 1px 4px rgba(0, 0, 0, 0.03);
+  --shadow-button: 0 4px 16px rgba(79, 70, 229, 0.38);
 
-  /* Typography */
-  --font-base: 'Lexend', system-ui, sans-serif;
-  --font-heading: 'Fredoka', 'Rozha One', cursive, sans-serif;
+  /* Typography — Lexend is evidence-based for dyslexia readability */
+  --font-base: 'Lexend', system-ui, -apple-system, sans-serif;
+  --font-heading: 'Fredoka', 'Lexend', system-ui, sans-serif;
   --font-devanagari: 'Noto Sans Devanagari', 'Lexend', sans-serif;
   --font-bengali: 'Noto Sans Bengali', 'Lexend', sans-serif;
   --font-tamil: 'Noto Sans Tamil', 'Lexend', sans-serif;
   --font-dyslexic: 'Lexend', sans-serif;
 
-  /* Spacing & Radii */
+  /* Spacing & radii */
   --radius-sm: 10px;
   --radius-md: 16px;
   --radius-lg: 24px;
   --radius-xl: 32px;
   --radius-full: 9999px;
-
-  /* Responsive Max Width */
   --max-width: 1080px;
+
+  /* Dyslexia reading tokens — overridden dynamically by DyslexiaContext */
+  --line-height-custom: 1.75;
+  --letter-spacing-custom: 0.02em;
+  --word-spacing-custom: 0.08em;
 }
 
 /* Body & Global Reset */
@@ -78,18 +86,25 @@ body {
   font-family: var(--font-base);
   background-color: var(--bg-primary);
   color: var(--text-main);
-  line-height: var(--line-height-custom, 1.6);
-  letter-spacing: var(--letter-spacing-custom, normal);
-  word-spacing: var(--word-spacing-custom, normal);
+  /* 18px base — readable for ages 6-12 without squinting */
+  font-size: 18px;
+  font-weight: 400;
+  /* Generous spacing — proven to reduce reading errors for dyslexic children */
+  line-height: var(--line-height-custom, 1.75);
+  letter-spacing: var(--letter-spacing-custom, 0.02em);
+  word-spacing: var(--word-spacing-custom, 0.08em);
   min-height: 100vh;
   overflow-x: hidden;
   background-image:
-    radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.05) 0%, transparent 40%),
-    radial-gradient(circle at 90% 80%, rgba(245, 158, 11, 0.06) 0%, transparent 40%),
-    radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.04) 0%, transparent 50%);
+    radial-gradient(ellipse at 15% 15%, rgba(99, 102, 241, 0.07) 0%, transparent 50%),
+    radial-gradient(ellipse at 85% 85%, rgba(245, 158, 11, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 0%, rgba(16, 185, 129, 0.05) 0%, transparent 40%);
   background-attachment: fixed;
-  transition: background-color 0.25s ease, color 0.25s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+/* No italics — italics increase reading difficulty for dyslexic children */
+em, i { font-style: normal; font-weight: 600; }
 
 /* Dyslexia Letter Reversal Distinction Anchors */
 .reversal-anchor-b {
@@ -117,22 +132,32 @@ body {
 }
 
 /* Typography Helpers */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
   font-weight: 600;
   color: var(--text-main);
-  letter-spacing: -0.01em;
+  line-height: 1.25;
+  letter-spacing: 0em; /* Fredoka has built-in good spacing */
 }
 
-.indic-text {
-  font-family: var(--font-devanagari);
+h1 { font-size: 2rem;   font-weight: 700; }
+h2 { font-size: 1.6rem; font-weight: 700; }
+h3 { font-size: 1.3rem; font-weight: 600; }
+h4 { font-size: 1.1rem; font-weight: 600; }
+
+/* Body paragraphs — Lexend, generous spacing */
+p {
+  font-family: var(--font-base);
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--text-muted);
   letter-spacing: 0.02em;
+  word-spacing: 0.06em;
 }
+
+.indic-text { font-family: var(--font-devanagari); letter-spacing: 0.02em; }
+.bengali-text { font-family: var(--font-bengali); }
+.tamil-text { font-family: var(--font-tamil); }
 
 /* Container */
 .app-container {
@@ -146,7 +171,8 @@ h6 {
   max-width: var(--max-width);
   width: 100%;
   margin: 0 auto;
-  padding: 1.25rem 1rem 3rem 1rem;
+  /* Extra bottom padding for fixed bottom nav */
+  padding: 1.25rem 1rem 5rem 1rem;
 }
 
 /* Cards & Glassmorphism */
@@ -165,7 +191,7 @@ h6 {
   box-shadow: var(--shadow-md);
 }
 
-/* Buttons */
+/* Buttons — 52px min-height for child-friendly touch targets */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -174,7 +200,7 @@ h6 {
   font-family: var(--font-heading);
   font-size: 1.1rem;
   font-weight: 600;
-  padding: 0.85rem 1.75rem;
+  padding: 0.9rem 1.75rem;
   border-radius: var(--radius-full);
   border: none;
   cursor: pointer;
@@ -182,6 +208,8 @@ h6 {
   user-select: none;
   text-decoration: none;
   min-height: 52px;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
 }
 
 .btn-primary {
@@ -447,14 +475,29 @@ h6 {
 
 /* Responsive adjustments */
 @media (max-width: 640px) {
-  .btn {
-    font-size: 1rem;
-    padding: 0.75rem 1.25rem;
-  }
+  body { font-size: 17px; }
+  h1 { font-size: 1.7rem; }
+  h2 { font-size: 1.4rem; }
+  h3 { font-size: 1.15rem; }
+  .btn { font-size: 1rem; padding: 0.8rem 1.25rem; }
+  .btn-pill { font-size: 0.88rem; padding: 0.5rem 0.9rem; }
+  .brand-subtitle { display: none; }
+  .main-content { padding: 1rem 0.85rem 5rem; }
+}
 
-  .brand-subtitle {
-    display: none;
+/* Print / PDF Report Styles */
+@media print {
+  body {
+    background: white !important;
+    background-image: none !important;
+    font-size: 14px;
+    color: #000 !important;
   }
+  .header-nav, nav, button { display: none !important; }
+  .glass-card { box-shadow: none !important; border: 1px solid #ccc !important; backdrop-filter: none !important; }
+  .main-content { padding: 0 !important; max-width: 100% !important; }
+  h1, h2, h3 { color: #000 !important; -webkit-text-fill-color: #000 !important; }
+  .modal-overlay { display: none !important; }
 }
 
 /* ==========================================================================
@@ -483,12 +526,13 @@ h6 {
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  padding: 0.45rem 0.9rem;
+  padding: 0.5rem 1rem;
   background: white;
   border-radius: var(--radius-full);
-  border: 1.5px solid var(--border-light);
+  border: 2px solid var(--border-light);
+  font-family: var(--font-heading);
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 1rem;
   box-shadow: var(--shadow-sm);
 }
 
