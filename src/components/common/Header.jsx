@@ -1,10 +1,11 @@
 import React from 'react';
-import { Volume2, VolumeX, Star, Gamepad2 } from 'lucide-react';
+import { Volume2, VolumeX, Star, Globe, Eye } from 'lucide-react';
 import { useProfile } from '../../context/ProfileContext';
 import { useAudio } from '../../context/AudioContext';
+import { useDyslexia } from '../../context/DyslexiaContext';
 import { SUPPORTED_LANGUAGES } from '../../data/languages';
 
-export default function Header() {
+export default function Header({ onOpenProfileSelector }) {
   const {
     activeLanguage,
     setLanguageById,
@@ -13,57 +14,96 @@ export default function Header() {
   } = useProfile();
 
   const { soundEnabled, setSoundEnabled, playPop } = useAudio();
+  const { setIsSettingsOpen } = useDyslexia();
 
   const toggleSound = () => {
     playPop();
     setSoundEnabled(!soundEnabled);
   };
 
-  const isBengali = activeLanguage?.id === 'bengali';
+  const openDyslexiaSettings = () => {
+    playPop();
+    setIsSettingsOpen(true);
+  };
 
   return (
-    <header className="header-nav">
-      <div className="header-container">
-        {/* Brand Logo */}
+    <header className="header-nav" style={{ padding: '0.6rem 1rem', background: '#FFFFFF', borderBottom: '1px solid #F1F5F9' }}>
+      <div className="header-container" style={{ maxWidth: '1080px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        {/* Brand Logo with Owl Squircle */}
         <div
-          className="brand-badge"
           onClick={() => {
             playPop();
             setCurrentView('landing');
           }}
+          style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}
         >
-          <span className="brand-icon">✨</span>
+          <div
+            style={{
+              width: '42px',
+              height: '42px',
+              borderRadius: '14px',
+              background: 'linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '1.5rem',
+              boxShadow: '0 4px 10px rgba(79, 70, 229, 0.25)'
+            }}
+          >
+            🦉
+          </div>
           <div>
-            <h1 className="brand-title">AksharMitra</h1>
-            <p className="brand-subtitle">
-              {isBengali ? 'স্মার্ট ডিসলেক্সিয়া ও ধ্বনিবিজ্ঞান প্রযুক্তি' : 'Smart Assistive Dyslexia & Phonics Tech'}
+            <h1 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0, color: '#1E293B', fontFamily: "'Lexend', sans-serif", letterSpacing: '-0.01em' }}>
+              AksharMitra
+            </h1>
+            <p style={{ fontSize: '0.72rem', color: '#64748B', margin: 0, fontWeight: 600 }}>
+              Assistive Tech for Dyslexia
             </p>
           </div>
         </div>
 
-        {/* Header Right Actions */}
-        <div className="header-actions">
-          {/* Remediation Games Button */}
+        {/* Header Right Actions: Dyslexia Comfort, Sound Toggle, Language, Avatar/Stars */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          {/* Dyslexia Sensory / Accessibility Toggle */}
           <button
-            onClick={() => {
-              playPop();
-              setCurrentView('games');
-            }}
-            className="btn-secondary btn-pill"
+            onClick={openDyslexiaSettings}
             style={{
-              padding: '0.4rem 0.85rem',
+              width: '38px',
+              height: '38px',
+              borderRadius: '50%',
+              background: '#EEF2FF',
+              border: '1.5px solid #C7D2FE',
               display: 'flex',
               alignItems: 'center',
-              gap: '0.35rem',
-              borderColor: '#A7F3D0',
-              background: '#ECFDF5',
-              color: '#065F46',
-              fontWeight: '700'
+              justifyContent: 'center',
+              cursor: 'pointer',
+              color: '#4F46E5',
+              transition: 'all 0.15s ease'
             }}
-            title={isBengali ? 'গেমস জোন খেলো' : 'Play Phonics & Remediation Games'}
+            title="Dyslexia & Sensory Comfort Settings"
           >
-            <Gamepad2 size={16} color="#059669" />
-            <span style={{ fontSize: '0.85rem' }}>{isBengali ? 'গেমস জোন' : 'Games Zone'}</span>
+            <Eye size={18} color="#4F46E5" />
+          </button>
+
+          {/* Sound Toggle Circle Button */}
+          <button
+            onClick={toggleSound}
+            style={{
+              width: '38px',
+              height: '38px',
+              borderRadius: '50%',
+              background: '#F8FAFC',
+              border: '1.5px solid #E2E8F0',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              color: soundEnabled ? '#4F46E5' : '#94A3B8',
+              transition: 'all 0.15s ease'
+            }}
+            title={soundEnabled ? 'Mute Sound' : 'Enable Sound'}
+          >
+            {soundEnabled ? <Volume2 size={18} color="#4F46E5" /> : <VolumeX size={18} color="#94A3B8" />}
           </button>
 
           {/* Language Selector Dropdown */}
@@ -74,13 +114,14 @@ export default function Header() {
               setLanguageById(e.target.value);
             }}
             style={{
-              padding: '0.4rem 0.75rem',
+              padding: '0.35rem 0.65rem',
               borderRadius: '9999px',
-              border: '2px solid var(--border-light)',
-              background: 'white',
+              border: '1.5px solid #E2E8F0',
+              background: '#F8FAFC',
               fontFamily: 'inherit',
               fontWeight: '600',
-              color: 'var(--text-main)',
+              fontSize: '0.8rem',
+              color: '#334155',
               cursor: 'pointer',
               outline: 'none'
             }}
@@ -92,38 +133,48 @@ export default function Header() {
             ))}
           </select>
 
-          {/* Sound Toggle */}
-          <button
-            onClick={toggleSound}
-            className="btn-secondary btn-pill"
-            style={{ padding: '0.4rem 0.6rem', display: 'flex', alignItems: 'center' }}
-            title={soundEnabled ? 'Mute Sound' : 'Enable Sound'}
-          >
-            {soundEnabled ? <Volume2 size={18} color="#4F46E5" /> : <VolumeX size={18} color="#94A3B8" />}
-          </button>
-
-          {/* Active Profile Info (if active) */}
-          {activeProfile && (
+          {/* Star & Avatar Pill or Login Prompt */}
+          {activeProfile ? (
             <div
+              onClick={() => {
+                playPop();
+                if (onOpenProfileSelector) onOpenProfileSelector();
+              }}
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.5rem',
-                background: 'var(--amber-soft)',
-                padding: '0.35rem 0.75rem',
+                gap: '0.45rem',
+                background: '#FEF3C7',
+                border: '1.5px solid #FDE68A',
+                padding: '0.35rem 0.85rem',
                 borderRadius: '9999px',
-                border: '1.5px solid #F59E0B'
+                cursor: 'pointer',
+                boxShadow: '0 2px 6px rgba(245, 158, 11, 0.12)'
+              }}
+              title="Switch profile or view stats"
+            >
+              <span style={{ fontSize: '1.15rem' }}>{activeProfile.avatarEmoji || '🦁'}</span>
+              <Star size={16} fill="#F59E0B" color="#F59E0B" />
+              <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#B45309' }}>
+                {activeProfile.stars || 15}
+              </span>
+            </div>
+          ) : (
+            <button
+              onClick={() => {
+                playPop();
+                setCurrentView('login');
+              }}
+              className="btn btn-primary"
+              style={{
+                padding: '0.35rem 0.85rem',
+                borderRadius: '9999px',
+                fontSize: '0.8rem',
+                fontWeight: 800
               }}
             >
-              <span style={{ fontSize: '1.2rem' }}>{activeProfile.avatarEmoji || '🦁'}</span>
-              <span style={{ fontWeight: '700', fontSize: '0.9rem', color: '#B45309' }}>
-                {activeProfile.name}
-              </span>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '2px', color: '#B45309', fontWeight: 'bold' }}>
-                <Star size={14} fill="#F59E0B" color="#F59E0B" />
-                <span>{activeProfile.stars || 0}</span>
-              </div>
-            </div>
+              Log In
+            </button>
           )}
         </div>
       </div>

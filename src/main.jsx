@@ -5,11 +5,15 @@ import './index.css';
 import { ProfileProvider } from './context/ProfileContext.jsx';
 import { AudioProvider } from './context/AudioContext.jsx';
 
+import { DyslexiaProvider } from './context/DyslexiaContext.jsx';
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <AudioProvider>
       <ProfileProvider>
-        <App />
+        <DyslexiaProvider>
+          <App />
+        </DyslexiaProvider>
       </ProfileProvider>
     </AudioProvider>
   </React.StrictMode>

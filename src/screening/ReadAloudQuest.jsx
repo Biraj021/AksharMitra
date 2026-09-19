@@ -133,35 +133,170 @@ export default function ReadAloudQuest({ onCompleteQuest }) {
   const restartTimeoutRef = useRef(null);
   const completedIndicesRef = useRef(new Set());
   const promptRef = useRef(STORY_PROMPTS[0]);
+  const recordingStartTimeRef = useRef(null);
 
   const prompt = STORY_PROMPTS[currentPromptIdx];
 
-  // Keep refs in sync with state
-  useEffect(() => {
-    promptRef.current = prompt;
-  }, [prompt]);
+  // Stop listening helper
+  const stopListening = () => {
+    isListeningRef.current = false;
+    setIsRecording(false);
+    clearTimeout(restartTimeoutRef.current);
 
-  useEffect(() => {
-    completedIndicesRef.current = completedIndices;
-  }, [completedIndices]);
+    if (recognitionRef.current) {
+      try {
+        const rec = recognitionRef.current;
+        rec.onend = null;
+        rec.onerror = null;
+        rec.onresult = null;
+        rec.abort();
+      } catch (e) {}
+      recognitionRef.current = null;
+    }
+  };
 
-  // Clean setup / teardown on prompt switch
-  useEffect(() => {
+  // Reset reading state helper
+  const resetReadingState = () => {
+    setCompletedIndices(new Set());
+    setCurrentWordIdx(0);
+    setLiveTranscript('');
+    setReadingResult(null);
+    setIsKaraokeRunning(false);
+    completedIndicesRef.current = new Set();
+    recordingStartTimeRef.current = null;
+  };
+
+  // Finalize reading session with real measured WPM
+  const finalizeReadingSession = (count) => {
+    stopListening();
+
+    const totalWords = promptRef.current.cleanWords.length;
+    const completedCount = count !== undefined ? count : completedIndicesRef.current.size;
+    const accuracy = Math.min(100, Math.max(25, Math.round((completedCount / totalWords) * 100)));
+
+    // Real measured WPM based on actual elapsed speech duration:
+    const elapsedSeconds = recordingStartTimeRef.current
+      ? Math.max(3, (Date.now() - recordingStartTimeRef.current) / 1000)
+      : 14;
+    const measuredWpm = Math.round((completedCount / (elapsedSeconds / 60)));
+    const finalWpm = Math.min(110, Math.max(15, measuredWpm));
+
+    const result = {
+      accuracy,
+      wpm: finalWpm,
+      hesitationCount: finalWpm < 35 || accuracy < 75 ? 2 : 0,
+      timestamp: Date.now()
+    };
+
+    setReadingResult(result);
+    playStarTwinkle();
+    addStars(5);
+
+    try {
+      confetti({
+        particleCount: 45,
+        spread: 60,
+        origin: { y: 0.6 }
+      });
+    } catch (e) {}
+  };
+
+  // Auto-Karaoke Sing-Along Demo Mode (and fallback when mic is unavailable)
+  const runKaraokeDemo = () => {
+    if (isKaraokeRunning) return;
     stopListening();
     resetReadingState();
-    speakText(prompt.audioPrompt, 'en-US');
+    setIsKaraokeRunning(true);
+    setIsRecording(true);
+    recordingStartTimeRef.current = Date.now();
 
-    return () => {
-      stopListening();
-    };
-  }, [currentPromptIdx]);
+    let idx = 0;
+    const interval = setInterval(() => {
+      if (idx < prompt.words.length) {
+        const cIdx = idx;
+        const next = new Set(completedIndicesRef.current).add(cIdx);
+        completedIndicesRef.current = next;
+        setCompletedIndices(new Set(next));
+        setCurrentWordIdx(cIdx + 1);
+        playChime(420 + cIdx * 30);
+        idx++;
+      } else {
+        clearInterval(interval);
+        setIsKaraokeRunning(false);
+        setIsRecording(false);
+        finalizeReadingSession(prompt.words.length);
+      }
+    }, 450);
+  };
 
-  // Teardown on unmount
-  useEffect(() => {
-    return () => {
-      stopListening();
-    };
-  }, []);
+  const startListeningInternal = () => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      setMicError('Speech recognition not supported in this browser. Please use Chrome/Edge or Sing-Along demo!');
+      runKaraokeDemo();
+      return;
+    }
+
+    try {
+      const recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = 'en-US';
+      recognition.maxAlternatives = 1;
+
+      recognition.onstart = () => {
+        setIsRecording(true);
+      };
+
+      recognition.onresult = (event) => {
+        let fullTranscript = '';
+        for (let i = 0; i < event.results.length; i++) {
+          fullTranscript += event.results[i][0].transcript + ' ';
+        }
+        const cleanText = fullTranscript.trim();
+        setLiveTranscript(cleanText);
+        evaluateSpokenTranscript(cleanText);
+      };
+
+      recognition.onerror = (event) => {
+        console.warn('SpeechRecognition error:', event.error);
+        if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+          setMicError('Microphone permission blocked. Please allow mic in browser settings, or use Sing-Along demo!');
+          stopListening();
+        }
+      };
+
+      recognition.onend = () => {
+        if (isListeningRef.current) {
+          clearTimeout(restartTimeoutRef.current);
+          restartTimeoutRef.current = setTimeout(() => {
+            if (isListeningRef.current) {
+              startListeningInternal();
+            }
+          }, 200);
+        } else {
+          setIsRecording(false);
+        }
+      };
+
+      recognitionRef.current = recognition;
+      recognition.start();
+    } catch (err) {
+      console.warn('SpeechRecognition start error:', err);
+    }
+  };
+
+  const startListening = () => {
+    playPop();
+    setMicError('');
+    if (readingResult) resetReadingState();
+
+    stopListening();
+    isListeningRef.current = true;
+    setIsRecording(true);
+    recordingStartTimeRef.current = Date.now();
+    startListeningInternal();
+  };
 
   // Sequential evaluation of spoken transcript against target words
   const evaluateSpokenTranscript = (transcript) => {
@@ -236,123 +371,13 @@ export default function ReadAloudQuest({ onCompleteQuest }) {
     }
   };
 
-  const startListeningInternal = () => {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      setMicError('Speech recognition not supported in this browser. Please use Chrome/Edge or Sing-Along demo!');
-      runKaraokeDemo();
-      return;
-    }
-
-    try {
-      const recognition = new SpeechRecognition();
-      recognition.continuous = true;
-      recognition.interimResults = true;
-      recognition.lang = 'en-US';
-      recognition.maxAlternatives = 1;
-
-      recognition.onstart = () => {
-        setIsRecording(true);
-      };
-
-      recognition.onresult = (event) => {
-        let fullTranscript = '';
-        for (let i = 0; i < event.results.length; i++) {
-          fullTranscript += event.results[i][0].transcript + ' ';
-        }
-        const cleanText = fullTranscript.trim();
-        setLiveTranscript(cleanText);
-        evaluateSpokenTranscript(cleanText);
-      };
-
-      recognition.onerror = (event) => {
-        console.warn('SpeechRecognition error:', event.error);
-        if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-          setMicError('Microphone permission blocked. Please allow mic in browser settings, or use Sing-Along demo!');
-          stopListening();
-        }
-      };
-
-      recognition.onend = () => {
-        if (isListeningRef.current) {
-          clearTimeout(restartTimeoutRef.current);
-          restartTimeoutRef.current = setTimeout(() => {
-            if (isListeningRef.current) {
-              startListeningInternal();
-            }
-          }, 200);
-        } else {
-          setIsRecording(false);
-        }
-      };
-
-      recognitionRef.current = recognition;
-      recognition.start();
-    } catch (err) {
-      console.warn('SpeechRecognition start error:', err);
-    }
-  };
-
-  const startListening = () => {
-    playPop();
-    setMicError('');
-    if (readingResult) resetReadingState();
-
-    stopListening();
-    isListeningRef.current = true;
-    setIsRecording(true);
-    startListeningInternal();
-  };
-
-  const stopListening = () => {
-    isListeningRef.current = false;
-    setIsRecording(false);
-    clearTimeout(restartTimeoutRef.current);
-
-    if (recognitionRef.current) {
-      try {
-        const rec = recognitionRef.current;
-        rec.onend = null;
-        rec.onerror = null;
-        rec.onresult = null;
-        rec.abort();
-      } catch (e) {}
-      recognitionRef.current = null;
-    }
-  };
-
-  const finalizeReadingSession = (count) => {
-    stopListening();
-
-    const totalWords = promptRef.current.cleanWords.length;
-    const completedCount = count !== undefined ? count : completedIndicesRef.current.size;
-    const accuracy = Math.min(100, Math.max(40, Math.round((completedCount / totalWords) * 100)));
-    const estimatedWPM = accuracy >= 70 ? Math.floor(48 + Math.random() * 15) : Math.floor(24 + Math.random() * 8);
-
-    const result = {
-      accuracy,
-      wpm: estimatedWPM,
-      hesitationCount: accuracy < 80 ? 2 : 0,
-      timestamp: Date.now()
-    };
-
-    setReadingResult(result);
-    playStarTwinkle();
-    addStars(5);
-
-    try {
-      confetti({
-        particleCount: 45,
-        spread: 60,
-        origin: { y: 0.6 }
-      });
-    } catch (e) {}
-  };
-
   // Interactive Tap-to-Read Word Card
   const handleWordClick = (word, idx) => {
     playPop();
     speakText(word, 'en-US');
+    if (!recordingStartTimeRef.current) {
+      recordingStartTimeRef.current = Date.now();
+    }
 
     setCompletedIndices((prev) => {
       const next = new Set(prev).add(idx);
@@ -375,46 +400,37 @@ export default function ReadAloudQuest({ onCompleteQuest }) {
     });
   };
 
-  // 100% Reliable Auto-Karaoke Sing-Along Demo Mode
-  const runKaraokeDemo = () => {
-    if (isKaraokeRunning) return;
+  // Keep refs in sync with state
+  useEffect(() => {
+    promptRef.current = prompt;
+  }, [prompt]);
+
+  useEffect(() => {
+    completedIndicesRef.current = completedIndices;
+  }, [completedIndices]);
+
+  // Clean setup / teardown on prompt switch
+  useEffect(() => {
     stopListening();
     resetReadingState();
-    setIsKaraokeRunning(true);
-    setIsRecording(true);
+    speakText(prompt.audioPrompt, 'en-US');
 
-    let idx = 0;
-    const interval = setInterval(() => {
-      if (idx < prompt.words.length) {
-        const cIdx = idx;
-        const next = new Set(completedIndicesRef.current).add(cIdx);
-        completedIndicesRef.current = next;
-        setCompletedIndices(new Set(next));
-        setCurrentWordIdx(cIdx + 1);
-        playChime(420 + cIdx * 30);
-        idx++;
-      } else {
-        clearInterval(interval);
-        setIsKaraokeRunning(false);
-        setIsRecording(false);
-        finalizeReadingSession(prompt.words.length);
-      }
-    }, 450);
-  };
+    return () => {
+      stopListening();
+    };
+  }, [currentPromptIdx]);
+
+  // Teardown on unmount
+  useEffect(() => {
+    return () => {
+      stopListening();
+    };
+  }, []);
 
   const handleReset = () => {
     playPop();
     stopListening();
     resetReadingState();
-  };
-
-  const resetReadingState = () => {
-    setCompletedIndices(new Set());
-    setCurrentWordIdx(0);
-    setLiveTranscript('');
-    setReadingResult(null);
-    setIsKaraokeRunning(false);
-    completedIndicesRef.current = new Set();
   };
 
   const handleNextPrompt = () => {
@@ -449,7 +465,7 @@ export default function ReadAloudQuest({ onCompleteQuest }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <span style={{ fontSize: '1.5rem' }}>📖</span>
           <div style={{ textAlign: 'left' }}>
-            <h3 style={{ fontSize: '1.2rem', margin: 0, color: '#1E293B' }}>Quest 2: Read-Aloud Fluency</h3>
+            <h3 style={{ fontSize: '1.2rem', margin: 0, color: '#1E293B' }}>Quest 3: Read-Aloud Fluency</h3>
             <p style={{ fontSize: '0.78rem', color: '#64748B', margin: 0 }}>
               Story {currentPromptIdx + 1} of {STORY_PROMPTS.length} • {prompt.title}
             </p>

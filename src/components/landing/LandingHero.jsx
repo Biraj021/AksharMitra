@@ -1,14 +1,18 @@
 import React from 'react';
-import { Play, Sparkles, User, Star, Gamepad2 } from 'lucide-react';
-import MascotMitra from '../common/MascotMitra';
+import { Volume2, ArrowRight, Trophy, Flame, Target, Puzzle, Sparkles } from 'lucide-react';
 import { useProfile } from '../../context/ProfileContext';
 import { useAudio } from '../../context/AudioContext';
 
 export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }) {
-  const { activeLanguage, activeProfile, setCurrentView } = useProfile();
-  const { playStarTwinkle, playPop, playChime } = useAudio();
+  const { activeProfile, setCurrentView } = useProfile();
+  const { playPop, playStarTwinkle, speakText } = useAudio();
 
-  const handlePlayClick = () => {
+  const studentName = activeProfile?.name || 'Aarav Sharma';
+  const studentEmoji = activeProfile?.avatarEmoji || '🦊';
+  const starsCount = activeProfile?.stars || 55;
+  const streakDays = activeProfile?.streak || 4;
+
+  const handleLaunchScreening = () => {
     playStarTwinkle();
     if (activeProfile) {
       setCurrentView('screening');
@@ -17,228 +21,325 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
     }
   };
 
-  const handleGamesClick = () => {
+  const handleLaunchGames = () => {
     playStarTwinkle();
     setCurrentView('games');
+  };
+
+  const handleDailyTipAudio = () => {
+    playPop();
+    speakText("Great readers make great learners. Let's explore a new story together!");
   };
 
   return (
     <div
       style={{
+        maxWidth: '560px',
+        margin: '0 auto',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '75vh',
-        textAlign: 'center',
-        position: 'relative',
-        padding: '1rem 0'
+        gap: '1.25rem',
+        padding: '0.75rem 0.25rem 2rem'
       }}
     >
-      {/* Playful Floating Sparkles Background */}
-      <div style={{ position: 'absolute', top: '5%', left: '10%', fontSize: '2rem', animation: 'float 3s infinite ease-in-out', pointerEvents: 'none', opacity: 0.7 }}>
-        ⭐
-      </div>
-      <div style={{ position: 'absolute', top: '15%', right: '12%', fontSize: '1.8rem', animation: 'float 4s infinite ease-in-out', animationDelay: '1s', pointerEvents: 'none', opacity: 0.7 }}>
-        🎈
-      </div>
-      <div style={{ position: 'absolute', bottom: '15%', left: '12%', fontSize: '2rem', animation: 'gentle-bounce 3.5s infinite ease-in-out', pointerEvents: 'none', opacity: 0.6 }}>
-        🎨
-      </div>
-      <div style={{ position: 'absolute', bottom: '10%', right: '10%', fontSize: '2.2rem', animation: 'float 3.2s infinite ease-in-out', animationDelay: '0.5s', pointerEvents: 'none', opacity: 0.7 }}>
-        ✨
-      </div>
-
-      {/* Main Friendly Play Zone */}
+      {/* 1. Purple Learner Hero Banner Card */}
       <div
         style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '1.5rem',
-          maxWidth: '680px',
-          width: '100%',
-          zIndex: 2
+          background: 'linear-gradient(135deg, #4F46E5 0%, #3730A3 100%)',
+          color: 'white',
+          borderRadius: '28px',
+          padding: '1.5rem',
+          boxShadow: '0 12px 28px rgba(79, 70, 229, 0.25)',
+          position: 'relative',
+          overflow: 'hidden'
         }}
       >
-        {/* Child-Friendly Welcoming Title */}
-        <div>
-          <h1
-            style={{
-              fontSize: 'clamp(2.2rem, 6vw, 3.4rem)',
-              fontWeight: '700',
-              color: '#4F46E5',
-              margin: '0 0 0.35rem',
-              letterSpacing: '-0.02em',
-              textShadow: '0 4px 12px rgba(79, 70, 229, 0.15)'
-            }}
-          >
-            AksharMitra
-          </h1>
-          <p
-            style={{
-              fontSize: '1.15rem',
-              fontWeight: '600',
-              color: '#B45309',
-              background: '#FEF3C7',
-              padding: '0.35rem 1.25rem',
-              borderRadius: '9999px',
-              display: 'inline-block',
-              margin: 0,
-              border: '1.5px solid #FDE68A'
-            }}
-          >
-            {activeProfile ? `Welcome back, ${activeProfile.name}! 👋` : "Let's Play with Words & Sounds! 🎈"}
-          </p>
+        {/* Top Header inside card: Welcome & Trophy/Stars */}
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
+          <div>
+            <div style={{ fontSize: '0.9rem', color: '#C7D2FE', fontWeight: 500, marginBottom: '0.2rem' }}>
+              Welcome back,
+            </div>
+            <h2 style={{ fontSize: '1.6rem', fontWeight: 800, margin: 0, color: 'white', fontFamily: "'Lexend', sans-serif" }}>
+              {studentName}! {studentEmoji}
+            </h2>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <span style={{ fontSize: '2.2rem' }}>🏆</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '3px', fontSize: '0.85rem', fontWeight: 800, color: '#FDE047' }}>
+              <span>{starsCount}</span>
+              <span>⭐</span>
+            </div>
+          </div>
         </div>
 
-        {/* Big Huggable Mitra Mascot */}
-        <div style={{ margin: '0.25rem 0' }}>
-          <MascotMitra
-            state="talking"
-            speechText={
-              activeProfile
-                ? `Ready for fun, ${activeProfile.name}? Pick a Quest or play in the Games Zone!`
-                : "Hi! I am Mitra! Pick a Quest or explore fun Games with me!"
-            }
-            size="lg"
-            showBubble={true}
-          />
-        </div>
-
-        {/* Dual High-Energy Action Cards: Start Quest & Remediation Games */}
+        {/* Reading Streak Pill */}
         <div
           style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-            gap: '1rem',
-            width: '100%',
-            maxWidth: '620px'
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.4rem',
+            background: 'rgba(255, 255, 255, 0.18)',
+            padding: '0.35rem 0.85rem',
+            borderRadius: '9999px',
+            fontSize: '0.82rem',
+            fontWeight: 700,
+            marginBottom: '1.25rem',
+            border: '1px solid rgba(255, 255, 255, 0.25)'
           }}
         >
-          {/* Action 1: Screening Quest */}
-          <button
-            onClick={handlePlayClick}
-            className="animate-pulse-glow"
-            style={{
-              background: 'linear-gradient(135deg, #F59E0B 0%, #EA580C 100%)',
-              color: 'white',
-              borderRadius: '24px',
-              border: '3px solid #FFFFFF',
-              padding: '1.25rem 1.5rem',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '0.4rem',
-              cursor: 'pointer',
-              boxShadow: '0 10px 24px rgba(234, 88, 12, 0.35)',
-              transition: 'all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)',
-              textAlign: 'center'
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)')}
-            onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0) scale(1)')}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Play size={26} fill="white" color="white" />
-              <span style={{ fontSize: '1.35rem', fontWeight: '800', letterSpacing: '0.02em' }}>
-                {activeProfile ? 'START QUEST 🚀' : "LET'S PLAY! 🚀"}
-              </span>
-            </div>
-            <span style={{ fontSize: '0.85rem', opacity: 0.95, fontWeight: '600' }}>
-              4-Step Phonics & Tracing Adventure
-            </span>
-          </button>
-
-          {/* Action 2: Remediation Games Hub */}
-          <button
-            onClick={handleGamesClick}
-            className="animate-pulse-glow"
-            style={{
-              background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
-              color: 'white',
-              borderRadius: '24px',
-              border: '3px solid #FFFFFF',
-              padding: '1.25rem 1.5rem',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '0.4rem',
-              cursor: 'pointer',
-              boxShadow: '0 10px 24px rgba(5, 150, 105, 0.35)',
-              transition: 'all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)',
-              textAlign: 'center'
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)')}
-            onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0) scale(1)')}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Gamepad2 size={26} color="white" />
-              <span style={{ fontSize: '1.35rem', fontWeight: '800', letterSpacing: '0.02em' }}>
-                GAMES ZONE 🎮
-              </span>
-            </div>
-            <span style={{ fontSize: '0.85rem', opacity: 0.95, fontWeight: '600' }}>
-              5 Fun Phonics & Letter Games
-            </span>
-          </button>
+          <Flame size={16} fill="#F97316" color="#F97316" />
+          <span>{streakDays} Day Reading Streak</span>
         </div>
 
-        {/* Profile Switcher / Who is Playing? */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginTop: '0.5rem' }}>
-          {activeProfile ? (
-            <div
-              onClick={() => {
-                playPop();
-                onOpenProfileSelector();
-              }}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                background: 'white',
-                padding: '0.45rem 1rem',
-                borderRadius: '9999px',
-                border: '2px solid #E2E8F0',
-                cursor: 'pointer',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
-                transition: 'all 0.15s ease'
-              }}
-            >
-              <span style={{ fontSize: '1.4rem' }}>{activeProfile.avatarEmoji || '🦁'}</span>
-              <span style={{ fontWeight: '700', fontSize: '0.95rem', color: '#1E293B' }}>
-                {activeProfile.name}
-              </span>
-              <span style={{ fontSize: '0.75rem', color: '#6366F1', fontWeight: 'bold' }}>
-                (Switch)
-              </span>
+        {/* 3 Stat Boxes */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.6rem' }}>
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.12)',
+              borderRadius: '16px',
+              padding: '0.75rem 0.5rem',
+              textAlign: 'center',
+              border: '1px solid rgba(255, 255, 255, 0.15)'
+            }}
+          >
+            <div style={{ fontSize: '1.35rem', fontWeight: 800, color: 'white' }}>
+              {activeProfile?.screeningCompleted ? 1 : 0}
             </div>
-          ) : (
+            <div style={{ fontSize: '0.72rem', color: '#C7D2FE', fontWeight: 600 }}>Screenings</div>
+          </div>
+
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.12)',
+              borderRadius: '16px',
+              padding: '0.75rem 0.5rem',
+              textAlign: 'center',
+              border: '1px solid rgba(255, 255, 255, 0.15)'
+            }}
+          >
+            <div style={{ fontSize: '1.35rem', fontWeight: 800, color: 'white' }}>5m</div>
+            <div style={{ fontSize: '0.72rem', color: '#C7D2FE', fontWeight: 600 }}>Today</div>
+          </div>
+
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.12)',
+              borderRadius: '16px',
+              padding: '0.75rem 0.5rem',
+              textAlign: 'center',
+              border: '1px solid rgba(255, 255, 255, 0.15)'
+            }}
+          >
+            <div style={{ fontSize: '1.35rem', fontWeight: 800, color: 'white' }}>5</div>
+            <div style={{ fontSize: '0.72rem', color: '#C7D2FE', fontWeight: 600 }}>Badges</div>
+          </div>
+        </div>
+      </div>
+
+      {/* 2. Mitra's Daily Tip Card */}
+      <div
+        style={{
+          background: '#F0F4FF',
+          border: '1.5px solid #DBEAFE',
+          borderRadius: '24px',
+          padding: '1.25rem 1.25rem 1.1rem',
+          display: 'flex',
+          gap: '1rem',
+          alignItems: 'flex-start',
+          boxShadow: '0 4px 14px rgba(79, 70, 229, 0.04)'
+        }}
+      >
+        <div
+          style={{
+            fontSize: '2.5rem',
+            lineHeight: 1,
+            paddingTop: '0.2rem',
+            userSelect: 'none'
+          }}
+        >
+          🦉
+        </div>
+
+        <div style={{ flex: 1 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.35rem' }}>
+            <h4 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#1E293B', margin: 0 }}>
+              Mitra's Daily Tip
+            </h4>
             <button
-              onClick={() => {
-                playPop();
-                onOpenProfileSelector();
-              }}
+              onClick={handleDailyTipAudio}
               style={{
                 background: 'white',
-                border: '2px solid #E0E7FF',
-                color: '#4338CA',
-                padding: '0.5rem 1.25rem',
-                borderRadius: '9999px',
-                fontWeight: '700',
-                fontSize: '0.9rem',
-                cursor: 'pointer',
+                border: '1px solid #CBD5E1',
+                borderRadius: '50%',
+                width: '28px',
+                height: '28px',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.4rem',
-                boxShadow: '0 2px 8px rgba(99, 102, 241, 0.08)'
+                justifyContent: 'center',
+                cursor: 'pointer'
               }}
+              title="Hear Daily Tip"
             >
-              <User size={16} />
-              <span>Who is Playing? (Profiles)</span>
+              <Volume2 size={15} color="#4F46E5" />
             </button>
-          )}
+          </div>
+
+          <p style={{ fontSize: '0.85rem', color: '#475569', margin: '0 0 0.75rem', lineHeight: 1.45 }}>
+            Great readers make great learners. Let's explore a new story together!
+          </p>
+
+          <button
+            onClick={handleLaunchGames}
+            style={{
+              background: '#4F46E5',
+              color: 'white',
+              border: 'none',
+              borderRadius: '9999px',
+              padding: '0.45rem 1.15rem',
+              fontSize: '0.82rem',
+              fontWeight: 700,
+              cursor: 'pointer',
+              boxShadow: '0 2px 8px rgba(79, 70, 229, 0.25)',
+              transition: 'all 0.15s ease'
+            }}
+          >
+            Try 5-Min Game
+          </button>
+        </div>
+      </div>
+
+      {/* 3. "Your Adventure Quests" Section */}
+      <div>
+        <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#1E293B', margin: '0 0 0.85rem' }}>
+          Your Adventure Quests
+        </h3>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+          {/* Card 1: Screening Island */}
+          <div
+            onClick={handleLaunchScreening}
+            style={{
+              background: 'white',
+              borderRadius: '22px',
+              border: '1.5px solid #E2E8F0',
+              borderLeft: '5px solid #4F46E5',
+              padding: '1.15rem 1.25rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              cursor: 'pointer',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.04)',
+              transition: 'all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)'
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-2px)')}
+            onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <div
+                style={{
+                  width: '48px',
+                  height: '48px',
+                  borderRadius: '16px',
+                  background: '#EEF2FF',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '1.5rem'
+                }}
+              >
+                🎯
+              </div>
+
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.2rem' }}>
+                  <h4 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#1E293B', margin: 0 }}>
+                    Screening Island
+                  </h4>
+                  <span
+                    style={{
+                      fontSize: '0.7rem',
+                      fontWeight: 700,
+                      color: '#4338CA',
+                      background: '#EEF2FF',
+                      padding: '0.15rem 0.55rem',
+                      borderRadius: '9999px'
+                    }}
+                  >
+                    5-7 Min Game
+                  </span>
+                </div>
+                <p style={{ fontSize: '0.82rem', color: '#64748B', margin: 0 }}>
+                  Play the Mirror Letter maze and Rhyme Clap challenge.
+                </p>
+              </div>
+            </div>
+
+            <ArrowRight size={20} color="#94A3B8" />
+          </div>
+
+          {/* Card 2: Adaptive Learning Lab */}
+          <div
+            onClick={handleLaunchGames}
+            style={{
+              background: 'white',
+              borderRadius: '22px',
+              border: '1.5px solid #E2E8F0',
+              borderLeft: '5px solid #10B981',
+              padding: '1.15rem 1.25rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              cursor: 'pointer',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.04)',
+              transition: 'all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)'
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-2px)')}
+            onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <div
+                style={{
+                  width: '48px',
+                  height: '48px',
+                  borderRadius: '16px',
+                  background: '#ECFDF5',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '1.5rem'
+                }}
+              >
+                🧩
+              </div>
+
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.2rem' }}>
+                  <h4 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#1E293B', margin: 0 }}>
+                    Adaptive Learning Lab
+                  </h4>
+                  <span
+                    style={{
+                      fontSize: '0.7rem',
+                      fontWeight: 700,
+                      color: '#047857',
+                      background: '#D1FAE5',
+                      padding: '0.15rem 0.55rem',
+                      borderRadius: '9999px'
+                    }}
+                  >
+                    Level 1-4
+                  </span>
+                </div>
+                <p style={{ fontSize: '0.82rem', color: '#64748B', margin: 0 }}>
+                  Phonics sound matcher, multisensory tracing & gentle rewards.
+                </p>
+              </div>
+            </div>
+
+            <ArrowRight size={20} color="#94A3B8" />
+          </div>
         </div>
       </div>
     </div>

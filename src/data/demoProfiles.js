@@ -1,6 +1,6 @@
 export const DEMO_PROFILES = [
   {
-    id: 'aarav_demo',
+    id: 'demo_aarav',
     name: 'Aarav',
     avatar: 'sheru',
     avatarEmoji: '🦁',
@@ -25,7 +25,7 @@ export const DEMO_PROFILES = [
     description: '⚠️ At-Risk Profile (Letter Reversal & Reading Hesitation Flagged)'
   },
   {
-    id: 'priya_demo',
+    id: 'demo_priya',
     name: 'Priya',
     avatar: 'mayur',
     avatarEmoji: '🦚',

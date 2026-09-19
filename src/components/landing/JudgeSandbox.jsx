@@ -10,12 +10,12 @@ export default function JudgeSandbox() {
 
   const handleLaunchAarav = () => {
     playStarTwinkle();
-    loadDemoProfile('aarav_demo');
+    loadDemoProfile('demo_aarav');
   };
 
   const handleLaunchPriya = () => {
     playStarTwinkle();
-    loadDemoProfile('priya_demo');
+    loadDemoProfile('demo_priya');
   };
 
   const handleDirectScreening = () => {

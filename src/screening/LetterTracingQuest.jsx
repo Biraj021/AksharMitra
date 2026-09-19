@@ -339,7 +339,7 @@ const getLetterConfig = (char) => {
   };
 };
 
-export default function LetterTracingQuest({ onCompleteQuest }) {
+export default function LetterTracingQuest({ onCompleteQuest, onBack }) {
   const { playPop, playChime, playStarTwinkle, speakText } = useAudio();
   const { addStars } = useProfile();
 
@@ -558,6 +558,21 @@ export default function LetterTracingQuest({ onCompleteQuest }) {
         borderRadius: '28px'
       }}
     >
+      {onBack && (
+        <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '0.75rem' }}>
+          <button
+            onClick={() => {
+              playPop();
+              onBack();
+            }}
+            className="btn btn-secondary btn-pill"
+            style={{ fontSize: '0.8rem', padding: '0.35rem 0.85rem' }}
+          >
+            ← Back to Games
+          </button>
+        </div>
+      )}
+
       {/* Alphabet Selector */}
       <div style={{ marginBottom: '0.85rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem', flexWrap: 'wrap', gap: '0.5rem' }}>

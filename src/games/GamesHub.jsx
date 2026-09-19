@@ -1,16 +1,118 @@
-import React from 'react';
-import { ArrowLeft, Play, Sparkles, Star, Trophy, Puzzle, Eye } from 'lucide-react';
-import MascotMitra from '../components/common/MascotMitra';
+import React, { useState } from 'react';
+import { Play, Sparkles, Star, Volume2, ArrowRight } from 'lucide-react';
 import { useProfile } from '../context/ProfileContext';
 import { useAudio } from '../context/AudioContext';
 
+const LEARNING_MODULES = [
+  {
+    id: 'word-snapper',
+    label: 'Phonics Lab',
+    icon: '🧩',
+    track: 'both',
+    levelLabel: 'LEVEL 1: SOUND LAB',
+    categoryBadge: 'Multisensory Phonics',
+    recommendedTag: 'Universal Core',
+    title: 'Word Snapper',
+    sampleImage: '🧶',
+    sampleWord: 'RUG',
+    instruction: 'Tap each letter to hear its name, then blend R · U · G into RUG!',
+    tiles: ['R', 'U', 'G'],
+    description: 'Snap letter tiles into slots, hear real phoneme sounds, and master b / d / p / q mirror words!'
+  },
+  {
+    id: 'spelling-clinic',
+    label: 'Spelling Clinic',
+    icon: '🧠',
+    track: 'track_b',
+    levelLabel: 'LEVEL 2: TRICKY SIGHT WORDS',
+    categoryBadge: 'Look-Cover-Write',
+    recommendedTag: 'Track B: Dyslexia Support',
+    title: 'Spelling Clinic',
+    sampleImage: '🤝',
+    sampleWord: 'FRIEND',
+    instruction: 'Remember: A FRIend is someone you stay with until the END!',
+    tiles: ['F', 'R', 'I', 'E', 'N', 'D'],
+    description: 'Mnemonic hooks, Look-Cover-Write training, and a 4-line handwriting canvas for dysgraphia support.'
+  },
+  {
+    id: 'abc-fill-in',
+    label: 'ABC Fill-In',
+    icon: '🔤',
+    track: 'both',
+    levelLabel: 'LEVEL 3: ALPHABET TRAIN',
+    categoryBadge: 'Visual Dyslexia Keyboard',
+    recommendedTag: 'Alphabet Flow',
+    title: 'ABC Alphabet Train',
+    sampleImage: '🚂',
+    sampleWord: 'A B [C] D E',
+    instruction: 'Restore the missing alphabet wagons using the color-coded visual keyboard!',
+    tiles: ['A', 'B', '?', 'D', 'E'],
+    description: 'Repair alphabet train wagons with vowel-highlighted dyslexia keyboard and sound feedback.'
+  },
+  {
+    id: 'spelling-traps',
+    label: 'Spelling Traps',
+    icon: '⚡',
+    track: 'track_a',
+    levelLabel: 'LEVEL 4: TRANSPOSITION SPOTTER',
+    categoryBadge: 'Letter-Swap Traps',
+    recommendedTag: 'Track A: Speed & Precision',
+    title: 'Spelling Trap Challenge',
+    sampleImage: '🎁',
+    sampleWord: 'FROM vs FORM',
+    instruction: 'Spot sneaky letter-swap traps in fun contextual story sentences!',
+    tiles: ['F', 'R', 'O', 'M'],
+    description: 'Spot letter-swap traps like FROM/FORM, PLAY/PALY, and GIRL/GRIL.'
+  },
+  {
+    id: 'letter-hunter',
+    label: 'Letter Hunter',
+    icon: '🎯',
+    track: 'track_b',
+    levelLabel: 'LEVEL 5: EAGLE EYE GRID',
+    categoryBadge: 'Visual Discrimination',
+    recommendedTag: 'Track B: Mirror Clarity',
+    title: 'Letter Hunter',
+    sampleImage: '🦅',
+    sampleWord: 'FIND: b',
+    instruction: 'Find target letters hidden among tricky mirror letters with combo streaks!',
+    tiles: ['b', 'd', 'b', 'p'],
+    description: 'Eagle-eye grid quest for subtle visual orientation distinction.'
+  },
+  {
+    id: 'letter-tracing',
+    label: 'Letter Tracing',
+    icon: '✍️',
+    track: 'track_b',
+    levelLabel: 'LEVEL 6: MULTISENSORY TRACING',
+    categoryBadge: 'Motor Dysgraphia Lab',
+    recommendedTag: 'Track B: Tactile Motor',
+    title: 'Magic Letter Tracing',
+    sampleImage: '✨',
+    sampleWord: 'TRACE: b',
+    instruction: 'Trace stroke-by-stroke with magnetic guide dots, audio hints, and instant stars!',
+    tiles: ['1', '2', '3', '⭐'],
+    description: 'Guided directional handwriting canvas with ghost letters and Mitra demonstrations.'
+  }
+];
+
 export default function GamesHub({ onSelectGame }) {
-  const { activeProfile, setCurrentView, activeLanguage } = useProfile();
+  const { activeProfile, setCurrentView } = useProfile();
   const { playPop, playStarTwinkle } = useAudio();
+  const [activeModuleId, setActiveModuleId] = useState('word-snapper');
+  const [trackFilter, setTrackFilter] = useState('all'); // 'all' | 'track_a' | 'track_b'
 
-  const isBengali = activeLanguage?.id === 'bengali';
+  const isAtRisk = activeProfile?.riskLevel && activeProfile.riskLevel !== 'typical';
+  const filteredModules = LEARNING_MODULES.filter((m) => {
+    if (trackFilter === 'all') return true;
+    if (trackFilter === 'track_a') return m.track === 'track_a' || m.track === 'both';
+    if (trackFilter === 'track_b') return m.track === 'track_b' || m.track === 'both';
+    return true;
+  });
 
-  const handleLaunchGame = (gameId) => {
+  const selectedModule = LEARNING_MODULES.find((m) => m.id === activeModuleId) || filteredModules[0] || LEARNING_MODULES[0];
+
+  const handleLaunch = (gameId) => {
     playStarTwinkle();
     if (onSelectGame) {
       onSelectGame(gameId);
@@ -20,300 +122,303 @@ export default function GamesHub({ onSelectGame }) {
   };
 
   return (
-    <div className="game-viewport">
-      {/* Top Header Navigation */}
-      <div className="game-top-bar">
-        <button
-          onClick={() => {
-            playPop();
-            setCurrentView('landing');
+    <div
+      style={{
+        maxWidth: '560px',
+        margin: '0 auto',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '1.25rem',
+        padding: '0.5rem 0.25rem 2rem'
+      }}
+    >
+      {/* 1. Top Banner */}
+      <div
+        style={{
+          background: 'linear-gradient(135deg, #059669 0%, #064E3B 100%)',
+          color: 'white',
+          borderRadius: '28px',
+          padding: '1.5rem',
+          boxShadow: '0 12px 28px rgba(6, 78, 59, 0.25)'
+        }}
+      >
+        <div
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.4rem',
+            background: 'rgba(255, 255, 255, 0.18)',
+            padding: '0.3rem 0.8rem',
+            borderRadius: '9999px',
+            fontSize: '0.75rem',
+            fontWeight: 800,
+            color: '#D1FAE5',
+            marginBottom: '0.85rem',
+            letterSpacing: '0.04em'
           }}
-          className="btn-secondary btn-pill"
-          style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}
         >
-          <ArrowLeft size={16} />
-          <span>{isBengali ? 'মূল পাতা' : 'Home'}</span>
-        </button>
+          <span>📖</span>
+          <span>ADAPTIVE DUAL-TRACK LEARNING LAB</span>
+        </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-          <div className="game-stat-pill" style={{ color: '#B45309', background: '#FEF3C7', borderColor: '#FDE68A' }}>
-            <Star size={16} fill="#F59E0B" color="#F59E0B" />
-            <span>{activeProfile?.stars || 0} {isBengali ? 'স্টার' : 'Stars'}</span>
+        <h2 style={{ fontSize: '1.65rem', fontWeight: 800, color: 'white', margin: '0 0 0.4rem', fontFamily: "'Lexend', sans-serif" }}>
+          Learning Adventures
+        </h2>
+        <p style={{ fontSize: '0.88rem', color: '#A7F3D0', lineHeight: 1.45, margin: 0 }}>
+          Universal literacy for all kids, with stealth precision for dyslexia support!
+        </p>
+      </div>
+
+      {/* 2. Personalized Student Adaptive Pathway Banner */}
+      <div
+        style={{
+          background: isAtRisk ? '#FEF3C7' : '#ECFDF5',
+          border: isAtRisk ? '1.5px solid #FDE68A' : '1.5px solid #A7F3D0',
+          borderRadius: '20px',
+          padding: '0.85rem 1.15rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.75rem'
+        }}
+      >
+        <span style={{ fontSize: '1.8rem' }}>{isAtRisk ? '🦉' : '🌟'}</span>
+        <div style={{ flex: 1, textAlign: 'left' }}>
+          <div style={{ fontSize: '0.82rem', fontWeight: 800, color: isAtRisk ? '#92400E' : '#065F46' }}>
+            {activeProfile?.name || 'Explorer'}'s Pathway: {isAtRisk ? 'Track B (Multisensory Remediation)' : 'Track A (Fluency & Speed)'}
           </div>
-          {activeProfile && (
-            <div className="game-stat-pill" style={{ color: '#4338CA', background: '#EEF2FF' }}>
-              <span>{activeProfile.avatarEmoji || '🦁'} {activeProfile.name}</span>
-            </div>
-          )}
+          <div style={{ fontSize: '0.75rem', color: isAtRisk ? '#B45309' : '#047857', marginTop: '0.15rem' }}>
+            {isAtRisk
+              ? 'Tactile letter tracing and b/d mirror discrimination highlighted.'
+              : 'Speed reading, sight-word traps, and advanced blends unlocked.'}
+          </div>
         </div>
       </div>
 
-      {/* Main Hub Container */}
+      {/* 3. Dual-Track Pathway Filter Tabs */}
+      <div style={{ display: 'flex', gap: '0.35rem', background: '#F1F5F9', padding: '0.3rem', borderRadius: '16px' }}>
+        <button
+          onClick={() => {
+            playPop();
+            setTrackFilter('all');
+          }}
+          style={{
+            flex: 1,
+            border: 'none',
+            background: trackFilter === 'all' ? 'white' : 'transparent',
+            color: trackFilter === 'all' ? '#1E293B' : '#64748B',
+            fontWeight: '800',
+            fontSize: '0.75rem',
+            padding: '0.5rem 0.4rem',
+            borderRadius: '12px',
+            cursor: 'pointer',
+            boxShadow: trackFilter === 'all' ? '0 2px 6px rgba(0,0,0,0.08)' : 'none',
+            transition: 'all 0.15s ease'
+          }}
+        >
+          🌟 All Games ({LEARNING_MODULES.length})
+        </button>
+        <button
+          onClick={() => {
+            playPop();
+            setTrackFilter('track_a');
+          }}
+          style={{
+            flex: 1,
+            border: 'none',
+            background: trackFilter === 'track_a' ? '#EFF6FF' : 'transparent',
+            color: trackFilter === 'track_a' ? '#1D4ED8' : '#64748B',
+            fontWeight: '800',
+            fontSize: '0.75rem',
+            padding: '0.5rem 0.4rem',
+            borderRadius: '12px',
+            cursor: 'pointer',
+            boxShadow: trackFilter === 'track_a' ? '0 2px 6px rgba(59,130,246,0.15)' : 'none',
+            transition: 'all 0.15s ease'
+          }}
+        >
+          🚀 Track A: Fluency
+        </button>
+        <button
+          onClick={() => {
+            playPop();
+            setTrackFilter('track_b');
+          }}
+          style={{
+            flex: 1,
+            border: 'none',
+            background: trackFilter === 'track_b' ? '#FEF3C7' : 'transparent',
+            color: trackFilter === 'track_b' ? '#B45309' : '#64748B',
+            fontWeight: '800',
+            fontSize: '0.75rem',
+            padding: '0.5rem 0.4rem',
+            borderRadius: '12px',
+            cursor: 'pointer',
+            boxShadow: trackFilter === 'track_b' ? '0 2px 6px rgba(245,158,11,0.2)' : 'none',
+            transition: 'all 0.15s ease'
+          }}
+        >
+          🧠 Track B: Multisensory
+        </button>
+      </div>
+
+      {/* 4. Top Activity Category Pills Grid */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))',
+          gap: '0.5rem'
+        }}
+      >
+        {filteredModules.map((mod) => {
+          const isActive = mod.id === activeModuleId;
+          const isRecommendedForProfile = (isAtRisk && mod.track === 'track_b') || (!isAtRisk && mod.track === 'track_a');
+          return (
+            <button
+              key={mod.id}
+              onClick={() => {
+                playPop();
+                setActiveModuleId(mod.id);
+              }}
+              style={{
+                background: isActive ? '#ECFDF5' : 'white',
+                border: isActive ? '2px solid #10B981' : isRecommendedForProfile ? '1.5px solid #FCD34D' : '1.5px solid #E2E8F0',
+                borderRadius: '16px',
+                padding: '0.65rem 0.4rem',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.3rem',
+                cursor: 'pointer',
+                position: 'relative',
+                transition: 'all 0.15s ease',
+                boxShadow: isActive ? '0 4px 12px rgba(16, 185, 129, 0.18)' : '0 2px 6px rgba(0,0,0,0.02)'
+              }}
+            >
+              {isRecommendedForProfile && (
+                <span style={{ position: 'absolute', top: '-6px', right: '-4px', background: '#F59E0B', color: 'white', fontSize: '9px', fontWeight: 900, padding: '1px 5px', borderRadius: '9999px' }}>
+                  ★ TOP
+                </span>
+              )}
+              <span style={{ fontSize: '1.4rem' }}>{mod.icon}</span>
+              <span
+                style={{
+                  fontSize: '0.75rem',
+                  fontWeight: 800,
+                  color: isActive ? '#065F46' : '#475569',
+                  textAlign: 'center',
+                  lineHeight: 1.2
+                }}
+              >
+                {mod.label}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* 3. Active Learning Activity Preview Card */}
       <div
         className="glass-card"
         style={{
-          padding: '2.5rem 1.75rem',
-          borderRadius: '28px',
+          background: 'white',
+          borderRadius: '26px',
+          padding: '1.5rem',
+          border: '1.5px solid #E2E8F0',
+          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.05)',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: '1.75rem',
-          background: 'white'
+          textAlign: 'center',
+          gap: '1rem'
         }}
       >
-        {/* Mitra Companion Welcome */}
-        <MascotMitra
-          state="celebrating"
-          speechText={
-            isBengali
-              ? (activeProfile ? `গেমস জোনে স্বাগতম, ${activeProfile.name}! যেকোনো একটি মজার খেলা বেছে নাও!` : 'গেমস জোনে স্বাগতম! মজার মজার বর্ণ নিয়ে খেলতে শুরু করো!')
-              : (activeProfile ? `Welcome to Remediation Games, ${activeProfile.name}! Pick a fun quest to play!` : 'Welcome to the Games Zone! Choose a game to train your eyes and ears!')
-          }
-          size="md"
-          showBubble={true}
-        />
-
-        <div style={{ textAlign: 'center' }}>
-          <h2 style={{ fontSize: '2rem', margin: '0 0 0.35rem', color: '#1E293B' }}>
-            {isBengali ? '🎮 বর্ণ ও ধ্বনি শেখার গেমস হাব' : '🎮 Remediation & Phonics Fun Hub'}
-          </h2>
-          <p style={{ color: '#64748B', fontSize: '1rem', maxWidth: '520px', margin: '0 auto' }}>
-            {isBengali
-              ? 'মজার খেলার মাধ্যমে বিভ্রান্তিকর বর্ণ (ব/র/ক/ধ) চেনা ও সঠিক শব্দ গঠনের অভ্যাস করো।'
-              : 'Multisensory games designed to master tricky mirror letters (b/d/p/q) and build strong reading confidence.'}
-          </p>
+        {/* Level & Category Badge */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', borderBottom: '1px solid #F1F5F9', paddingBottom: '0.75rem' }}>
+          <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#4338CA', textTransform: 'uppercase' }}>
+            {selectedModule.levelLabel}
+          </span>
+          <span style={{ fontSize: '0.72rem', fontWeight: 700, padding: '0.2rem 0.6rem', borderRadius: '9999px', background: '#EEF2FF', color: '#4F46E5' }}>
+            {selectedModule.categoryBadge}
+          </span>
         </div>
 
-        {/* Game Cards Grid */}
+        {/* Visual Item Illustration */}
+        <div style={{ fontSize: '3.5rem', margin: '0.25rem 0' }}>
+          {selectedModule.sampleImage}
+        </div>
+
+        {/* Word Display */}
         <div
           style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: '1.25rem',
-            width: '100%',
-            maxWidth: '960px'
+            background: '#F8FAFC',
+            border: '2px solid #E2E8F0',
+            borderRadius: '16px',
+            padding: '0.5rem 1.75rem',
+            fontSize: '1.6rem',
+            fontWeight: 900,
+            color: '#1E293B',
+            fontFamily: "'Lexend', sans-serif",
+            letterSpacing: '0.08em'
           }}
         >
-          {/* Game 1: Word Snapper */}
-          <div
-            className="glass-card"
-            style={{
-              padding: '1.75rem 1.5rem',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              gap: '1.25rem',
-              borderRadius: '22px',
-              border: '2px solid #E0E7FF',
-              background: 'linear-gradient(180deg, #FFFFFF 0%, #F5F7FF 100%)',
-              cursor: 'pointer',
-              transition: 'all 0.25s ease'
-            }}
-            onClick={() => handleLaunchGame('word-snapper')}
-          >
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-                <div style={{ fontSize: '2.5rem', background: '#EEF2FF', width: '56px', height: '56px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  🧩
-                </div>
-                <span className="badge badge-indigo">{isBengali ? 'শব্দ গঠন' : 'Phonics Builder'}</span>
-              </div>
-
-              <h3 style={{ fontSize: '1.35rem', margin: '0 0 0.4rem', color: '#4338CA' }}>
-                {isBengali ? 'শব্দ সাজাও (Word Snapper)' : 'Word Snapper'}
-              </h3>
-              <p style={{ fontSize: '0.9rem', color: '#64748B', lineHeight: 1.5, margin: 0 }}>
-                {isBengali
-                  ? 'বর্ণগুলোকে নির্দিষ্ট স্থানে সাজাও, সঠিক উচ্চারণ শোনো এবং বর্ণমালা রপ্ত করো!'
-                  : 'Snap letter tiles into slots, hear real phoneme sounds, and master tricky b / d / p / q words!'}
-              </p>
-            </div>
-
-            <button
-              className="btn btn-primary"
-              style={{ width: '100%', borderRadius: '9999px', padding: '0.7rem' }}
-            >
-              <Play size={18} />
-              <span>{isBengali ? 'শব্দ খেলা শুরু করো' : 'Play Word Snapper'}</span>
-            </button>
-          </div>
-
-          {/* Game 2: Letter Hunter */}
-          <div
-            className="glass-card"
-            style={{
-              padding: '1.75rem 1.5rem',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              gap: '1.25rem',
-              borderRadius: '22px',
-              border: '2px solid #FEF3C7',
-              background: 'linear-gradient(180deg, #FFFFFF 0%, #FFFDF5 100%)',
-              cursor: 'pointer',
-              transition: 'all 0.25s ease'
-            }}
-            onClick={() => handleLaunchGame('letter-hunter')}
-          >
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-                <div style={{ fontSize: '2.5rem', background: '#FEF3C7', width: '56px', height: '56px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  🎯
-                </div>
-                <span className="badge badge-amber">{isBengali ? 'দৃষ্টিগত বৈষম্য' : 'Visual Discrimination'}</span>
-              </div>
-
-              <h3 style={{ fontSize: '1.35rem', margin: '0 0 0.4rem', color: '#B45309' }}>
-                {isBengali ? 'বর্ণ শিকারী (Letter Hunter)' : 'Letter Hunter'}
-              </h3>
-              <p style={{ fontSize: '0.9rem', color: '#64748B', lineHeight: 1.5, margin: 0 }}>
-                {isBengali
-                  ? 'অন্যান্য বিভ্রান্তিকর বর্ণের মধ্য থেকে নির্দিষ্ট লক্ষ্য বর্ণটি দ্রুত খুঁজে বের করো!'
-                  : 'Eagle-eye grid quest! Find target letters hidden among tricky mirror letters with combo streaks!'}
-              </p>
-            </div>
-
-            <button
-              className="btn btn-amber"
-              style={{ width: '100%', borderRadius: '9999px', padding: '0.7rem' }}
-            >
-              <Play size={18} />
-              <span>{isBengali ? 'বর্ণ শিকার শুরু করো' : 'Play Letter Hunter'}</span>
-            </button>
-          </div>
-
-          {/* Game 3: Spelling Clinic */}
-          <div
-            className="glass-card"
-            style={{
-              padding: '1.75rem 1.5rem',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              gap: '1.25rem',
-              borderRadius: '22px',
-              border: '2px solid #E9D5FF',
-              background: 'linear-gradient(180deg, #FFFFFF 0%, #FAF5FF 100%)',
-              cursor: 'pointer',
-              transition: 'all 0.25s ease'
-            }}
-            onClick={() => handleLaunchGame('spelling-clinic')}
-          >
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-                <div style={{ fontSize: '2.5rem', background: '#F3E8FF', width: '56px', height: '56px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  🧠
-                </div>
-                <span className="badge badge-purple">{isBengali ? 'বানান ক্লিনিক' : 'Look-Cover-Write'}</span>
-              </div>
-
-              <h3 style={{ fontSize: '1.35rem', margin: '0 0 0.4rem', color: '#7E22CE' }}>
-                {isBengali ? 'বানান ক্লিনিক (Spelling Clinic)' : 'Spelling Clinic'}
-              </h3>
-              <p style={{ fontSize: '0.9rem', color: '#64748B', lineHeight: 1.5, margin: 0 }}>
-                {isBengali
-                  ? 'স্মৃতিসহায়িকা এবং ৪-লাইনের হস্তলিপি ক্যানভাসের মাধ্যমে জটিল বানানের ভুল দূর করো।'
-                  : 'Master tricky words with memorable mnemonic hooks, Look-Cover-Write training, and a 4-line handwriting canvas!'}
-              </p>
-            </div>
-
-            <button
-              className="btn btn-primary"
-              style={{ width: '100%', borderRadius: '9999px', padding: '0.7rem', background: '#9333EA', borderColor: '#9333EA' }}
-            >
-              <Play size={18} />
-              <span>{isBengali ? 'ক্লিনিক শুরু করো' : 'Enter Spelling Clinic'}</span>
-            </button>
-          </div>
-
-          {/* Game 4: Spelling Trap Challenge */}
-          <div
-            className="glass-card"
-            style={{
-              padding: '1.75rem 1.5rem',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              gap: '1.25rem',
-              borderRadius: '22px',
-              border: '2px solid #FECDD3',
-              background: 'linear-gradient(180deg, #FFFFFF 0%, #FFF1F2 100%)',
-              cursor: 'pointer',
-              transition: 'all 0.25s ease'
-            }}
-            onClick={() => handleLaunchGame('spelling-traps')}
-          >
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-                <div style={{ fontSize: '2.5rem', background: '#FFE4E6', width: '56px', height: '56px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  ⚡
-                </div>
-                <span className="badge badge-rose">{isBengali ? 'বর্ণ-বদল ফাঁদ' : 'Transposition Trap'}</span>
-              </div>
-
-              <h3 style={{ fontSize: '1.35rem', margin: '0 0 0.4rem', color: '#BE123C' }}>
-                {isBengali ? 'বানান ফাঁদ চ্যালেঞ্জ (Spelling Traps)' : 'Spelling Trap Challenge'}
-              </h3>
-              <p style={{ fontSize: '0.9rem', color: '#64748B', lineHeight: 1.5, margin: 0 }}>
-                {isBengali
-                  ? 'FROM বনাম FORM এর মতো অক্ষর উল্টে যাওয়া ফাঁদগুলো চটজলদি চিহ্নিত করো।'
-                  : 'Spot sneaky letter-swap traps like FROM vs FORM, PLAY vs PALY, and GIRL vs GRIL in fun sentence quests!'}
-              </p>
-            </div>
-
-            <button
-              className="btn btn-primary"
-              style={{ width: '100%', borderRadius: '9999px', padding: '0.7rem', background: '#E11D48', borderColor: '#E11D48' }}
-            >
-              <Play size={18} />
-              <span>{isBengali ? 'ফাঁদ চ্যালেঞ্জ শুরু' : 'Play Trap Challenge'}</span>
-            </button>
-          </div>
-
-          {/* Game 5: ABC Fill-In */}
-          <div
-            className="glass-card"
-            style={{
-              padding: '1.75rem 1.5rem',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              gap: '1.25rem',
-              borderRadius: '22px',
-              border: '2px solid #A7F3D0',
-              background: 'linear-gradient(180deg, #FFFFFF 0%, #ECFDF5 100%)',
-              cursor: 'pointer',
-              transition: 'all 0.25s ease'
-            }}
-            onClick={() => handleLaunchGame('abc-fill-in')}
-          >
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-                <div style={{ fontSize: '2.5rem', background: '#D1FAE5', width: '56px', height: '56px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  🚂
-                </div>
-                <span className="badge badge-emerald">{isBengali ? 'বর্ণমালা ট্রেন' : 'Alphabet Train'}</span>
-              </div>
-
-              <h3 style={{ fontSize: '1.35rem', margin: '0 0 0.4rem', color: '#047857' }}>
-                {isBengali ? 'এবিসি পূরণ করো (ABC Fill-In)' : 'ABC Fill-In'}
-              </h3>
-              <p style={{ fontSize: '0.9rem', color: '#64748B', lineHeight: 1.5, margin: 0 }}>
-                {isBengali
-                  ? 'ট্রেনের হারানো বগিগুলোতে সঠিক বর্ণ বসাও এবং বিশেষ ভিজ্যুয়াল কিবোর্ডে অনুশীলন করো।'
-                  : 'Restore missing alphabet train wagons using the dyslexia-friendly keyboard with color-coded vowels and mirror guides!'}
-              </p>
-            </div>
-
-            <button
-              className="btn btn-emerald"
-              style={{ width: '100%', borderRadius: '9999px', padding: '0.7rem' }}
-            >
-              <Play size={18} />
-              <span>{isBengali ? 'ট্রেন খেলা শুরু করো' : 'Play ABC Fill-In'}</span>
-            </button>
-          </div>
+          {selectedModule.sampleWord}
         </div>
+
+        <p style={{ fontSize: '0.85rem', color: '#475569', margin: 0, lineHeight: 1.45, maxWidth: '400px' }}>
+          {selectedModule.instruction}
+        </p>
+
+        {/* Letter Tiles Demonstration */}
+        <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
+          {selectedModule.tiles.map((char, i) => (
+            <div
+              key={i}
+              style={{
+                width: '46px',
+                height: '56px',
+                borderRadius: '14px',
+                background: '#EEF2FF',
+                border: '2px solid #C7D2FE',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '1.35rem',
+                fontWeight: 900,
+                color: '#4338CA',
+                fontFamily: "'Lexend', sans-serif"
+              }}
+            >
+              {char}
+            </div>
+          ))}
+        </div>
+
+        {/* Play Now CTA Button */}
+        <button
+          onClick={() => handleLaunch(selectedModule.id)}
+          className="animate-pulse-glow"
+          style={{
+            width: '100%',
+            background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+            color: 'white',
+            border: 'none',
+            borderRadius: '9999px',
+            padding: '0.85rem',
+            fontSize: '1.05rem',
+            fontWeight: 800,
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '0.5rem',
+            boxShadow: '0 4px 16px rgba(16, 185, 129, 0.35)',
+            marginTop: '0.5rem'
+          }}
+        >
+          <Play size={20} fill="white" color="white" />
+          <span>Launch {selectedModule.title}</span>
+        </button>
       </div>
     </div>
   );
