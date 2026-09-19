@@ -56,7 +56,7 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
           flexDirection: 'column',
           alignItems: 'center',
           gap: '1.5rem',
-          maxWidth: '520px',
+          maxWidth: '680px',
           width: '100%',
           zIndex: 2
         }}
@@ -65,7 +65,7 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
         <div>
           <h1
             style={{
-              fontSize: 'clamp(2.2rem, 6vw, 3.2rem)',
+              fontSize: 'clamp(2.2rem, 6vw, 3.4rem)',
               fontWeight: '700',
               color: '#4F46E5',
               margin: '0 0 0.35rem',
@@ -77,11 +77,11 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
           </h1>
           <p
             style={{
-              fontSize: '1.2rem',
+              fontSize: '1.15rem',
               fontWeight: '600',
               color: '#B45309',
               background: '#FEF3C7',
-              padding: '0.35rem 1rem',
+              padding: '0.35rem 1.25rem',
               borderRadius: '9999px',
               display: 'inline-block',
               margin: 0,
@@ -93,61 +93,95 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
         </div>
 
         {/* Big Huggable Mitra Mascot */}
-        <div style={{ margin: '0.5rem 0' }}>
+        <div style={{ margin: '0.25rem 0' }}>
           <MascotMitra
             state="talking"
             speechText={
               activeProfile
-                ? `Ready for more fun quests, ${activeProfile.name}? Click PLAY!`
-                : "Hi! I am Mitra! Tap PLAY to start our magical game!"
+                ? `Ready for fun, ${activeProfile.name}? Pick a Quest or play in the Games Zone!`
+                : "Hi! I am Mitra! Pick a Quest or explore fun Games with me!"
             }
             size="lg"
             showBubble={true}
           />
         </div>
 
-        {/* Action Buttons: Play Quest & Remediation Games */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', width: '100%', alignItems: 'center' }}>
+        {/* Dual High-Energy Action Cards: Start Quest & Remediation Games */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+            gap: '1rem',
+            width: '100%',
+            maxWidth: '620px'
+          }}
+        >
+          {/* Action 1: Screening Quest */}
           <button
             onClick={handlePlayClick}
-            className="btn btn-amber animate-pulse-glow"
+            className="animate-pulse-glow"
             style={{
-              fontSize: '1.65rem',
-              padding: '1.15rem 3.25rem',
-              borderRadius: '9999px',
-              border: '4px solid #FFFFFF',
-              boxShadow: '0 12px 28px rgba(245, 158, 11, 0.5), 0 4px 8px rgba(0,0,0,0.1)',
+              background: 'linear-gradient(135deg, #F59E0B 0%, #EA580C 100%)',
+              color: 'white',
+              borderRadius: '24px',
+              border: '3px solid #FFFFFF',
+              padding: '1.25rem 1.5rem',
               display: 'flex',
+              flexDirection: 'column',
               alignItems: 'center',
-              gap: '0.85rem',
+              justifyContent: 'center',
+              gap: '0.4rem',
               cursor: 'pointer',
-              width: '100%',
-              maxWidth: '380px'
+              boxShadow: '0 10px 24px rgba(234, 88, 12, 0.35)',
+              transition: 'all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)',
+              textAlign: 'center'
             }}
+            onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)')}
+            onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0) scale(1)')}
           >
-            <Play size={28} fill="white" color="white" />
-            <span style={{ fontWeight: '800', letterSpacing: '0.04em' }}>
-              {activeProfile ? 'START QUEST 🚀' : "LET'S PLAY! 🚀"}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Play size={26} fill="white" color="white" />
+              <span style={{ fontSize: '1.35rem', fontWeight: '800', letterSpacing: '0.02em' }}>
+                {activeProfile ? 'START QUEST 🚀' : "LET'S PLAY! 🚀"}
+              </span>
+            </div>
+            <span style={{ fontSize: '0.85rem', opacity: 0.95, fontWeight: '600' }}>
+              4-Step Phonics & Tracing Adventure
             </span>
           </button>
 
+          {/* Action 2: Remediation Games Hub */}
           <button
             onClick={handleGamesClick}
-            className="btn btn-primary"
+            className="animate-pulse-glow"
             style={{
-              fontSize: '1.1rem',
-              padding: '0.85rem 2rem',
-              borderRadius: '9999px',
+              background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+              color: 'white',
+              borderRadius: '24px',
+              border: '3px solid #FFFFFF',
+              padding: '1.25rem 1.5rem',
               display: 'flex',
+              flexDirection: 'column',
               alignItems: 'center',
-              gap: '0.6rem',
-              boxShadow: '0 4px 14px rgba(79, 70, 229, 0.3)',
-              width: '100%',
-              maxWidth: '380px'
+              justifyContent: 'center',
+              gap: '0.4rem',
+              cursor: 'pointer',
+              boxShadow: '0 10px 24px rgba(5, 150, 105, 0.35)',
+              transition: 'all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)',
+              textAlign: 'center'
             }}
+            onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)')}
+            onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0) scale(1)')}
           >
-            <Gamepad2 size={22} />
-            <span>🎮 Remediation Games (b/d/p/q)</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Gamepad2 size={26} color="white" />
+              <span style={{ fontSize: '1.35rem', fontWeight: '800', letterSpacing: '0.02em' }}>
+                GAMES ZONE 🎮
+              </span>
+            </div>
+            <span style={{ fontSize: '0.85rem', opacity: 0.95, fontWeight: '600' }}>
+              5 Fun Phonics & Letter Games
+            </span>
           </button>
         </div>
 
