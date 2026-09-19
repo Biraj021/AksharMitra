@@ -200,13 +200,13 @@ export default function ScreeningContainer() {
             <button
               onClick={() => {
                 playPop();
-                setCurrentView('dashboard');
+                setCurrentView('games');
               }}
               className="btn btn-primary"
               style={{ borderRadius: '9999px', padding: '0.85rem 1.75rem' }}
             >
-              <Shield size={18} />
-              <span>View Parent/Teacher Report</span>
+              <Sparkles size={18} />
+              <span>Play Phonics Games 🎮</span>
             </button>
 
             <button

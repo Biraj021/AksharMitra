@@ -1,5 +1,5 @@
 import React from 'react';
-import { Volume2, VolumeX, Shield, Sparkles, Star, Gamepad2 } from 'lucide-react';
+import { Volume2, VolumeX, Star, Gamepad2 } from 'lucide-react';
 import { useProfile } from '../../context/ProfileContext';
 import { useAudio } from '../../context/AudioContext';
 import { SUPPORTED_LANGUAGES } from '../../data/languages';
@@ -9,9 +9,7 @@ export default function Header() {
     activeLanguage,
     setLanguageById,
     activeProfile,
-    setCurrentView,
-    setShowParentModal,
-    setShowPitchModal
+    setCurrentView
   } = useProfile();
 
   const { soundEnabled, setSoundEnabled, playPop } = useAudio();
@@ -19,16 +17,6 @@ export default function Header() {
   const toggleSound = () => {
     playPop();
     setSoundEnabled(!soundEnabled);
-  };
-
-  const handleParentClick = () => {
-    playPop();
-    setShowParentModal(true);
-  };
-
-  const handlePitchClick = () => {
-    playPop();
-    setShowPitchModal(true);
   };
 
   const isBengali = activeLanguage?.id === 'bengali';
@@ -77,6 +65,7 @@ export default function Header() {
             <Gamepad2 size={16} color="#059669" />
             <span style={{ fontSize: '0.85rem' }}>{isBengali ? 'গেমস জোন' : 'Games Zone'}</span>
           </button>
+
           {/* Language Selector Dropdown */}
           <select
             value={activeLanguage.id}
@@ -136,37 +125,6 @@ export default function Header() {
               </div>
             </div>
           )}
-
-          {/* Parent / Educator Portal Button */}
-          <button
-            onClick={handleParentClick}
-            className="btn-secondary btn-pill"
-            style={{
-              gap: '0.35rem',
-              borderColor: '#C7D2FE',
-              background: '#EEF2FF',
-              color: '#4338CA'
-            }}
-            title="Parent / Teacher Companion Portal"
-          >
-            <Shield size={16} />
-            <span style={{ fontSize: '0.85rem' }}>Parent Portal</span>
-          </button>
-
-          {/* Pitch & Hackathon Info Modal */}
-          <button
-            onClick={handlePitchClick}
-            className="btn-primary btn-pill"
-            style={{
-              padding: '0.4rem 0.85rem',
-              background: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
-              boxShadow: '0 2px 8px rgba(245, 158, 11, 0.3)'
-            }}
-            title="Why AksharMitra? Judge Pitch Deck"
-          >
-            <Sparkles size={16} />
-            <span style={{ fontSize: '0.85rem' }}>Judge Deck</span>
-          </button>
         </div>
       </div>
     </header>
