@@ -108,10 +108,10 @@ graph TD
 - [x] **4.1 Production Build & Code Quality**
   - [x] Vite production bundle passes with 0 errors (1912+ modules compiled).
   - [x] Clean git commit history on `main` branch.
-- [ ] **4.2 Service Worker Offline PWA Caching**
-  - [ ] Standalone PWA install prompt & offline caching.
-- [ ] **4.3 Live Demo Deployment**
-  - [ ] Deploy to Vercel / Netlify for live judge testing.
+- [x] **4.2 Service Worker Offline PWA Caching**
+  - [x] Standalone PWA Web App Manifest (`public/manifest.json`) & offline Service Worker (`public/sw.js`).
+- [x] **4.3 Live Demo Deployment Readiness**
+  - [x] SPA routing rewrite configuration (`vercel.json`) & comprehensive `README.md`.
 
 ---
 
@@ -123,4 +123,5 @@ graph TD
 | **Phase 1** | Mitra Mascot, Rewards Loop & Gentle Failure UX | Medium | ✅ Complete |
 | **Phase 2** | 4 Stealth Screening Quests (Tracing, Read-Aloud, Rhyme, Safari) | High | ✅ Complete |
 | **Phase 3** | Remediation Games Zone (Word Snapper & Letter Hunter) | High | ✅ Complete |
-| **Phase 4** | Multilingual Matrix, Offline PWA & Production Polish | Medium | 🟡 In Progress / Polish |
+| **Phase 4** | Offline PWA, Vercel SPA Deploy & Documentation Showcase | Medium | ✅ Complete |
+
