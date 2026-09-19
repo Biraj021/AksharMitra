@@ -65,7 +65,7 @@ export default function ScreeningContainer() {
         isBengali ? 'bn-IN' : 'en-US'
       );
     } else if (data.questId === 'read_aloud') {
-      const result = data.result || { accuracy: 88, wpm: 52, hesitationCount: 0 };
+      const result = data.result || { accuracy: 25, wpm: 20, hesitationCount: 4 };
       sessionDataRef.current.readAloud = result;
       setSessionData({ ...sessionDataRef.current });
       finalizeScreening(sessionDataRef.current);

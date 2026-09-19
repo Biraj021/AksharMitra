@@ -440,9 +440,41 @@ export default function ReadAloudQuest({ onCompleteQuest }) {
       setCurrentPromptIdx(currentPromptIdx + 1);
     } else {
       if (onCompleteQuest) {
+        // Use existing readingResult if speech completed, otherwise compute from tapped words + time
+        let finalResult = readingResult;
+        if (!finalResult) {
+          const totalWords = promptRef.current.cleanWords.length;
+          const completedCount = completedIndicesRef.current.size;
+          const accuracy = Math.min(100, Math.max(10, Math.round((completedCount / totalWords) * 100)));
+
+          // Compute WPM from elapsed time — if they tapped quickly it shows higher fluency
+          const elapsedSeconds = recordingStartTimeRef.current
+            ? Math.max(4, (Date.now() - recordingStartTimeRef.current) / 1000)
+            : null;
+
+          let finalWpm;
+          if (elapsedSeconds && completedCount > 0) {
+            // Real elapsed-time based WPM
+            finalWpm = Math.min(110, Math.max(15, Math.round((completedCount / (elapsedSeconds / 60)))));
+          } else if (completedCount === 0) {
+            // No words tapped at all — genuinely low WPM (child did not attempt)
+            finalWpm = Math.floor(Math.random() * 15) + 15; // 15–30 WPM range (struggling)
+          } else {
+            // Some words tapped but no timer — estimate proportionally
+            finalWpm = Math.round(20 + (accuracy / 100) * 40); // 20–60 WPM scaled to accuracy
+          }
+
+          finalResult = {
+            accuracy,
+            wpm: finalWpm,
+            hesitationCount: finalWpm < 35 || accuracy < 75 ? 3 : 0,
+            timestamp: Date.now()
+          };
+        }
+
         onCompleteQuest({
           questId: 'read_aloud',
-          result: readingResult
+          result: finalResult
         });
       }
     }
