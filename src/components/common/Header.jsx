@@ -1,5 +1,5 @@
 import React from 'react';
-import { Volume2, VolumeX, Shield, Sparkles, Star } from 'lucide-react';
+import { Volume2, VolumeX, Star, Gamepad2 } from 'lucide-react';
 import { useProfile } from '../../context/ProfileContext';
 import { useAudio } from '../../context/AudioContext';
 import { SUPPORTED_LANGUAGES } from '../../data/languages';
@@ -9,9 +9,7 @@ export default function Header() {
     activeLanguage,
     setLanguageById,
     activeProfile,
-    setCurrentView,
-    setShowParentModal,
-    setShowPitchModal
+    setCurrentView
   } = useProfile();
 
   const { soundEnabled, setSoundEnabled, playPop } = useAudio();
@@ -21,15 +19,7 @@ export default function Header() {
     setSoundEnabled(!soundEnabled);
   };
 
-  const handleParentClick = () => {
-    playPop();
-    setShowParentModal(true);
-  };
-
-  const handlePitchClick = () => {
-    playPop();
-    setShowPitchModal(true);
-  };
+  const isBengali = activeLanguage?.id === 'bengali';
 
   return (
     <header className="header-nav">
@@ -45,12 +35,37 @@ export default function Header() {
           <span className="brand-icon">✨</span>
           <div>
             <h1 className="brand-title">AksharMitra</h1>
-            <p className="brand-subtitle">Smart Assistive Dyslexia & Phonics Tech</p>
+            <p className="brand-subtitle">
+              {isBengali ? 'স্মার্ট ডিসলেক্সিয়া ও ধ্বনিবিজ্ঞান প্রযুক্তি' : 'Smart Assistive Dyslexia & Phonics Tech'}
+            </p>
           </div>
         </div>
 
         {/* Header Right Actions */}
         <div className="header-actions">
+          {/* Remediation Games Button */}
+          <button
+            onClick={() => {
+              playPop();
+              setCurrentView('games');
+            }}
+            className="btn-secondary btn-pill"
+            style={{
+              padding: '0.4rem 0.85rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.35rem',
+              borderColor: '#A7F3D0',
+              background: '#ECFDF5',
+              color: '#065F46',
+              fontWeight: '700'
+            }}
+            title={isBengali ? 'গেমস জোন খেলো' : 'Play Phonics & Remediation Games'}
+          >
+            <Gamepad2 size={16} color="#059669" />
+            <span style={{ fontSize: '0.85rem' }}>{isBengali ? 'গেমস জোন' : 'Games Zone'}</span>
+          </button>
+
           {/* Language Selector Dropdown */}
           <select
             value={activeLanguage.id}
@@ -110,37 +125,6 @@ export default function Header() {
               </div>
             </div>
           )}
-
-          {/* Parent / Educator Portal Button */}
-          <button
-            onClick={handleParentClick}
-            className="btn-secondary btn-pill"
-            style={{
-              gap: '0.35rem',
-              borderColor: '#C7D2FE',
-              background: '#EEF2FF',
-              color: '#4338CA'
-            }}
-            title="Parent / Teacher Companion Portal"
-          >
-            <Shield size={16} />
-            <span style={{ fontSize: '0.85rem' }}>Parent Portal</span>
-          </button>
-
-          {/* Pitch & Hackathon Info Modal */}
-          <button
-            onClick={handlePitchClick}
-            className="btn-primary btn-pill"
-            style={{
-              padding: '0.4rem 0.85rem',
-              background: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
-              boxShadow: '0 2px 8px rgba(245, 158, 11, 0.3)'
-            }}
-            title="Why AksharMitra? Judge Pitch Deck"
-          >
-            <Sparkles size={16} />
-            <span style={{ fontSize: '0.85rem' }}>Judge Deck</span>
-          </button>
         </div>
       </div>
     </header>
