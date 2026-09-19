@@ -1,0 +1,372 @@
+/* ==========================================================================
+   AksharMitra Sensory Design System & Dyslexia-Friendly Tokens
+   ========================================================================== */
+
+:root {
+  /* Sensory & Warm Palette */
+  --bg-primary: #FFFDF7;
+  --bg-secondary: #F8F5EE;
+  --bg-card: rgba(255, 255, 255, 0.92);
+  --bg-card-hover: rgba(255, 255, 255, 1);
+  --bg-accent-soft: #EEF2FF;
+
+  /* Primary Brand Colors */
+  --primary-50: #EEF2FF;
+  --primary-100: #E0E7FF;
+  --primary-500: #6366F1;
+  --primary-600: #4F46E5;
+  --primary-700: #4338CA;
+  --primary-gradient: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
+  --sunset-gradient: linear-gradient(135deg, #F59E0B 0%, #EA580C 100%);
+  --mint-gradient: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  --lavender-gradient: linear-gradient(135deg, #A855F7 0%, #7C3AED 100%);
+  --card-gradient: linear-gradient(180deg, #FFFFFF 0%, #FBF9F3 100%);
+
+  /* Text & Legibility */
+  --text-main: #1E293B;
+  --text-muted: #64748B;
+  --text-soft: #94A3B8;
+  --text-inverse: #FFFFFF;
+
+  /* Accent & Feedback Colors */
+  --amber-gold: #F59E0B;
+  --amber-soft: #FEF3C7;
+  --mint-green: #10B981;
+  --mint-soft: #D1FAE5;
+  --coral-red: #F43F5E;
+  --coral-soft: #FFE4E6;
+  --sky-blue: #0EA5E9;
+  --sky-soft: #E0F2FE;
+
+  /* Borders & Shadows */
+  --border-light: rgba(226, 232, 240, 0.8);
+  --border-brand: rgba(99, 102, 241, 0.3);
+  --shadow-sm: 0 2px 8px rgba(99, 102, 241, 0.06);
+  --shadow-md: 0 8px 24px -4px rgba(79, 70, 229, 0.12);
+  --shadow-lg: 0 16px 36px -6px rgba(79, 70, 229, 0.18);
+  --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
+  --shadow-button: 0 4px 14px rgba(79, 70, 229, 0.35);
+
+  /* Typography */
+  --font-base: 'Lexend', system-ui, sans-serif;
+  --font-heading: 'Fredoka', 'Rozha One', cursive, sans-serif;
+  --font-devanagari: 'Noto Sans Devanagari', 'Lexend', sans-serif;
+  --font-bengali: 'Noto Sans Bengali', 'Lexend', sans-serif;
+  --font-tamil: 'Noto Sans Tamil', 'Lexend', sans-serif;
+  --font-dyslexic: 'Lexend', sans-serif;
+
+  /* Spacing & Radii */
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --radius-full: 9999px;
+
+  /* Responsive Max Width */
+  --max-width: 1080px;
+}
+
+/* Body & Global Reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: var(--font-base);
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.05) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(245, 158, 11, 0.06) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.04) 0%, transparent 50%);
+  background-attachment: fixed;
+}
+
+/* Typography Helpers */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  color: var(--text-main);
+  letter-spacing: -0.01em;
+}
+
+.indic-text {
+  font-family: var(--font-devanagari);
+  letter-spacing: 0.02em;
+}
+
+/* Container */
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+  max-width: var(--max-width);
+  width: 100%;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 3rem 1rem;
+}
+
+/* Cards & Glassmorphism */
+.glass-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.glass-card:hover {
+  border-color: var(--border-brand);
+  box-shadow: var(--shadow-md);
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 0.85rem 1.75rem;
+  border-radius: var(--radius-full);
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  user-select: none;
+  text-decoration: none;
+  min-height: 52px;
+}
+
+.btn-primary {
+  background: var(--primary-gradient);
+  color: white;
+  box-shadow: var(--shadow-button);
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(79, 70, 229, 0.45);
+}
+
+.btn-primary:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.btn-amber {
+  background: var(--sunset-gradient);
+  color: white;
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
+}
+
+.btn-amber:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(245, 158, 11, 0.45);
+}
+
+.btn-secondary {
+  background: white;
+  color: var(--text-main);
+  border: 2px solid var(--border-light);
+}
+
+.btn-secondary:hover {
+  border-color: var(--primary-500);
+  color: var(--primary-600);
+  background: var(--primary-50);
+  transform: translateY(-2px);
+}
+
+.btn-pill {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  border-radius: var(--radius-full);
+  min-height: 40px;
+}
+
+/* Header Styles */
+.header-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(255, 253, 247, 0.88);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1.5px solid var(--border-light);
+  padding: 0.75rem 1.25rem;
+}
+
+.header-container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.brand-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.brand-icon {
+  font-size: 1.75rem;
+  filter: drop-shadow(0 2px 6px rgba(99, 102, 241, 0.3));
+  animation: gentle-bounce 3s infinite ease-in-out;
+}
+
+.brand-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1.2;
+}
+
+.brand-subtitle {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Micro-Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes gentle-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-5deg); }
+  75% { transform: rotate(5deg); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
+  50% { box-shadow: 0 0 0 12px rgba(99, 102, 241, 0); }
+}
+
+@keyframes wave-arm {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(20deg); }
+}
+
+@keyframes mouth-talk {
+  0%, 100% { transform: scaleY(0.3); }
+  50% { transform: scaleY(1); }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.animate-wiggle {
+  animation: wiggle 2s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2.5s infinite;
+}
+
+/* Modals */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  padding: 1rem;
+}
+
+.modal-content {
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: 2rem;
+  max-width: 580px;
+  width: 100%;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+  border: 2px solid var(--border-light);
+  animation: scale-up 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes scale-up {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Badges and Tags */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.badge-amber {
+  background: var(--amber-soft);
+  color: #B45309;
+}
+
+.badge-indigo {
+  background: var(--primary-100);
+  color: var(--primary-700);
+}
+
+.badge-mint {
+  background: var(--mint-soft);
+  color: #065F46;
+}
+
+.badge-coral {
+  background: var(--coral-soft);
+  color: #9F1239;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .btn {
+    font-size: 1rem;
+    padding: 0.75rem 1.25rem;
+  }
+  .brand-subtitle {
+    display: none;
+  }
+}
