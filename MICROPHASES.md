@@ -1,16 +1,16 @@
 # AksharMitra — Comprehensive Microphases & Implementation Roadmap
 ### Hacksynthesis UEM 30-Hour Hackathon Blueprint
 
-> **Vision**: An offline-first, gamified assistive learning and non-stigmatizing early dyslexia risk-screening Progressive Web App (PWA) built script-first for Indian languages (Devanagari, Bengali, Tamil).
+> **Vision**: An offline-first, gamified assistive learning and non-stigmatizing early dyslexia risk-screening Progressive Web App (PWA) built for child engagement, multi-sensory phonics, and early literacy support.
 
 ---
 
 ## 🎯 Core Architectural Principles
 1. **Student-Centric Primary Flow**: The child experiences playful quests with the mascot *Mitra*; clinical metrics are silently computed in the background.
-2. **Dual-Mode Profiles (Student First + Companion Educator View)**: Focus 85% of UX on student engagement (avatars, rewards, zero-stigma games) with a streamlined PIN-protected Companion View for parents/teachers to view analytics.
-3. **Script-Native Pedagogy**: Confusion matrices specifically tailored to Indian scripts (e.g., ब/भ, द/ध, प/फ, matra placement) rather than direct translations of Latin b/d confusions.
-4. **Gentle Failure UX**: Zero red crossbars, zero harsh buzzer sounds; encouraging micro-animations and positive reinforcement at all times.
-5. **Hackathon Demo Resilience**: Instant 1-Click Judge Demo Pass, offline audio synthesizer, and simulated speech visualizer fallback for noisy venue conditions.
+2. **Kid-First Engagement**: 100% focused on student joy (avatars, star rewards, zero-stigma games, cheerful Web Audio chimes).
+3. **Phonics & Reversal Pedagogy**: Targeting visual and auditory confusions (e.g., *b/d/p/q*, *m/w*, *n/u*, rhyming phonemes, and initial letter isolation).
+4. **Gentle Failure UX**: Zero red crossbars, zero harsh buzzer sounds; encouraging micro-animations, voice guidance, and positive reinforcement at all times.
+5. **Hackathon Demo Resilience**: Instant zero-latency Web Audio API synthesizer, Sing-Along karaoke demo fallback, and fast non-linear quest navigation.
 
 ---
 
@@ -18,139 +18,100 @@
 
 ```mermaid
 graph TD
-    P0[Phase 0: PWA Shell, Indic Design System & Dual-Mode Auth] --> P1[Phase 1: Mitra Mascot & Gamification Core]
+    P0[Phase 0: PWA Shell, Typography & Child Auth] --> P1[Phase 1: Mitra Mascot & Gamification Core]
     P1 --> P2[Phase 2: Golden Path Screening Quests]
-    P2 --> P3[Phase 3: Adaptive Remediation Engine]
-    P3 --> P4[Phase 4: Parent/Teacher Companion Dashboard]
-    P4 --> P5[Phase 5: Multilingual Matrix & Judge Pitch Mode]
+    P2 --> P3[Phase 3: Adaptive Remediation Games Zone]
+    P3 --> P4[Phase 4: Multi-Language & Offline Hardening]
 ```
 
 ---
 
-### Phase 0: PWA Foundation, Indic Design System & Auth Engine
-- [ ] **0.1 Project Scaffolding & Build Pipeline**
-  - [ ] Set up Vite + React + Vanilla CSS (Mobile-first, responsive viewport for phones, tablets & desktop).
-  - [ ] Configure PWA manifest (`manifest.json`) and Service Worker for standalone installability and offline caching.
-  - [ ] Modular directory structure: `/components`, `/games`, `/screening`, `/services`, `/store`, `/assets`, `/audio`, `/data`.
-- [ ] **0.2 Child-Friendly Visual & Sensory Design System**
-  - [ ] Warm, high-contrast, dyslexia-friendly palette (warm creams, soothing blues, joyful amber, soft mint; avoiding stark pitch-black-on-pure-white).
-  - [ ] Typography integration: Clean, high-legibility Indic fonts (*Noto Sans Devanagari*, *Rozha One*) and *OpenDyslexic* / *Lexend* for dual-script readability.
-  - [ ] Touch target standardization (minimum 48px–64px hit targets for small hands).
-  - [ ] Micro-animation tokens (gentle bounce, wiggle, star burst, confetti particles).
-- [ ] **0.3 Dual-Mode Auth & Profile Management**
-  - [ ] **Student Profile Creator (Primary Focus)**: Friendly name/nickname, grade level (Class 1-5), language selection (Hindi / Bengali / Tamil), and interactive avatar picker.
-  - [ ] **Parent/Teacher Companion Access**: Simple PIN code (e.g., 4-digit PIN) to unlock educator analytics and student switching.
-  - [ ] **Instant Judge Demo Pass (1-Click Sandbox)**:
-    - 🧒 *Aarav (Grade 2)* — Pre-flagged with Devanagari reversal confusion (ब vs भ).
-    - 👧 *Priya (Grade 3)* — Typical progression benchmark profile.
-    - 🆕 *Fresh Quest Mode* — Instant clean student walkthrough for live demo.
-- [ ] **0.4 Local-First Storage & Audio Engine**
-  - [ ] IndexedDB / LocalStorage state persistence for profiles, game history, and screening vectors.
-  - [ ] Web Audio API synthesizer for cheerful sound effects (soft chime, star twinkle, gentle pop, slide sound).
-  - [ ] Web Speech API (TTS & Speech Recognition) with offline / simulated speech fallback for noisy pitch environments.
+### Phase 0: PWA Foundation, Typography & Audio Engine ✅
+- [x] **0.1 Project Scaffolding & Build Pipeline**
+  - [x] Set up Vite + React + Vanilla CSS (Mobile-first, responsive viewport for phones, tablets & desktop).
+  - [x] Clean directory structure: `/components`, `/games`, `/screening`, `/context`, `/data`, `/assets`.
+- [x] **0.2 Child-Friendly Visual & Sensory Design System**
+  - [x] Warm, high-contrast, dyslexia-friendly palette (warm creams, soothing indigo, joyful amber, soft emerald; avoiding harsh stark blacks).
+  - [x] Typography integration: High-legibility dyslexic-friendly fonts (*Lexend*, *Inter*) for optimal readability.
+  - [x] Touch target standardization (minimum 48px–64px hit targets for small hands).
+  - [x] Micro-animation tokens (gentle bounce, pulse glow, star burst, confetti particles).
+- [x] **0.3 Child Profile Management**
+  - [x] **Student Profile Creator**: Friendly nickname, grade level, language selection (English primary, Bengali preview), and interactive avatar picker.
+  - [x] **Profile Switcher**: 1-click modal to switch between child explorer profiles.
+- [x] **0.4 Local-First Storage & Web Audio Engine**
+  - [x] LocalStorage state persistence for student profiles, stars, streaks, and quest history.
+  - [x] Web Audio API synthetic chime synthesizer (soft chime, star twinkle fanfare, gentle pop, bubble sound) with zero external asset latency.
+  - [x] Web Speech API (TTS & Speech Recognition) with offline Sing-Along demo fallback.
 
 ---
 
-### Phase 1: Mascot & Gamification Infrastructure
-- [ ] **1.1 Mascot System ("Mitra" / The Friendly Companion)**
-  - [ ] Mascot component with reactive animated avatar states:
+### Phase 1: Mascot & Gamification Infrastructure ✅
+- [x] **1.1 Mascot System ("Mitra" / The Friendly Companion)**
+  - [x] Mascot component with reactive animated avatar states:
     - `idle` (waving, blinking)
-    - `talking` (mouth flap synchronized with audio prompt)
+    - `talking` (mouth synchronized with cheerful voice prompts)
     - `thinking` (encouraging look)
-    - `celebrating` (jumping with stars)
-    - `guiding` (pointing to interactive UI elements)
-  - [ ] Mascot speech bubble with bilingual voice prompts (Hindi & Indian English).
-- [ ] **1.2 Gamification & Motivation Loop**
-  - [ ] Star & gem reward system awarded for participation and effort, not speed.
-  - [ ] Daily streak tracker with visual adventure map.
-  - [ ] Badge trophy room (e.g., "Akshar Hero", "Dhwani Master", "Speedy Explorer").
-- [ ] **1.3 Gentle Failure & Scaffolding Engine**
-  - [ ] Adaptive Hint System: 1st hesitation = verbal encouragement; 2nd = visual glow; 3rd = mascot demonstrates correct stroke/sound.
-  - [ ] Zero negative scores, zero red crosses, zero penalty counters.
+    - `celebrating` (jumping with star confetti)
+  - [x] Mascot speech bubble with natural English voice synthesis.
+- [x] **1.2 Gamification & Motivation Loop**
+  - [x] Star reward system awarded for participation and effort.
+  - [x] Daily streak tracker.
+  - [x] Quest Master Badge unlocking celebration with confetti cannons.
+- [x] **1.3 Gentle Failure & Scaffolding Engine**
+  - [x] Friendly voice hints on mispronounced or mistaken cards.
+  - [x] Zero negative scores, zero red crosses, zero penalties.
 
 ---
 
-### Phase 2: Golden Path Stealth Screening Quests (~5-7 min Playful Flow)
-- [ ] **2.1 Task A: "Akshar Rekha" (Canvas Letter & Reversal Tracing)**
-  - [ ] Interactive HTML5/Canvas tracing engine with stroke-path guideline dots.
-  - [ ] Real-time stroke vector analysis (direction, starting point, curvature, stroke hesitation).
-  - [ ] Script confusion tests:
-    - Devanagari mirrors/confusions: **ब** vs **भ**, **द** vs **ध**, **प** vs **फ**, **म** vs **भ**.
-    - Numerical mirrors: **3** vs **६**, **6** vs **9**, **2** vs **5**.
-  - [ ] Metric extraction: Stroke reversal probability, hesitation index, spatial deviation score.
-- [ ] **2.2 Task B: "Bol Mitra Bol" (Read-Aloud & Fluency Analyzer)**
-  - [ ] Short, age-appropriate illustrated story sentence prompts with karaoke-style synchronized text highlights.
-  - [ ] Speech recording via microphone with real-time audio waveform visualizer.
-  - [ ] Phoneme & word comparison engine:
-    - Levenshtein & phonetic distance between expected sentence and transcribed speech.
-    - Detection of word omissions, insertions, and long hesitation pauses (>1.5s).
-    - **Venue Fail-Safe**: Interactive "Tap-to-Speak" fallback simulation if microphone fails in noisy room.
-  - [ ] Metric extraction: Words Per Minute (WPM), Fluency Accuracy %, Phoneme substitution frequency.
-- [ ] **2.3 Task C: "Dhwani Shikaar" (Phonological & Syllable Rhythm Clapping)**
-  - [ ] Rhyming identification game (matching "नल" with "जल" vs "घर").
-  - [ ] Syllable tapping / beat game (tap the drum for each syllable in "पा-ठ-शा-ला").
-  - [ ] Sound blending & segmentation (/क/ + /म/ + /ल/ -> "कमल").
-  - [ ] Metric extraction: Phonological discrimination error rate, auditory processing reaction time.
-- [ ] **2.4 Screening Aggregator & Risk Assessment Matrix**
-  - [ ] Weighted scoring formula integrating:
-    - $R_{rev}$ (Reversal & Motor Index)
-    - $F_{read}$ (Fluency & Reading Hesitation Index)
-    - $P_{phon}$ (Phonological Awareness Index)
-  - [ ] Risk banding classification: `Typical Progression`, `Mild Observation Recommended`, `Elevated Risk (Early Support Recommended)`.
-  - [ ] Celebratory student outro with confetti & reward badge (no clinical jargon displayed to the child).
-  - [ ] **Judge Fast-Forward**: Dev toggle to jump between screening tasks in 5 seconds during pitch.
+### Phase 2: Stealth Screening Quests Suite ✅
+- [x] **2.1 Quest 1: "Letter Tracing" (Visual & Graphomotor Reversal Tracing)**
+  - [x] Interactive HTML5 Canvas tracing engine with magnetic glowing guideline dots and uniform brush stroke.
+  - [x] A-Z letter carousel with special focus on reversal letters: **b**, **d**, **p**, **q**.
+  - [x] Multi-stroke letter support (**i**, **j**, **t**, **x**, **f**).
+  - [x] Metric extraction: Stroke tracing accuracy, deviation scoring, reversal tracking.
+- [x] **2.2 Quest 2: "Read Aloud" (Speech-to-Text & Fluency Analyzer)**
+  - [x] Illustrated story sentences (*The Big Dog*, *The Cat & Star*, *Sunny Garden*).
+  - [x] Real-time Web Speech API recognition with synchronized word-by-word karaoke highlighting.
+  - [x] Dual-path token alignment and phonetic typo matching for child speech.
+  - [x] Tap-to-pronounce fallback and Sing-Along Auto Demo mode.
+  - [x] Metric extraction: Words Per Minute (WPM), Fluency Accuracy %, hesitation count.
+- [x] **2.3 Quest 3: "Rhyme Magic" (Auditory Phonological Awareness)**
+  - [x] 4 Auditory rhyme puzzles (*Cat/Hat*, *Frog/Dog*, *Star/Car*, *Bed/Red*).
+  - [x] Auto-narrated prompt on puzzle start and transition.
+  - [x] Tactile option cards with sound feedback and reward chimes.
+- [x] **2.4 Quest 4: "Sound Safari" (Odd-One-Out Phoneme Isolation)**
+  - [x] 4 Safari missions isolating initial letter sounds (*B, S, M, D*).
+  - [x] Clean natural voice prompts and card pronunciation.
+  - [x] Detective reward badges and friendly phonetic feedback.
+- [x] **2.5 Master Screening Container**
+  - [x] 5-Step interactive flow with free non-linear pill navigation between all quests.
+  - [x] Celebratory completion screen awarding +30 Star Bonus and Master Explorer Badge.
 
 ---
 
-### Phase 3: Script-Native Adaptive Remediation Engine
-- [ ] **3.1 Screening-to-Remediation Dynamic Bridge**
-  - [ ] Automatically route the child to targeted learning modules based on screening results (e.g., if reversal detected in **ब/भ**, launch the **ब/भ Matra Adventure**).
-- [ ] **3.2 Signature Game: "Akshar Jod" (Phonics & Matra Word Builder)**
-  - [ ] Drag-and-drop letter and matra tiles into word slots with magnetic snapping and tactile animations.
-  - [ ] Real-time audio phoneme blending as tiles connect (e.g., 'क' + 'ा' = 'का').
-  - [ ] Progressive difficulty tiers:
-    1. Consonant identification
-    2. Two-letter root words (कम, नल, घर)
-    3. Matra combinations (काला, किताब)
-    4. Sanyukt-akshar / conjuncts (मित्र, ज्ञान)
-- [ ] **3.3 Mini Game: "Drishti Khoj" (Visual Discrimination & Rapid Spotting)**
-  - [ ] Rapid visual search grid: find the target letter among deceptive visual distractors (find 'ब' among 'भ' and 'व').
-  - [ ] Calibrated visual density scaling based on child's performance.
-- [ ] **3.4 Dynamic Difficulty Adjuster (DDA)**
-  - [ ] Rolling trial performance window (adapts visual cues and hints in real time).
+### Phase 3: Adaptive Remediation Games Zone ✅
+- [x] **3.1 Games Zone Hub (`GamesHub.jsx`)**
+  - [x] Central game selection dashboard with Mitra mascot guidance and category badges.
+  - [x] Direct navigation from header and landing page.
+- [x] **3.2 Signature Game: "Word Snapper" (Phonics & Magnetic Tile Builder)**
+  - [x] Drag-and-drop / tap-to-place letter tiles into word slots with magnetic snapping animations.
+  - [x] Target reversal confusion letter highlighting (*b/d/p/q*).
+  - [x] Mnemonic cue boxes explaining letter orientations.
+  - [x] Real-time TTS phoneme blending as tiles are placed.
+- [x] **3.3 Mini Game: "Letter Hunter" (Visual Discrimination Grid)**
+  - [x] Rapid visual spotting grid targeting deceptive letter confusions (*b vs d*, *p vs q*, *m vs w*, *n vs u*).
+  - [x] Combo multiplier badge, gentle mistake wiggle animations, and star rewards.
 
 ---
 
-### Phase 4: Parent & Educator Companion Dashboard
-- [ ] **4.1 Secure Companion View Access**
-  - [ ] PIN-gated toggle from app header to switch between Child Adventure and Parent/Teacher View.
-  - [ ] Multi-student switcher with quick profile stats.
-- [ ] **4.2 Visual Risk & Progress Analytics**
-  - [ ] Radar / Spider chart displaying 4 developmental axes:
-    - Phonological Awareness
-    - Visual Discrimination
-    - Reading Fluency & Speed
-    - Graphomotor & Tracing Accuracy
-  - [ ] Historical session timeline showing improvement trends across sessions.
-- [ ] **4.3 Actionable Guidance & Non-Diagnostic Recommendations**
-  - [ ] Plain-language explanations of observed patterns (*"Child showed difficulty distinguishing 'ब' and 'भ' across 4 trials"*).
-  - [ ] At-home sensory games (sand-tray writing, rhythm clapping).
-  - [ ] Referral notice: Guidance on when to consult teachers, ASHA workers, or local PRASHAST/DIET centers.
-- [ ] **4.4 One-Click PDF/Printable Summary Card**
-  - [ ] Clean, printer-friendly summary report for parent-teacher meetings.
-
----
-
-### Phase 5: Multilingual Matrix, Offline Hardening & Pitch Polish
-- [ ] **5.1 Script Confusion Matrix Showcase**
-  - [ ] Modular script configuration schema (`/data/languages/hindi.json`, `bengali.json`, `tamil.json`).
-  - [ ] Full Hindi pilot gameplay + 1-click interactive preview of Bengali (ব vs র vs ক) and Tamil (ண vs ன vs ந) confusion matrices.
-- [ ] **5.2 PWA Offline Bundling & Resilience**
-  - [ ] Service Worker cache for all audio sprites, fonts, and assets.
-  - [ ] Graceful degradation for low-end Android mobile browsers.
-- [ ] **5.3 Presentation & Demo Enhancements (Judges Ready)**
-  - [ ] Embedded "Why AksharMitra?" comparison modal (DALI, PRASHAST, DIKSHA differentiation).
-  - [ ] Interactive 3-minute pitch mode timer & live walkthrough checklist.
+### Phase 4: Polish, Multi-Language & Hackathon Presentation 🚀
+- [x] **4.1 Production Build & Code Quality**
+  - [x] Vite production bundle passes with 0 errors (1912+ modules compiled).
+  - [x] Clean git commit history on `main` branch.
+- [ ] **4.2 Service Worker Offline PWA Caching**
+  - [ ] Standalone PWA install prompt & offline caching.
+- [ ] **4.3 Live Demo Deployment**
+  - [ ] Deploy to Vercel / Netlify for live judge testing.
 
 ---
 
@@ -158,9 +119,8 @@ graph TD
 
 | Phase | Feature Set | Complexity | Status |
 |---|---|---|---|
-| **0.1-0.4** | PWA Scaffolding, Indic Fonts, Dual Auth & Judge Pass | Medium | ⏳ Ready to Start |
-| **1.1-1.3** | Mitra Mascot, Gamification & Gentle Failure UX | Medium | ⏳ Queued |
-| **2.1-2.4** | 3 Stealth Screening Quests & Risk Matrix | High | ⏳ Queued |
-| **3.1-3.4** | Dynamic Remediation ("Akshar Jod" & DDA) | High | ⏳ Queued |
-| **4.1-4.4** | Parent/Teacher Companion Dashboard & PDF Card | Medium | ⏳ Queued |
-| **5.1-5.3** | Multilingual Showcase, Offline Cache & Pitch Mode | Medium | ⏳ Queued |
+| **Phase 0** | PWA Scaffolding, Dyslexia Typography & Web Audio Engine | Medium | ✅ Complete |
+| **Phase 1** | Mitra Mascot, Rewards Loop & Gentle Failure UX | Medium | ✅ Complete |
+| **Phase 2** | 4 Stealth Screening Quests (Tracing, Read-Aloud, Rhyme, Safari) | High | ✅ Complete |
+| **Phase 3** | Remediation Games Zone (Word Snapper & Letter Hunter) | High | ✅ Complete |
+| **Phase 4** | Multilingual Matrix, Offline PWA & Production Polish | Medium | 🟡 In Progress / Polish |
