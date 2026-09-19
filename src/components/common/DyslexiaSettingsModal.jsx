@@ -1,11 +1,15 @@
 import React from 'react';
 import { X, Eye, Type, Palette, MoveHorizontal, Volume2, Sparkles, Check, RotateCcw } from 'lucide-react';
 import { useDyslexia, COLOR_TINTS, FONT_OPTIONS } from '../../context/DyslexiaContext';
+import { useProfile } from '../../context/ProfileContext';
 import { useAudio } from '../../context/AudioContext';
 
 export default function DyslexiaSettingsModal() {
   const { settings, updateSetting, resetSettings, isSettingsOpen, setIsSettingsOpen } = useDyslexia();
+  const { activeLanguage, t } = useProfile();
   const { playPop, playStarTwinkle } = useAudio();
+
+  const isBengali = activeLanguage?.id === 'bengali';
 
   if (!isSettingsOpen) return null;
 
@@ -46,10 +50,10 @@ export default function DyslexiaSettingsModal() {
             </div>
             <div>
               <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#1E293B', margin: 0 }}>
-                Dyslexia & Sensory Comfort
+                {t('sensoryTitle')}
               </h3>
               <p style={{ fontSize: '0.75rem', color: '#64748B', margin: 0 }}>
-                Customize fonts, anti-glare tints, and reading guides
+                {t('sensoryDesc')}
               </p>
             </div>
           </div>
@@ -287,7 +291,7 @@ export default function DyslexiaSettingsModal() {
             }}
           >
             <RotateCcw size={14} />
-            <span>Reset Defaults</span>
+            <span>{t('resetDefaults')}</span>
           </button>
 
           <button
@@ -305,7 +309,7 @@ export default function DyslexiaSettingsModal() {
               boxShadow: '0 4px 12px rgba(79, 70, 229, 0.25)'
             }}
           >
-            Save & Apply
+            {t('doneBtn')}
           </button>
         </div>
       </div>

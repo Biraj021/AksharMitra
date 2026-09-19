@@ -12,28 +12,37 @@ export default function LoginPage() {
     deleteProfile,
     loadDemoProfile,
     activeLanguage,
-    setLanguageById
+    setLanguageById,
+    t
   } = useProfile();
 
   const { playPop, playStarTwinkle, speakText } = useAudio();
   const [showAddModal, setShowAddModal] = useState(false);
 
+  const isBengali = activeLanguage?.id === 'bengali';
+
   const handleSelectStudent = (profileId, name) => {
     playStarTwinkle();
-    speakText(`Welcome back, ${name}! Let's start our adventure!`, 'en-US');
+    speakText(
+      isBengali ? `স্বাগতম ${name}! এসো আমাদের পড়ার অভিযান শুরু করি!` : `Welcome back, ${name}! Let's start our adventure!`,
+      isBengali ? 'bn-IN' : 'en-US'
+    );
     switchProfile(profileId);
   };
 
   const handleQuickDemo = (demoId, demoName) => {
     playStarTwinkle();
-    speakText(`Loading ${demoName}'s diagnostic evaluation dashboard!`, 'en-US');
+    speakText(
+      isBengali ? `${demoName}-এর ডায়াগনস্টিক রিপোর্ট লোড করা হচ্ছে!` : `Loading ${demoName}'s diagnostic evaluation dashboard!`,
+      isBengali ? 'bn-IN' : 'en-US'
+    );
     loadDemoProfile(demoId);
   };
 
   const handleDeleteStudent = (e, profileId, name) => {
     e.stopPropagation();
     playPop();
-    if (window.confirm(`Are you sure you want to remove ${name}'s profile?`)) {
+    if (window.confirm(`${t('deleteProfileConfirm')} (${name})`)) {
       deleteProfile(profileId);
     }
   };
@@ -95,11 +104,11 @@ export default function LoginPage() {
           🦉
         </div>
 
-        <h1 style={{ fontSize: '1.85rem', fontWeight: 900, color: 'white', margin: '0 0 0.35rem', fontFamily: "'Lexend', sans-serif" }}>
-          Who is learning today?
+        <h1 style={{ fontSize: '1.85rem', fontWeight: 900, color: 'white', margin: '0 0 0.35rem' }}>
+          {t('whoIsLearning')}
         </h1>
         <p style={{ fontSize: '0.92rem', color: '#C7D2FE', margin: '0 auto', maxWidth: '440px', lineHeight: 1.45 }}>
-          Choose your explorer profile to continue your reading journey with separate stars, scores, and quests!
+          {t('loginSubtitle')}
         </p>
       </div>
 
@@ -108,9 +117,9 @@ export default function LoginPage() {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
           <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1E293B', margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <span>🎒</span>
-            <span>Student Profiles</span>
+            <span>{t('studentsAndExplorers')}</span>
             <span style={{ fontSize: '0.78rem', background: '#EEF2FF', color: '#4F46E5', padding: '0.2rem 0.6rem', borderRadius: '9999px', fontWeight: 700 }}>
-              {profilesList.length} Active
+              {profilesList.length} {t('active')}
             </span>
           </h3>
 
@@ -131,7 +140,7 @@ export default function LoginPage() {
             }}
           >
             <UserPlus size={16} />
-            <span>+ Add New Student</span>
+            <span>{t('addNewStudent')}</span>
           </button>
         </div>
 
@@ -208,11 +217,11 @@ export default function LoginPage() {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginTop: '0.2rem' }}>
                       <Star size={14} fill="#F59E0B" color="#F59E0B" />
                       <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#B45309' }}>
-                        {profile.stars || 15} Stars
+                        {profile.stars || 15} {t('stars')}
                       </span>
                       <span style={{ fontSize: '0.75rem', color: '#94A3B8' }}>•</span>
                       <span style={{ fontSize: '0.75rem', color: '#64748B' }}>
-                        {profile.streak || 1}d Streak 🔥
+                        {profile.streak || 1} {t('streakDay')}
                       </span>
                     </div>
                   </div>
@@ -234,7 +243,7 @@ export default function LoginPage() {
                         cursor: 'pointer',
                         flexShrink: 0
                       }}
-                      title="Delete profile"
+                      title={t('deleteProfileConfirm')}
                     >
                       <Trash2 size={13} />
                     </button>
@@ -247,16 +256,16 @@ export default function LoginPage() {
                     {isCompleted ? (
                       <span style={{ color: '#059669', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                         <CheckCircle size={14} />
-                        <span>{isAtRisk ? 'Track B (Remediation)' : 'Track A (Fluency)'}</span>
+                        <span>{isAtRisk ? (isBengali ? 'ট্র্যাক খ (নিরাময়)' : 'Track B (Remediation)') : (isBengali ? 'ট্র্যাক ক (সাবলীলতা)' : 'Track A (Fluency)')}</span>
                       </span>
                     ) : (
                       <span style={{ color: '#4F46E5', fontWeight: 700 }}>
-                        🧭 Screening Ready (5 Min)
+                        🧭 {isBengali ? 'স্ক্রীনিং প্রস্তুত (৫ মিনিট)' : 'Screening Ready (5 Min)'}
                       </span>
                     )}
                   </div>
                   <div style={{ color: '#4F46E5', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
-                    <span>Play</span>
+                    <span>{isBengali ? 'শুরু' : 'Play'}</span>
                     <ArrowRight size={14} />
                   </div>
                 </div>
@@ -278,11 +287,11 @@ export default function LoginPage() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
           <Award size={18} color="#4F46E5" />
           <h4 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#1E293B', margin: 0 }}>
-            Judge & Educator Quick Demo Benchmarks
+            {t('judgeDemoTitle')}
           </h4>
         </div>
         <p style={{ fontSize: '0.78rem', color: '#64748B', margin: '0 0 0.85rem' }}>
-          Compare how the platform responds differently to an At-Risk Dyslexic reader vs. a Typical reader:
+          {t('judgeDemoSubtitle')}
         </p>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '0.75rem' }}>
@@ -302,10 +311,10 @@ export default function LoginPage() {
           >
             <div>
               <div style={{ fontWeight: 800, fontSize: '0.88rem', color: '#92400E' }}>
-                🦁 Aarav Sharma (At-Risk Demo)
+                🦁 {isBengali ? 'আরভ শর্মা (ঝুঁকিপূর্ণ ডেমো)' : 'Aarav Sharma (At-Risk Demo)'}
               </div>
               <div style={{ fontSize: '0.72rem', color: '#B45309' }}>
-                Letter reversal flagged • Track B Remediation
+                {isBengali ? 'বর্ণ বিভ্রান্তি চিহ্নিত • ট্র্যাক খ নিরাময়' : 'Letter reversal flagged • Track B Remediation'}
               </div>
             </div>
             <ArrowRight size={16} color="#B45309" />
@@ -327,10 +336,10 @@ export default function LoginPage() {
           >
             <div>
               <div style={{ fontWeight: 800, fontSize: '0.88rem', color: '#065F46' }}>
-                🦚 Priya Patel (Typical Reader Demo)
+                🦚 {isBengali ? 'প্রিয়া প্যাটেল (স্বাভাবিক ডেমো)' : 'Priya Patel (Typical Reader Demo)'}
               </div>
               <div style={{ fontSize: '0.72rem', color: '#047857' }}>
-                Milestones typical • Track A Accelerated
+                {isBengali ? 'দক্ষতা স্বাভাবিক • ট্র্যাক ক দ্রুত পঠন' : 'Milestones typical • Track A Accelerated'}
               </div>
             </div>
             <ArrowRight size={16} color="#047857" />

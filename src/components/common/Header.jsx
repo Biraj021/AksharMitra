@@ -10,7 +10,8 @@ export default function Header({ onOpenProfileSelector }) {
     activeLanguage,
     setLanguageById,
     activeProfile,
-    setCurrentView
+    setCurrentView,
+    t
   } = useProfile();
 
   const { soundEnabled, setSoundEnabled, playPop } = useAudio();
@@ -53,11 +54,11 @@ export default function Header({ onOpenProfileSelector }) {
             🦉
           </div>
           <div>
-            <h1 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0, color: '#1E293B', fontFamily: "'Lexend', sans-serif", letterSpacing: '-0.01em' }}>
-              AksharMitra
+            <h1 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0, color: '#1E293B', letterSpacing: '-0.01em' }}>
+              {t('appName')}
             </h1>
             <p style={{ fontSize: '0.72rem', color: '#64748B', margin: 0, fontWeight: 600 }}>
-              Assistive Tech for Dyslexia
+              {t('appSubtitle')}
             </p>
           </div>
         </div>
@@ -80,7 +81,7 @@ export default function Header({ onOpenProfileSelector }) {
               color: '#4F46E5',
               transition: 'all 0.15s ease'
             }}
-            title="Dyslexia & Sensory Comfort Settings"
+            title={t('dyslexiaComfort')}
           >
             <Eye size={18} color="#4F46E5" />
           </button>
@@ -101,7 +102,7 @@ export default function Header({ onOpenProfileSelector }) {
               color: soundEnabled ? '#4F46E5' : '#94A3B8',
               transition: 'all 0.15s ease'
             }}
-            title={soundEnabled ? 'Mute Sound' : 'Enable Sound'}
+            title={soundEnabled ? t('muteSound') : t('enableSound')}
           >
             {soundEnabled ? <Volume2 size={18} color="#4F46E5" /> : <VolumeX size={18} color="#94A3B8" />}
           </button>
@@ -151,7 +152,7 @@ export default function Header({ onOpenProfileSelector }) {
                 cursor: 'pointer',
                 boxShadow: '0 2px 6px rgba(245, 158, 11, 0.12)'
               }}
-              title="Switch profile or view stats"
+              title={t('chooseProfile')}
             >
               <span style={{ fontSize: '1.15rem' }}>{getAvatarEmoji(activeProfile.avatarEmoji || activeProfile.avatar)}</span>
               <Star size={16} fill="#F59E0B" color="#F59E0B" />
@@ -173,7 +174,7 @@ export default function Header({ onOpenProfileSelector }) {
                 fontWeight: 800
               }}
             >
-              Log In
+              {t('logIn')}
             </button>
           )}
         </div>

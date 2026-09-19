@@ -32,7 +32,11 @@ export default function App() {
   const isScreeningGated = activeProfile && !activeProfile.screeningCompleted && currentView !== 'login';
 
   return (
-    <div className="app-container" style={{ paddingBottom: '75px', minHeight: '100vh' }}>
+    <div
+      className={`app-container ${activeLanguage?.id === 'bengali' ? 'lang-bengali' : 'lang-english'}`}
+      lang={activeLanguage?.id === 'bengali' ? 'bn' : 'en'}
+      style={{ paddingBottom: '75px', minHeight: '100vh' }}
+    >
       {/* Universal Header */}
       <Header onOpenProfileSelector={() => setShowProfileSelector(true)} />
 

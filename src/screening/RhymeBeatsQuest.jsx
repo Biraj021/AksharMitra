@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Volume2, CheckCircle, ArrowRight } from 'lucide-react';
 import { useAudio } from '../context/AudioContext';
+import { useProfile } from '../context/ProfileContext';
 
-const RHYME_BEAT_QUESTIONS = [
+const RHYME_BEAT_QUESTIONS_EN = [
   {
     id: 'rb_1',
     type: 'rhyme_match',
@@ -53,15 +54,69 @@ const RHYME_BEAT_QUESTIONS = [
   }
 ];
 
+const RHYME_BEAT_QUESTIONS_BN = [
+  {
+    id: 'rb_bn_1',
+    type: 'rhyme_match',
+    targetWord: 'জল',
+    emoji: '💧',
+    instruction: '"জল" শব্দের সাথে কোন শব্দের ছন্দ মেলে?',
+    audioPrompt: 'জল শব্দের সাথে কোন শব্দের মিল আছে? ফল, গাছ, নাকি চাঁদ?',
+    options: [
+      { id: '1', word: 'ফল', emoji: '🍎', isCorrect: true },
+      { id: '2', word: 'গাছ', emoji: '🌳', isCorrect: false },
+      { id: '3', word: 'চাঁদ', emoji: '🌙', isCorrect: false }
+    ]
+  },
+  {
+    id: 'rb_bn_2',
+    type: 'rhyme_match',
+    targetWord: 'বই',
+    emoji: '📖',
+    instruction: '"বই" শব্দের সাথে কোন শব্দের ছন্দ মেলে?',
+    audioPrompt: 'বই শব্দের সাথে কোন শব্দের মিল আছে? দই, পাখি, নাকি নদী?',
+    options: [
+      { id: '1', word: 'দই', emoji: '🥣', isCorrect: true },
+      { id: '2', word: 'পাখি', emoji: '🦜', isCorrect: false },
+      { id: '3', word: 'নদী', emoji: '🌊', isCorrect: false }
+    ]
+  },
+  {
+    id: 'rb_bn_3',
+    type: 'syllable_beat',
+    word: 'প্রজাপতি',
+    emoji: '🦋',
+    syllables: 'প্র - জা - প - তি',
+    syllableCount: 4,
+    instruction: '"প্র-জা-প-তি" শব্দে কয়টি তালের শব্দাংশ আছে?',
+    audioPrompt: 'প্রজাপতি শব্দে কয়টি শব্দাংশের তাল আছে? প্র জা প তি।',
+    options: [1, 2, 3, 4]
+  },
+  {
+    id: 'rb_bn_4',
+    type: 'syllable_beat',
+    word: 'আম',
+    emoji: '🥭',
+    syllables: 'আম',
+    syllableCount: 1,
+    instruction: '"আম" শব্দে কয়টি তালের শব্দাংশ আছে?',
+    audioPrompt: 'আম শব্দে কয়টি তালের শব্দাংশ আছে?',
+    options: [1, 2, 3]
+  }
+];
+
 export default function RhymeBeatsQuest({ onCompleteQuest }) {
   const { playPop, playChime, playStarTwinkle, speakText } = useAudio();
+  const { activeLanguage } = useProfile();
+  const isBengali = activeLanguage?.id === 'bengali';
+  const questions = isBengali ? RHYME_BEAT_QUESTIONS_BN : RHYME_BEAT_QUESTIONS_EN;
 
   const [currentIdx, setCurrentIdx] = useState(0);
   const [selectedOptId, setSelectedOptId] = useState(null);
   const [correctCount, setCorrectCount] = useState(0);
   const [status, setStatus] = useState('active'); // 'active' | 'completed_step'
 
-  const currentQ = RHYME_BEAT_QUESTIONS[currentIdx];
+  const currentQ = questions[currentIdx] || questions[0];
 
   const handlePickRhyme = (opt) => {
     playPop();
@@ -74,7 +129,10 @@ export default function RhymeBeatsQuest({ onCompleteQuest }) {
       playStarTwinkle();
     } else {
       playChime(320);
-      speakText(`${opt.word} does not rhyme with ${currentQ.targetWord}. Try another!`);
+      const errMsg = isBengali
+        ? `"${opt.word}" শব্দটি "${currentQ.targetWord}" এর সাথে ছন্দ মেলায় না। আবার চেষ্টা করো!`
+        : `${opt.word} does not rhyme with ${currentQ.targetWord}. Try another!`;
+      speakText(errMsg, isBengali ? 'bn-IN' : 'en-US');
     }
   };
 
@@ -89,18 +147,21 @@ export default function RhymeBeatsQuest({ onCompleteQuest }) {
       playStarTwinkle();
     } else {
       playChime(320);
-      speakText(`Listen to the beats: ${currentQ.syllables}. Try again!`);
+      const errMsg = isBengali
+        ? `শব্দাংশের তালগুলো মনোযোগ দিয়ে শোনো: ${currentQ.syllables}। আবার চেষ্টা করো!`
+        : `Listen to the beats: ${currentQ.syllables}. Try again!`;
+      speakText(errMsg, isBengali ? 'bn-IN' : 'en-US');
     }
   };
 
   const handleNextStep = () => {
-    if (currentIdx + 1 < RHYME_BEAT_QUESTIONS.length) {
+    if (currentIdx + 1 < questions.length) {
       setCurrentIdx((prev) => prev + 1);
       setSelectedOptId(null);
       setStatus('active');
     } else {
       // Finalize Round 2 Metrics
-      const totalPossible = RHYME_BEAT_QUESTIONS.length;
+      const totalPossible = questions.length;
       const score = Math.round((correctCount / totalPossible) * 100);
 
       onCompleteQuest({
@@ -128,10 +189,10 @@ export default function RhymeBeatsQuest({ onCompleteQuest }) {
       {/* Round Header & Audio Prompt */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#0284C7', background: '#E0F2FE', padding: '0.2rem 0.65rem', borderRadius: '9999px' }}>
-          Round 2: Rhyme & Beats ({currentIdx + 1}/4)
+          {isBengali ? `পর্ব ২: ছন্দ ও সুরের তাল (${currentIdx + 1}/${questions.length})` : `Round 2: Rhyme & Beats (${currentIdx + 1}/${questions.length})`}
         </span>
         <button
-          onClick={() => speakText(currentQ.audioPrompt)}
+          onClick={() => speakText(currentQ.audioPrompt, isBengali ? 'bn-IN' : 'en-US')}
           style={{
             background: '#F8FAFC',
             border: '1px solid #CBD5E1',
@@ -143,6 +204,7 @@ export default function RhymeBeatsQuest({ onCompleteQuest }) {
             justifyContent: 'center',
             cursor: 'pointer'
           }}
+          title={isBengali ? 'শুনুন' : 'Listen'}
         >
           <Volume2 size={16} color="#0284C7" />
         </button>
@@ -179,7 +241,7 @@ export default function RhymeBeatsQuest({ onCompleteQuest }) {
                 }}
               >
                 <span style={{ fontSize: '1.8rem' }}>{opt.emoji}</span>
-                <span style={{ fontSize: '1rem', fontWeight: 800, color: '#1E293B', fontFamily: "'Lexend', sans-serif" }}>
+                <span style={{ fontSize: '1rem', fontWeight: 800, color: '#1E293B', fontFamily: isBengali ? 'var(--font-bengali)' : "'Lexend', sans-serif" }}>
                   {opt.word}
                 </span>
               </button>
@@ -205,7 +267,7 @@ export default function RhymeBeatsQuest({ onCompleteQuest }) {
                   borderRadius: '18px',
                   fontSize: '1.6rem',
                   fontWeight: 900,
-                  fontFamily: "'Lexend', sans-serif",
+                  fontFamily: isBengali ? 'var(--font-bengali)' : "'Lexend', sans-serif",
                   border: isSelected && isCorrect ? '3px solid #10B981' : '2px solid #E2E8F0',
                   background: isSelected && isCorrect ? '#D1FAE5' : '#F8FAFC',
                   color: isSelected && isCorrect ? '#047857' : '#1E293B',
@@ -243,7 +305,7 @@ export default function RhymeBeatsQuest({ onCompleteQuest }) {
               boxShadow: '0 4px 12px rgba(2, 132, 199, 0.3)'
             }}
           >
-            <span>Continue to Next</span>
+            <span>{isBengali ? 'পরবর্তী ধাপে এগিয়ে যাও' : 'Continue to Next'}</span>
             <ArrowRight size={18} />
           </button>
         </div>

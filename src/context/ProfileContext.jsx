@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { SUPPORTED_LANGUAGES } from '../data/languages';
 import { DEMO_PROFILES } from '../data/demoProfiles';
+import { TRANSLATIONS, getTranslation } from '../data/translations';
 
 const ProfileContext = createContext(null);
 
@@ -214,6 +215,8 @@ export function ProfileProvider({ children }) {
     }));
   };
 
+  const t = (key) => getTranslation(key, activeLanguage?.id || 'english');
+
   return (
     <ProfileContext.Provider
       value={{
@@ -237,7 +240,9 @@ export function ProfileProvider({ children }) {
         setShowParentModal,
         showPitchModal,
         setShowPitchModal,
-        getAvatarEmoji
+        getAvatarEmoji,
+        t,
+        getTranslation
       }}
     >
       {children}

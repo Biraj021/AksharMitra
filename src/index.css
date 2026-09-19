@@ -159,6 +159,23 @@ p {
 .bengali-text { font-family: var(--font-bengali); }
 .tamil-text { font-family: var(--font-tamil); }
 
+.lang-bengali,
+.lang-bengali body,
+.lang-bengali p,
+.lang-bengali span,
+.lang-bengali button,
+.lang-bengali input,
+.lang-bengali select,
+.lang-bengali textarea,
+.lang-bengali h1,
+.lang-bengali h2,
+.lang-bengali h3,
+.lang-bengali h4,
+.lang-bengali h5,
+.lang-bengali h6 {
+  font-family: var(--font-bengali) !important;
+}
+
 /* Container */
 .app-container {
   min-height: 100vh;

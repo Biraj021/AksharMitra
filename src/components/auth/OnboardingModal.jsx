@@ -7,7 +7,7 @@ import { useProfile } from '../../context/ProfileContext';
 import { useAudio } from '../../context/AudioContext';
 
 export default function OnboardingModal({ isOpen, onClose }) {
-  const { activeLanguage, setLanguageById, createStudentProfile } = useProfile();
+  const { activeLanguage, setLanguageById, createStudentProfile, t } = useProfile();
   const { playPop, playStarTwinkle, speakText } = useAudio();
 
   const [step, setStep] = useState(1);
@@ -15,12 +15,14 @@ export default function OnboardingModal({ isOpen, onClose }) {
   const [selectedAvatar, setSelectedAvatar] = useState('sheru');
   const [selectedGrade, setSelectedGrade] = useState('grade2');
 
+  const isBengali = activeLanguage?.id === 'bengali';
+
   if (!isOpen) return null;
 
   const handleNextStep = () => {
     playPop();
     if (!name.trim()) {
-      setName('Little Explorer');
+      setName(isBengali ? 'অভিযাত্রী' : 'Little Explorer');
     }
     setStep(2);
   };
@@ -43,7 +45,7 @@ export default function OnboardingModal({ isOpen, onClose }) {
     } catch (err) {}
 
     const profile = createStudentProfile({
-      name: name.trim() || 'Young Explorer',
+      name: name.trim() || (isBengali ? 'অভিযাত্রী' : 'Young Explorer'),
       avatar: selectedAvatar,
       grade: selectedGrade,
       languageId: activeLanguage.id
@@ -53,7 +55,10 @@ export default function OnboardingModal({ isOpen, onClose }) {
     setStep(1);
 
     const speechLang = activeLanguage.id === 'bengali' ? 'bn-IN' : 'en-US';
-    speakText(`Welcome ${profile.name}! Let's start the adventure!`, speechLang);
+    speakText(
+      isBengali ? `স্বাগতম ${profile.name}! এসো শেখার অভিযান শুরু করি!` : `Welcome ${profile.name}! Let's start the adventure!`,
+      speechLang
+    );
   };
 
   return (
@@ -65,10 +70,10 @@ export default function OnboardingModal({ isOpen, onClose }) {
             <span style={{ fontSize: '1.5rem' }}>✨</span>
             <div>
               <h3 style={{ fontSize: '1.25rem', margin: 0 }}>
-                {step === 1 ? 'Step 1: Choose Identity' : 'Step 2: Grade & Language'}
+                {step === 1 ? t('chooseIdentity') : t('gradeAndLanguage')}
               </h3>
               <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: 0 }}>
-                {step === 1 ? 'Pick your avatar and tell us your name' : 'Customize your learning experience'}
+                {step === 1 ? t('identitySubtitle') : t('customizeSubtitle')}
               </p>
             </div>
           </div>
@@ -98,13 +103,13 @@ export default function OnboardingModal({ isOpen, onClose }) {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
             <div>
               <label style={{ display: 'block', fontWeight: '700', fontSize: '0.95rem', marginBottom: '0.4rem' }}>
-                What should Mitra call you?
+                {t('whatIsName')}
               </label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Maya, Aarav, Leo"
+                placeholder={t('namePlaceholder')}
                 autoFocus
                 style={{
                   width: '100%',
@@ -128,7 +133,7 @@ export default function OnboardingModal({ isOpen, onClose }) {
               className="btn btn-primary"
               style={{ width: '100%', borderRadius: '16px', marginTop: '0.5rem' }}
             >
-              <span>Next Step</span>
+              <span>{t('nextStep')}</span>
               <ArrowRight size={18} />
             </button>
           </div>
@@ -139,7 +144,7 @@ export default function OnboardingModal({ isOpen, onClose }) {
           <form onSubmit={handleComplete} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
             <div>
               <label style={{ display: 'block', fontWeight: '700', fontSize: '0.95rem', marginBottom: '0.4rem' }}>
-                Select Your Grade
+                {t('selectGrade')}
               </label>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.5rem' }}>
                 {GRADES.map((g) => {
@@ -174,7 +179,7 @@ export default function OnboardingModal({ isOpen, onClose }) {
 
             <div>
               <label style={{ display: 'block', fontWeight: '700', fontSize: '0.95rem', marginBottom: '0.4rem' }}>
-                Learning Language
+                {t('learningLanguage')}
               </label>
               <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                 {SUPPORTED_LANGUAGES.map((l) => {
@@ -217,7 +222,7 @@ export default function OnboardingModal({ isOpen, onClose }) {
                 style={{ flex: '1', borderRadius: '16px' }}
               >
                 <ArrowLeft size={18} />
-                <span>Back</span>
+                <span>{t('prevStep')}</span>
               </button>
 
               <button
@@ -226,7 +231,7 @@ export default function OnboardingModal({ isOpen, onClose }) {
                 style={{ flex: '2', borderRadius: '16px' }}
               >
                 <Rocket size={20} />
-                <span>Let's Play! 🚀</span>
+                <span>{t('startAdventure')}</span>
               </button>
             </div>
           </form>

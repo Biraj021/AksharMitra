@@ -4,22 +4,26 @@ import { useProfile } from '../../context/ProfileContext';
 import { useAudio } from '../../context/AudioContext';
 
 export default function BottomNav() {
-  const { currentView, setCurrentView, activeProfile } = useProfile();
+  const { currentView, setCurrentView, activeProfile, activeLanguage, t } = useProfile();
   const { playPop, speakText } = useAudio();
 
   const isScreeningDone = Boolean(activeProfile?.screeningCompleted);
+  const isBengali = activeLanguage?.id === 'bengali';
 
   const navItems = [
-    { id: 'landing', label: 'Home', icon: Home, matchViews: ['landing'], locked: !isScreeningDone },
-    { id: 'screening', label: 'Screening', icon: Compass, matchViews: ['screening'], locked: false },
-    { id: 'games', label: 'Learning', icon: BookOpen, matchViews: ['games', 'word-snapper', 'letter-hunter', 'spelling-clinic', 'spelling-traps', 'abc-fill-in'], locked: !isScreeningDone },
-    { id: 'dashboard', label: 'Insights', icon: BarChart3, matchViews: ['dashboard'], locked: !isScreeningDone }
+    { id: 'landing', label: t('home'), icon: Home, matchViews: ['landing'], locked: !isScreeningDone },
+    { id: 'screening', label: t('screening'), icon: Compass, matchViews: ['screening'], locked: false },
+    { id: 'games', label: t('learning'), icon: BookOpen, matchViews: ['games', 'word-snapper', 'letter-hunter', 'spelling-clinic', 'spelling-traps', 'abc-fill-in'], locked: !isScreeningDone },
+    { id: 'dashboard', label: t('insights'), icon: BarChart3, matchViews: ['dashboard'], locked: !isScreeningDone }
   ];
 
   const handleNav = (item) => {
     playPop();
     if (item.locked) {
-      speakText('Please finish your 3-step screening quest with Mitra first to unlock this section!', 'en-US');
+      speakText(
+        t('screeningLockedAlert'),
+        isBengali ? 'bn-IN' : 'en-US'
+      );
       setCurrentView('screening');
       return;
     }

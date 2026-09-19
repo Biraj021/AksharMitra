@@ -4,7 +4,7 @@ import { useProfile, getAvatarEmoji } from '../../context/ProfileContext';
 import { useAudio } from '../../context/AudioContext';
 
 export default function ProfileSelectorModal({ isOpen, onClose, onAddNew }) {
-  const { activeProfile, profilesList, switchProfile, logoutProfile, setCurrentView } = useProfile();
+  const { activeProfile, profilesList, switchProfile, logoutProfile, setCurrentView, t } = useProfile();
   const { playPop, playStarTwinkle } = useAudio();
 
   if (!isOpen) return null;
@@ -27,9 +27,9 @@ export default function ProfileSelectorModal({ isOpen, onClose, onAddNew }) {
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
           <div>
-            <h3 style={{ fontSize: '1.25rem', margin: 0 }}>Choose Profile</h3>
+            <h3 style={{ fontSize: '1.25rem', margin: 0 }}>{t('chooseProfile')}</h3>
             <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: 0 }}>
-              Select an explorer or switch accounts
+              {t('chooseProfileDesc')}
             </p>
           </div>
           <button
@@ -82,12 +82,12 @@ export default function ProfileSelectorModal({ isOpen, onClose, onAddNew }) {
                       </span>
                       {isCurrent && (
                         <span style={{ fontSize: '0.7rem', background: '#4F46E5', color: 'white', padding: '0.15rem 0.45rem', borderRadius: '9999px', fontWeight: 'bold' }}>
-                          Active
+                          {t('active')}
                         </span>
                       )}
                     </div>
                     <span style={{ fontSize: '0.78rem', color: '#64748B' }}>
-                      {p.gradeLabel || 'Grade 2'} • {p.stars || 15} ⭐ • {p.screeningCompleted ? 'Screened' : 'Ready'}
+                      {p.gradeLabel || 'Grade 2'} • {p.stars || 15} ⭐ • {p.screeningCompleted ? t('screened') : t('ready')}
                     </span>
                   </div>
                 </div>
@@ -109,7 +109,7 @@ export default function ProfileSelectorModal({ isOpen, onClose, onAddNew }) {
             style={{ width: '100%', borderRadius: '16px', borderColor: '#C7D2FE', color: '#4338CA', background: '#EEF2FF' }}
           >
             <UserPlus size={18} />
-            <span>+ Add New Explorer Profile</span>
+            <span>{t('addNewStudent')}</span>
           </button>
 
           <button
@@ -131,7 +131,7 @@ export default function ProfileSelectorModal({ isOpen, onClose, onAddNew }) {
             }}
           >
             <LogOut size={16} />
-            <span>Switch to Login Screen</span>
+            <span>{t('logoutSwitch')}</span>
           </button>
         </div>
       </div>

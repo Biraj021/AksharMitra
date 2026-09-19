@@ -4,10 +4,11 @@ import { useProfile, getAvatarEmoji } from '../../context/ProfileContext';
 import { useAudio } from '../../context/AudioContext';
 
 export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }) {
-  const { activeProfile, setCurrentView } = useProfile();
+  const { activeProfile, setCurrentView, activeLanguage, t } = useProfile();
   const { playPop, playStarTwinkle, speakText } = useAudio();
 
-  const studentName = activeProfile?.name || 'Aarav Sharma';
+  const isBengali = activeLanguage?.id === 'bengali';
+  const studentName = activeProfile?.name || (isBengali ? 'অভিযাত্রী' : 'Explorer');
   const studentEmoji = getAvatarEmoji(activeProfile?.avatarEmoji || activeProfile?.avatar);
   const starsCount = activeProfile?.stars || 55;
   const streakDays = activeProfile?.streak || 4;
@@ -28,7 +29,10 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
 
   const handleDailyTipAudio = () => {
     playPop();
-    speakText("Great readers make great learners. Let's explore a new story together!");
+    speakText(
+      t('dailyTipDesc'),
+      isBengali ? 'bn-IN' : 'en-US'
+    );
   };
 
   return (
@@ -58,9 +62,9 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
           <div>
             <div style={{ fontSize: '0.9rem', color: '#C7D2FE', fontWeight: 500, marginBottom: '0.2rem' }}>
-              Welcome back,
+              {t('welcomeBack')}
             </div>
-            <h2 style={{ fontSize: '1.6rem', fontWeight: 800, margin: 0, color: 'white', fontFamily: "'Lexend', sans-serif" }}>
+            <h2 style={{ fontSize: '1.6rem', fontWeight: 800, margin: 0, color: 'white' }}>
               {studentName}! {studentEmoji}
             </h2>
           </div>
@@ -90,7 +94,7 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
           }}
         >
           <Flame size={16} fill="#F97316" color="#F97316" />
-          <span>{streakDays} Day Reading Streak</span>
+          <span>{streakDays} {t('readingStreak')}</span>
         </div>
 
         {/* 3 Stat Boxes */}
@@ -107,7 +111,7 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
             <div style={{ fontSize: '1.35rem', fontWeight: 800, color: 'white' }}>
               {activeProfile?.screeningCompleted ? 1 : 0}
             </div>
-            <div style={{ fontSize: '0.72rem', color: '#C7D2FE', fontWeight: 600 }}>Screenings</div>
+            <div style={{ fontSize: '0.72rem', color: '#C7D2FE', fontWeight: 600 }}>{t('screening')}</div>
           </div>
 
           <div
@@ -120,7 +124,7 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
             }}
           >
             <div style={{ fontSize: '1.35rem', fontWeight: 800, color: 'white' }}>5m</div>
-            <div style={{ fontSize: '0.72rem', color: '#C7D2FE', fontWeight: 600 }}>Today</div>
+            <div style={{ fontSize: '0.72rem', color: '#C7D2FE', fontWeight: 600 }}>{t('learning')}</div>
           </div>
 
           <div
@@ -133,7 +137,7 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
             }}
           >
             <div style={{ fontSize: '1.35rem', fontWeight: 800, color: 'white' }}>5</div>
-            <div style={{ fontSize: '0.72rem', color: '#C7D2FE', fontWeight: 600 }}>Badges</div>
+            <div style={{ fontSize: '0.72rem', color: '#C7D2FE', fontWeight: 600 }}>{t('stars')}</div>
           </div>
         </div>
       </div>
@@ -165,7 +169,7 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
         <div style={{ flex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.35rem' }}>
             <h4 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#1E293B', margin: 0 }}>
-              Mitra's Daily Tip
+              {t('dailyTipTitle')}
             </h4>
             <button
               onClick={handleDailyTipAudio}
@@ -180,14 +184,14 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
                 justifyContent: 'center',
                 cursor: 'pointer'
               }}
-              title="Hear Daily Tip"
+              title={t('listen')}
             >
               <Volume2 size={15} color="#4F46E5" />
             </button>
           </div>
 
           <p style={{ fontSize: '0.85rem', color: '#475569', margin: '0 0 0.75rem', lineHeight: 1.45 }}>
-            Great readers make great learners. Let's explore a new story together!
+            {t('dailyTipDesc')}
           </p>
 
           <button
@@ -205,7 +209,7 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
               transition: 'all 0.15s ease'
             }}
           >
-            Try 5-Min Game
+            {t('playNow')}
           </button>
         </div>
       </div>
@@ -213,7 +217,7 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
       {/* 3. "Your Adventure Quests" Section */}
       <div>
         <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#1E293B', margin: '0 0 0.85rem' }}>
-          Your Adventure Quests
+          {t('screeningIslandTitle')}
         </h3>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
@@ -255,7 +259,7 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.2rem' }}>
                   <h4 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#1E293B', margin: 0 }}>
-                    Screening Island
+                    {t('screeningIslandTitle')}
                   </h4>
                   <span
                     style={{
@@ -267,11 +271,11 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
                       borderRadius: '9999px'
                     }}
                   >
-                    5-7 Min Game
+                    3 Rounds
                   </span>
                 </div>
                 <p style={{ fontSize: '0.82rem', color: '#64748B', margin: 0 }}>
-                  Play the Mirror Letter maze and Rhyme Clap challenge.
+                  {t('screeningIslandSubtitle')}
                 </p>
               </div>
             </div>
@@ -317,7 +321,7 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.2rem' }}>
                   <h4 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#1E293B', margin: 0 }}>
-                    Adaptive Learning Lab
+                    {t('exploreGamesTitle')}
                   </h4>
                   <span
                     style={{
@@ -329,11 +333,11 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
                       borderRadius: '9999px'
                     }}
                   >
-                    Level 1-4
+                    Games Hub
                   </span>
                 </div>
                 <p style={{ fontSize: '0.82rem', color: '#64748B', margin: 0 }}>
-                  Phonics sound matcher, multisensory tracing & gentle rewards.
+                  {t('exploreGamesSubtitle')}
                 </p>
               </div>
             </div>

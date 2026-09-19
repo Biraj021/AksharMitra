@@ -8,8 +8,9 @@ import { useProfile } from '../../context/ProfileContext';
 import { useAudio } from '../../context/AudioContext';
 
 export default function ScreeningContainer() {
-  const { activeProfile, setActiveProfile, setCurrentView, activeLanguage } = useProfile();
+  const { activeProfile, setActiveProfile, setCurrentView, activeLanguage, t } = useProfile();
   const { playPop, playStarTwinkle, speakText } = useAudio();
+  const isBengali = activeLanguage?.id === 'bengali';
 
   // 0: Roadmap Overview, 1: Mirror Letters, 2: Rhyme Beats, 3: Read Aloud, 4: Diagnostic Snapshot
   const [activeStep, setActiveStep] = useState(0);
@@ -181,11 +182,11 @@ export default function ScreeningContainer() {
           {/* Top Deep Purple Banner */}
           <div
             style={{
-              background: 'linear-gradient(135deg, #3730A3 0%, #1E1B4B 100%)',
+              background: 'linear-gradient(135deg, #4F46E5 0%, #312E81 100%)',
               color: 'white',
               borderRadius: '28px',
               padding: '1.5rem',
-              boxShadow: '0 12px 28px rgba(30, 27, 75, 0.25)'
+              boxShadow: '0 12px 28px rgba(79, 70, 229, 0.25)'
             }}
           >
             <div
@@ -204,14 +205,14 @@ export default function ScreeningContainer() {
               }}
             >
               <span>🧭</span>
-              <span>5–7 MIN PLAYFUL ASSESSMENT</span>
+              <span>{t('screeningTimeEstimate')}</span>
             </div>
 
             <h2 style={{ fontSize: '1.65rem', fontWeight: 800, color: 'white', margin: '0 0 0.4rem', fontFamily: "'Lexend', sans-serif" }}>
-              Screening Island Quests
+              {t('screeningRoadmapTitle')}
             </h2>
             <p style={{ fontSize: '0.88rem', color: '#C7D2FE', lineHeight: 1.45, margin: 0 }}>
-              Explore 3 playful diagnostic mini-games to help Mitra map your reading rhythm!
+              {t('screeningRoadmapSubtitle')}
             </p>
           </div>
 
@@ -231,10 +232,12 @@ export default function ScreeningContainer() {
               <span style={{ fontSize: '1.8rem' }}>🌟</span>
               <div>
                 <div style={{ fontWeight: 800, fontSize: '0.92rem', color: '#92400E' }}>
-                  Welcome {activeProfile?.name || 'Explorer'}! Initial Quest Required
+                  {isBengali ? `স্বাগতম ${activeProfile?.name || 'অভিযাত্রী'}! প্রাথমিক মূল্যায়ন আবশ্যক` : `Welcome ${activeProfile?.name || 'Explorer'}! Initial Quest Required`}
                 </div>
                 <div style={{ fontSize: '0.78rem', color: '#B45309', marginTop: '0.15rem', lineHeight: 1.4 }}>
-                  Complete this 3-step screening quest with Mitra to unlock full platform access, identify potential dyslexia risk indicators, and activate your custom learning path!
+                  {isBengali
+                    ? 'প্ল্যাটফর্মের সম্পূর্ণ অংশ আনলক করতে ও ডিসলেক্সিয়া সংক্রান্ত নির্দেশিত শিক্ষণ পথ সক্রিয় করতে মিত্রার সাথে ৩-ধাপের এই স্ক্রীনিং পর্বটি সম্পন্ন করুন!'
+                    : 'Complete this 3-step screening quest with Mitra to unlock full platform access, identify potential dyslexia risk indicators, and activate your custom learning path!'}
                 </div>
               </div>
             </div>
@@ -259,10 +262,10 @@ export default function ScreeningContainer() {
                 <span style={{ fontSize: '1.6rem' }}>✅</span>
                 <div>
                   <div style={{ fontWeight: 800, fontSize: '0.9rem', color: '#065F46' }}>
-                    Screening Already Completed for {activeProfile.name}!
+                    {isBengali ? `${activeProfile.name}-এর স্ক্রীনিং ইতিমধ্যে সম্পন্ন হয়েছে!` : `Screening Already Completed for ${activeProfile.name}!`}
                   </div>
                   <div style={{ fontSize: '0.75rem', color: '#047857' }}>
-                    Diagnostic profile & learning pathway are active on the dashboard.
+                    {isBengali ? 'ডায়াগনস্টিক প্রোফাইল ও নির্দেশিত শিক্ষণ পথ ড্যাশবোর্ডে সক্রিয়।' : 'Diagnostic profile & learning pathway are active on the dashboard.'}
                   </div>
                 </div>
               </div>
@@ -284,7 +287,7 @@ export default function ScreeningContainer() {
                     cursor: 'pointer'
                   }}
                 >
-                  View My Report
+                  {isBengali ? 'রিপোর্ট দেখুন' : 'View My Report'}
                 </button>
                 <button
                   onClick={() => handleStartQuest(1)}
@@ -299,7 +302,7 @@ export default function ScreeningContainer() {
                     cursor: 'pointer'
                   }}
                 >
-                  Retake Quest
+                  {isBengali ? 'আবার খেলো' : 'Retake Quest'}
                 </button>
               </div>
             </div>
@@ -322,7 +325,7 @@ export default function ScreeningContainer() {
             <div style={{ flex: 1 }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.35rem' }}>
                 <h4 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#1E293B', margin: 0 }}>
-                  Mitra says:
+                  {isBengali ? 'মিত্রা বলছে:' : 'Mitra says:'}
                 </h4>
                 <button
                   onClick={handleMitraIntroAudio}
@@ -337,7 +340,7 @@ export default function ScreeningContainer() {
                     justifyContent: 'center',
                     cursor: 'pointer'
                   }}
-                  title="Listen to instruction"
+                  title={t('listen')}
                 >
                   <Volume2 size={15} color="#4F46E5" />
                 </button>
@@ -367,7 +370,7 @@ export default function ScreeningContainer() {
                   boxShadow: '0 4px 12px rgba(79, 70, 229, 0.3)'
                 }}
               >
-                {activeProfile?.screeningCompleted ? 'Retake 3-Step Screening' : 'Start 3-Step Screening'}
+                {activeProfile?.screeningCompleted ? (isBengali ? 'আবার স্ক্রীনিং শুরু করো' : 'Retake 3-Step Screening') : (isBengali ? '৩-ধাপের স্ক্রীনিং শুরু করো 🚀' : 'Start 3-Step Screening 🚀')}
               </button>
             </div>
           </div>
@@ -375,7 +378,7 @@ export default function ScreeningContainer() {
           {/* Quest Roadmap Section */}
           <div>
             <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1E293B', margin: '0 0 0.85rem' }}>
-              Quest Roadmap
+              {isBengali ? 'অভিযানের ধাপসমূহ' : 'Quest Roadmap'}
             </h3>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
@@ -398,10 +401,10 @@ export default function ScreeningContainer() {
                 <div style={{ fontSize: '2rem' }}>🪞</div>
                 <div style={{ flex: 1 }}>
                   <h4 style={{ fontSize: '0.98rem', fontWeight: 800, color: '#1E293B', margin: '0 0 0.15rem' }}>
-                    1. Mirror Letters
+                    {t('round1Title')}
                   </h4>
                   <p style={{ fontSize: '0.8rem', color: '#64748B', margin: 0 }}>
-                    Identify mirror letters (b/d/p/q) and trace directional strokes.
+                    {t('round1Desc')}
                   </p>
                 </div>
                 <ArrowRight size={18} color="#94A3B8" />
@@ -426,10 +429,10 @@ export default function ScreeningContainer() {
                 <div style={{ fontSize: '2rem' }}>🥁</div>
                 <div style={{ flex: 1 }}>
                   <h4 style={{ fontSize: '0.98rem', fontWeight: 800, color: '#1E293B', margin: '0 0 0.15rem' }}>
-                    2. Rhyme Beats
+                    {t('round2Title')}
                   </h4>
                   <p style={{ fontSize: '0.8rem', color: '#64748B', margin: 0 }}>
-                    Auditory rhyme recognition and syllable sound matching.
+                    {t('round2Desc')}
                   </p>
                 </div>
                 <ArrowRight size={18} color="#94A3B8" />
@@ -454,10 +457,10 @@ export default function ScreeningContainer() {
                 <div style={{ fontSize: '2rem' }}>🎙️</div>
                 <div style={{ flex: 1 }}>
                   <h4 style={{ fontSize: '0.98rem', fontWeight: 800, color: '#1E293B', margin: '0 0 0.15rem' }}>
-                    3. Read Aloud
+                    {t('round3Title')}
                   </h4>
                   <p style={{ fontSize: '0.8rem', color: '#64748B', margin: 0 }}>
-                    Read a simple passage aloud to measure oral reading cadence.
+                    {t('round3Desc')}
                   </p>
                 </div>
                 <ArrowRight size={18} color="#94A3B8" />
@@ -481,10 +484,10 @@ export default function ScreeningContainer() {
             style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.8rem', padding: '0.35rem 0.85rem' }}
           >
             <ArrowLeft size={16} />
-            <span>Screening Map</span>
+            <span>{t('screeningMap')}</span>
           </button>
           <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#4F46E5', background: '#EEF2FF', padding: '0.25rem 0.75rem', borderRadius: '9999px' }}>
-            Quest {activeStep} of 3
+            {t('questWord')} {activeStep} {t('ofWord')} 3
           </span>
         </div>
       )}
@@ -510,14 +513,14 @@ export default function ScreeningContainer() {
         >
           <div style={{ fontSize: '3.5rem', marginBottom: '0.25rem' }}>🏆</div>
           <div style={{ display: 'inline-block', background: '#FEF3C7', color: '#B45309', padding: '0.3rem 1rem', borderRadius: '9999px', fontSize: '0.8rem', fontWeight: 800, marginBottom: '0.5rem' }}>
-            +35 🌟 QUEST REWARD
+            {t('questReward')}
           </div>
 
           <h2 style={{ fontSize: '1.65rem', fontWeight: 800, color: '#1E293B', margin: '0 0 0.25rem' }}>
-            Screening Complete, {activeProfile?.name || 'Aarav'}!
+            {t('screeningCompleteHeader')} {activeProfile?.name || (isBengali ? 'অনন্য' : 'Explorer')}!
           </h2>
           <p style={{ fontSize: '0.85rem', color: '#64748B', margin: '0 0 1.25rem' }}>
-            Mitra has analyzed your visual, phonological, and speech cadence signals.
+            {t('mitraAnalyzedDesc')}
           </p>
 
           {/* Screening Snapshot Card */}
@@ -532,56 +535,72 @@ export default function ScreeningContainer() {
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', paddingBottom: '0.5rem', borderBottom: '1px solid #E2E8F0' }}>
-              <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#1E293B' }}>Diagnostic Cross-Signal Snapshot</span>
+              <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#1E293B' }}>{t('diagnosticSnapshotTitle')}</span>
               <span style={{ fontSize: '0.72rem', padding: '0.2rem 0.6rem', borderRadius: '9999px', background: isTypical ? '#D1FAE5' : '#FEF3C7', color: isTypical ? '#065F46' : '#92400E', fontWeight: 700 }}>
-                {isTypical ? 'Typical Development' : 'Targeted Support Recommended'}
+                {isTypical ? t('typicalDevBadge') : t('targetedSupportBadge')}
               </span>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.82rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ color: '#64748B', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                  <span>🪞</span> Letter Orientation Accuracy:
+                  <span>🪞</span> {t('letterAccuracyLabel')}
                 </span>
                 <span style={{ fontWeight: 800, color: visualAccuracy >= 75 ? '#10B981' : '#F59E0B' }}>
-                  {visualAccuracy}% Accuracy
+                  {visualAccuracy}% {t('accuracyUnit')}
                 </span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ color: '#64748B', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                  <span>🥁</span> Phonological & Rhyme Score:
+                  <span>🥁</span> {t('phonoScoreLabel')}
                 </span>
                 <span style={{ fontWeight: 800, color: phonologicalScore >= 75 ? '#0284C7' : '#F59E0B' }}>
-                  {phonologicalScore}% Score
+                  {phonologicalScore}% {t('scoreUnit')}
                 </span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ color: '#64748B', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                  <span>🎙️</span> Oral Reading Fluency:
+                  <span>🎙️</span> {t('readingFluencyLabel')}
                 </span>
                 <span style={{ fontWeight: 800, color: '#4F46E5' }}>
-                  {readingWpm} Words / Min
+                  {readingWpm} {t('wpmUnit')}
                 </span>
               </div>
             </div>
 
             <div style={{ marginTop: '0.85rem', background: isTypical ? '#ECFDF5' : '#EEF2FF', padding: '0.85rem', borderRadius: '14px', border: isTypical ? '1.5px solid #A7F3D0' : '1.5px solid #C7D2FE' }}>
               <div style={{ fontSize: '0.78rem', fontWeight: 800, color: isTypical ? '#065F46' : '#4338CA', marginBottom: '0.25rem' }}>
-                {isTypical ? '🚀 Track A: Accelerated Literacy & Fluency Pathway' : '🧠 Track B: Multisensory Orton-Gillingham Pathway'}
+                {isTypical ? t('trackATitle') : t('trackBTitle')}
               </div>
               <div style={{ fontSize: '0.75rem', color: isTypical ? '#047857' : '#3730A3', lineHeight: 1.45 }}>
                 {isTypical ? (
-                  <>
-                    → Fast-paced word blending in <strong>Word Snapper (Speed Phonics)</strong><br />
-                    → Advanced sight-word spotter in <strong>Spelling Trap Challenge</strong><br />
-                    → Rapid alphabet sequences in <strong>ABC Train</strong>
-                  </>
+                  isBengali ? (
+                    <>
+                      → শব্দ সংগ্রাহকে দ্রুত শব্দ তৈরির অনুশীলন <strong>(Word Snapper)</strong><br />
+                      → বানান ফাঁদ চ্যালেঞ্জে বিশেষ শব্দ পরিচিতি <strong>(Spelling Traps)</strong><br />
+                      → দ্রুত বর্ণ ক্রম খেলা <strong>(ABC Train)</strong>
+                    </>
+                  ) : (
+                    <>
+                      → Fast-paced word blending in <strong>Word Snapper (Speed Phonics)</strong><br />
+                      → Advanced sight-word spotter in <strong>Spelling Trap Challenge</strong><br />
+                      → Rapid alphabet sequences in <strong>ABC Train</strong>
+                    </>
+                  )
                 ) : (
-                  <>
-                    → Practice mirror letter discrimination in <strong>Letter Hunter (b/d/p/q)</strong><br />
-                    → Tactile handwriting memory in <strong>Magic Letter Tracing</strong><br />
-                    → Look-Cover-Write training in <strong>Spelling Clinic</strong>
-                  </>
+                  isBengali ? (
+                    <>
+                      → কাছাকাছি বর্ণের পার্থক্য অনুশীলন <strong>(বর্ণ শিকারী ব/র/ক/ধ)</strong><br />
+                      → আঙুল দিয়ে স্পর্শভিত্তিক বর্ণ লেখা <strong>(জাদুকরী বর্ণাভ্যাস)</strong><br />
+                      → দেখো-ঢাকো-লেখো বানান নিরাময় <strong>(বানান ক্লিনিক)</strong>
+                    </>
+                  ) : (
+                    <>
+                      → Practice mirror letter discrimination in <strong>Letter Hunter (b/d/p/q)</strong><br />
+                      → Tactile handwriting memory in <strong>Magic Letter Tracing</strong><br />
+                      → Look-Cover-Write training in <strong>Spelling Clinic</strong>
+                    </>
+                  )
                 )}
               </div>
             </div>
@@ -612,7 +631,7 @@ export default function ScreeningContainer() {
               }}
             >
               <Sparkles size={18} />
-              <span>{isTypical ? 'Launch Track A: Fluency & Word Quests' : 'Launch Track B: Multisensory Games'}</span>
+              <span>{isTypical ? t('launchTrackA') : t('launchTrackB')}</span>
             </button>
 
             <button
@@ -638,7 +657,7 @@ export default function ScreeningContainer() {
               }}
             >
               <Award size={18} />
-              <span>View Teacher / Parent Report (PDF)</span>
+              <span>{t('viewParentReport')}</span>
             </button>
           </div>
         </div>

@@ -3,10 +3,10 @@ import { Play, Sparkles, Star, Volume2, ArrowRight } from 'lucide-react';
 import { useProfile } from '../context/ProfileContext';
 import { useAudio } from '../context/AudioContext';
 
-const LEARNING_MODULES = [
+const LEARNING_MODULES_EN = [
   {
     id: 'word-snapper',
-    label: 'Phonics Lab',
+    label: 'Word Snapper',
     icon: '🧩',
     track: 'both',
     levelLabel: 'LEVEL 1: SOUND LAB',
@@ -96,13 +96,109 @@ const LEARNING_MODULES = [
   }
 ];
 
+const LEARNING_MODULES_BN = [
+  {
+    id: 'word-snapper',
+    label: 'শব্দ সংগ্রাহক',
+    icon: '🧩',
+    track: 'both',
+    levelLabel: 'লেভেল ১: ধ্বনি ও শব্দ গঠন',
+    categoryBadge: 'মাল্টি-সেন্সরি ধ্বনিবিজ্ঞান',
+    recommendedTag: 'মৌলিক শিক্ষা',
+    title: 'শব্দ সংগ্রাহক',
+    sampleImage: '🌊',
+    sampleWord: 'জল',
+    instruction: 'প্রতিটি বর্ণের উপর ট্যাপ করে শব্দ শোনো, এবং জ · ল মিলিয়ে "জল" গঠন করো!',
+    tiles: ['জ', 'ল'],
+    description: 'পড়ন্ত বর্ণ ব্লকে শব্দ গঠন করো এবং বর্ণ-বিভ্রান্তি দূর করো!'
+  },
+  {
+    id: 'spelling-clinic',
+    label: 'বানান নিরাময়',
+    icon: '🧠',
+    track: 'track_b',
+    levelLabel: 'লেভেল ২: কঠিন বানান কৌশল',
+    categoryBadge: 'স্মৃতি ও বর্ণ সংযোগ',
+    recommendedTag: 'ট্র্যাক খ: ডিসলেক্সিয়া সহায়তা',
+    title: 'বানান নিরাময় ক্লিনিক',
+    sampleImage: '🤝',
+    sampleWord: 'বন্ধু',
+    instruction: 'মনে রাখো: ব + ন্ধ + ু মিলে তৈরি হয় "বন্ধু"!',
+    tiles: ['ব', 'ন', '্ধ', 'ু'],
+    description: 'অডিও সংকেত ও যুক্তবর্ণের সহজ কৌশলের মাধ্যমে বানান সংশোধন করো।'
+  },
+  {
+    id: 'abc-fill-in',
+    label: 'বর্ণমালা ট্রেন',
+    icon: '🔤',
+    track: 'both',
+    levelLabel: 'লেভেল ৩: বর্ণমালা মেলানো',
+    categoryBadge: 'দৃষ্টি সহায়ক কিবোর্ড',
+    recommendedTag: 'বর্ণের ক্রমধারা',
+    title: 'বর্ণমালা ট্রেন অভিযান',
+    sampleImage: '🚂',
+    sampleWord: 'অ আ [ই] ঈ',
+    instruction: 'রঙিন বর্ণ কিবোর্ড ব্যবহার করে ট্রেনের মিসিং বগি ঠিক করো!',
+    tiles: ['অ', 'আ', '?', 'ঈ'],
+    description: 'স্বরবর্ণ ও ব্যঞ্জনবর্ণের সঠিক ক্রমধারা অভ্যাস করার খেলা।'
+  },
+  {
+    id: 'spelling-traps',
+    label: 'বানান ফাঁদ',
+    icon: '⚡',
+    track: 'track_a',
+    levelLabel: 'লেভেল ৪: বিভ্রান্তিকর বানান',
+    categoryBadge: 'বানান ধাঁধা ও গতি',
+    recommendedTag: 'ট্র্যাক ক: দ্রুত পঠন',
+    title: 'বানান ফাঁদ চ্যালেঞ্জ',
+    sampleImage: '🎁',
+    sampleWord: 'পাতা vs পাতা',
+    instruction: 'বাক্যের সঠিক অর্থ অনুযায়ী সঠিক বানানটি বেছে নাও!',
+    tiles: ['প', 'া', 'ত', 'া'],
+    description: 'কাছাকাছি বানানের সূক্ষ্ম পার্থক্য চেনার আনন্দদায়ক প্রতিযোগিতা।'
+  },
+  {
+    id: 'letter-hunter',
+    label: 'বর্ণ শিকারী',
+    icon: '🎯',
+    track: 'track_b',
+    levelLabel: 'লেভেল ৫: তীক্ষ্ণ দৃষ্টি গ্রিড',
+    categoryBadge: 'দৃষ্টিগত পার্থক্য',
+    recommendedTag: 'ট্র্যাক খ: ব/র স্পষ্টতা',
+    title: 'বর্ণ শিকারী',
+    sampleImage: '🦅',
+    sampleWord: 'খোঁজো: ব',
+    instruction: 'গ্রিডের মধ্যে লুকানো বর্ণগুলো দ্রুত খুঁজে বের করে কম্বো অর্জন করো!',
+    tiles: ['ব', 'র', 'ব', 'ক'],
+    description: 'ব ও র, ক ও ধ এর মতো কাছাকাছি বর্ণের বিভ্রান্তি দূর করার সেরা খেলা।'
+  },
+  {
+    id: 'letter-tracing',
+    label: 'বর্ণাভ্যাস ট্রেসিং',
+    icon: '✍️',
+    track: 'track_b',
+    levelLabel: 'লেভেল ৬: স্পর্শভিত্তিক বর্ণাভ্যাস',
+    categoryBadge: 'হাতের কাজ ও মোটর ল্যাব',
+    recommendedTag: 'ট্র্যাক খ: স্পর্শভিত্তিক মোটর',
+    title: 'ম্যাজিক বর্ণ ট্রেসিং',
+    sampleImage: '✨',
+    sampleWord: 'আঁকো: ক',
+    instruction: 'উজ্জ্বল তারার নির্দেশিত পথ ধরে সুন্দর করে বর্ণ আঁকো!',
+    tiles: ['১', '২', '৩', '⭐'],
+    description: 'সঠিক বর্ণ অঙ্কন দিক ও নির্ভুল স্ট্রোকের সহায়ক ক্যানভাস।'
+  }
+];
+
 export default function GamesHub({ onSelectGame }) {
-  const { activeProfile, setCurrentView } = useProfile();
+  const { activeProfile, setCurrentView, activeLanguage, t } = useProfile();
   const { playPop, playStarTwinkle } = useAudio();
   const [activeModuleId, setActiveModuleId] = useState('word-snapper');
   const [trackFilter, setTrackFilter] = useState('all'); // 'all' | 'track_a' | 'track_b'
 
+  const isBengali = activeLanguage?.id === 'bengali';
+  const LEARNING_MODULES = isBengali ? LEARNING_MODULES_BN : LEARNING_MODULES_EN;
   const isAtRisk = activeProfile?.riskLevel && activeProfile.riskLevel !== 'typical';
+
   const filteredModules = LEARNING_MODULES.filter((m) => {
     if (trackFilter === 'all') return true;
     if (trackFilter === 'track_a') return m.track === 'track_a' || m.track === 'both';
@@ -158,14 +254,14 @@ export default function GamesHub({ onSelectGame }) {
           }}
         >
           <span>📖</span>
-          <span>ADAPTIVE DUAL-TRACK LEARNING LAB</span>
+          <span>{isBengali ? 'অভিযোজিত দ্বৈত-ট্র্যাক শিক্ষণ ল্যাব' : 'ADAPTIVE DUAL-TRACK LEARNING LAB'}</span>
         </div>
 
-        <h2 style={{ fontSize: '1.65rem', fontWeight: 800, color: 'white', margin: '0 0 0.4rem', fontFamily: "'Lexend', sans-serif" }}>
-          Learning Adventures
+        <h2 style={{ fontSize: '1.65rem', fontWeight: 800, color: 'white', margin: '0 0 0.4rem' }}>
+          {t('gamesHubTitle')}
         </h2>
         <p style={{ fontSize: '0.88rem', color: '#A7F3D0', lineHeight: 1.45, margin: 0 }}>
-          Universal literacy for all kids, with stealth precision for dyslexia support!
+          {t('gamesHubSubtitle')}
         </p>
       </div>
 
@@ -184,12 +280,12 @@ export default function GamesHub({ onSelectGame }) {
         <span style={{ fontSize: '1.8rem' }}>{isAtRisk ? '🦉' : '🌟'}</span>
         <div style={{ flex: 1, textAlign: 'left' }}>
           <div style={{ fontSize: '0.82rem', fontWeight: 800, color: isAtRisk ? '#92400E' : '#065F46' }}>
-            {activeProfile?.name || 'Explorer'}'s Pathway: {isAtRisk ? 'Track B (Multisensory Remediation)' : 'Track A (Fluency & Speed)'}
+            {activeProfile?.name || (isBengali ? 'অভিযাত্রী' : 'Explorer')}'s Pathway: {isAtRisk ? (isBengali ? 'ট্র্যাক খ (মাল্টি-সেন্সরি নিরাময়)' : 'Track B (Multisensory Remediation)') : (isBengali ? 'ট্র্যাক ক (পড়ার গতি ও সাবলীলতা)' : 'Track A (Fluency & Speed)')}
           </div>
           <div style={{ fontSize: '0.75rem', color: isAtRisk ? '#B45309' : '#047857', marginTop: '0.15rem' }}>
             {isAtRisk
-              ? 'Tactile letter tracing and b/d mirror discrimination highlighted.'
-              : 'Speed reading, sight-word traps, and advanced blends unlocked.'}
+              ? (isBengali ? 'স্পর্শভিত্তিক বর্ণাভ্যাস এবং ব/র এর মতো বিভ্রান্তিকর বর্ণ অনুশীলন নির্দেশিত।' : 'Tactile letter tracing and b/d mirror discrimination highlighted.')
+              : (isBengali ? 'দ্রুত পঠন, শব্দের ধাঁধা এবং উন্নত যুক্তবর্ণের খেলা আনলক করা হয়েছে।' : 'Speed reading, sight-word traps, and advanced blends unlocked.')}
           </div>
         </div>
       </div>
@@ -215,7 +311,7 @@ export default function GamesHub({ onSelectGame }) {
             transition: 'all 0.15s ease'
           }}
         >
-          🌟 All Games ({LEARNING_MODULES.length})
+          🌟 {isBengali ? 'সব গেমস' : 'All Games'} ({LEARNING_MODULES.length})
         </button>
         <button
           onClick={() => {
@@ -236,7 +332,7 @@ export default function GamesHub({ onSelectGame }) {
             transition: 'all 0.15s ease'
           }}
         >
-          🚀 Track A: Fluency
+          🚀 {isBengali ? 'ট্র্যাক ক: গতি' : 'Track A: Fluency'}
         </button>
         <button
           onClick={() => {
@@ -257,7 +353,7 @@ export default function GamesHub({ onSelectGame }) {
             transition: 'all 0.15s ease'
           }}
         >
-          🧠 Track B: Multisensory
+          🧠 {isBengali ? 'ট্র্যাক খ: নিরাময়' : 'Track B: Multisensory'}
         </button>
       </div>
 
@@ -417,7 +513,7 @@ export default function GamesHub({ onSelectGame }) {
           }}
         >
           <Play size={20} fill="white" color="white" />
-          <span>Launch {selectedModule.title}</span>
+          <span>{isBengali ? `${selectedModule.title} শুরু করো 🚀` : `Launch ${selectedModule.title} 🚀`}</span>
         </button>
       </div>
     </div>

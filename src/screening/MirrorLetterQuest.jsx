@@ -2,8 +2,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Volume2, CheckCircle, ArrowRight, RotateCcw, Sparkles, Play } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useAudio } from '../context/AudioContext';
+import { useProfile } from '../context/ProfileContext';
 
-const MIRROR_QUESTIONS = [
+const MIRROR_QUESTIONS_EN = [
   {
     id: 'mq_1',
     type: 'pick_target',
@@ -84,8 +85,92 @@ const MIRROR_QUESTIONS = [
   }
 ];
 
+const MIRROR_QUESTIONS_BN = [
+  {
+    id: 'mq_bn_1',
+    type: 'pick_target',
+    target: 'ব',
+    instruction: 'সবগুলো "ব" বর্ণে ট্যাপ করো! "র" এবং "ক" থেকে সাবধান!',
+    audioPrompt: 'সবগুলো ব বর্ণে স্পর্শ করো! র এবং ক থেকে সাবধান!',
+    options: [
+      { id: '1', char: 'ব', isTarget: true },
+      { id: '2', char: 'র', isTarget: false, errorType: 'horizontal_mirror' },
+      { id: '3', char: 'ব', isTarget: true },
+      { id: '4', char: 'ক', isTarget: false, errorType: 'vertical_inversion' },
+      { id: '5', char: 'র', isTarget: false, errorType: 'horizontal_mirror' },
+      { id: '6', char: 'ব', isTarget: true }
+    ],
+    targetCount: 3
+  },
+  {
+    id: 'mq_bn_2',
+    type: 'pick_target',
+    target: 'ক',
+    instruction: 'সঠিক "ক" বর্ণটি খুঁজে বের করো!',
+    audioPrompt: 'সঠিক ক বর্ণটি খুঁজে বের করো!',
+    options: [
+      { id: '1', char: 'ধ', isTarget: false, errorType: 'horizontal_mirror' },
+      { id: '2', char: 'ক', isTarget: true },
+      { id: '3', char: 'ব', isTarget: false, errorType: 'rotational_flip' },
+      { id: '4', char: 'ক', isTarget: true },
+      { id: '5', char: 'ফ', isTarget: false, errorType: 'vertical_inversion' },
+      { id: '6', char: 'ক', isTarget: true }
+    ],
+    targetCount: 3
+  },
+  {
+    id: 'mq_bn_3',
+    type: 'word_orientation',
+    instruction: 'ছবিটি দেখো: 💧। কোন শব্দটি "জল"?',
+    audioPrompt: 'ছবিটি দেখো। কোন শব্দটি জল?',
+    targetWord: 'জল',
+    options: [
+      { id: 'w1', word: 'লজ', isTarget: false, errorType: 'letter_order_reversal' },
+      { id: 'w2', word: 'জল', isTarget: true }
+    ]
+  },
+  {
+    id: 'mq_bn_4',
+    type: 'direction_trace',
+    targetLetter: 'ব',
+    ruleText: 'উপর থেকে সোজা নিচে নামাও, তারপর ডানপাশে বাঁকাও ➡️',
+    instruction: '"ব" বর্ণটি আঙুল দিয়ে নিখুঁতভাবে আঁকো!',
+    audioPrompt: 'ব বর্ণটি নিখুঁতভাবে আঁকো! ১ নম্বর বিন্দু থেকে শুরু করো!',
+    ghostChar: 'ব',
+    dots: [
+      { id: 1, x: 80, y: 40, label: '1 ⬇️' },
+      { id: 2, x: 80, y: 120, label: '2' },
+      { id: 3, x: 80, y: 200, label: '3 ↷' },
+      { id: 4, x: 135, y: 125, label: '4' },
+      { id: 5, x: 180, y: 162, label: '5' },
+      { id: 6, x: 135, y: 200, label: '6 ↶' },
+      { id: 7, x: 80, y: 200, label: '7' }
+    ]
+  },
+  {
+    id: 'mq_bn_5',
+    type: 'direction_trace',
+    targetLetter: 'র',
+    ruleText: '"ব" এঁকে নিচে একটি সুন্দর গোল বিন্দু দাও ⬇️',
+    instruction: '"র" বর্ণটি আঙুল দিয়ে নিখুঁতভাবে আঁকো!',
+    audioPrompt: 'র বর্ণটি নিখুঁতভাবে আঁকো!',
+    ghostChar: 'র',
+    dots: [
+      { id: 1, x: 140, y: 125, label: '1 ↶' },
+      { id: 2, x: 85, y: 162, label: '2' },
+      { id: 3, x: 140, y: 200, label: '3 ↷' },
+      { id: 4, x: 165, y: 40, label: '4 ⬇️' },
+      { id: 5, x: 165, y: 120, label: '5' },
+      { id: 6, x: 165, y: 200, label: '6' }
+    ]
+  }
+];
+
 export default function MirrorLetterQuest({ onCompleteQuest }) {
   const { playPop, playChime, playStarTwinkle, speakText } = useAudio();
+  const { activeLanguage } = useProfile();
+  const isBengali = activeLanguage?.id === 'bengali';
+  const questions = isBengali ? MIRROR_QUESTIONS_BN : MIRROR_QUESTIONS_EN;
 
   const [currentIdx, setCurrentIdx] = useState(0);
   const [selectedIds, setSelectedIds] = useState(new Set());
@@ -97,15 +182,15 @@ export default function MirrorLetterQuest({ onCompleteQuest }) {
 
   const canvasRef = useRef(null);
   const cumulativeTracingHitsRef = useRef(0);
-  const currentQ = MIRROR_QUESTIONS[currentIdx];
+  const currentQ = questions[currentIdx] || questions[0];
 
   // Auto-speak instructions on question change
   useEffect(() => {
     if (currentQ?.audioPrompt) {
-      speakText(currentQ.audioPrompt);
+      speakText(currentQ.audioPrompt, isBengali ? 'bn-IN' : 'en-US');
     }
     clearCanvas();
-  }, [currentIdx]);
+  }, [currentIdx, activeLanguage?.id]);
 
   const handlePickOption = (option) => {
     playPop();
@@ -125,7 +210,10 @@ export default function MirrorLetterQuest({ onCompleteQuest }) {
     } else {
       playChime(320);
       setMistakesCount((prev) => prev + 1);
-      speakText(`That is ${option.char || option.word}. Look closely for ${currentQ.target || currentQ.targetWord}!`);
+      const errVoice = isBengali
+        ? `এটি হলো ${option.char || option.word}। সাবধানে ${currentQ.target || currentQ.targetWord} খুঁজে নাও!`
+        : `That is ${option.char || option.word}. Look closely for ${currentQ.target || currentQ.targetWord}!`;
+      speakText(errVoice, isBengali ? 'bn-IN' : 'en-US');
     }
   };
 
@@ -275,7 +363,10 @@ export default function MirrorLetterQuest({ onCompleteQuest }) {
         setTimeout(() => {
           setIsDemonstrating(false);
           clearCanvas();
-          speakText("Now your turn! Follow the same path.");
+          speakText(
+            isBengali ? "এবার তোমার পালা! একই পথ ধরে আঁকো।" : "Now your turn! Follow the same path.",
+            isBengali ? 'bn-IN' : 'en-US'
+          );
         }, 1200);
       }
     }, 280);
@@ -286,7 +377,7 @@ export default function MirrorLetterQuest({ onCompleteQuest }) {
       cumulativeTracingHitsRef.current += tracingCollected.size;
     }
 
-    if (currentIdx + 1 < MIRROR_QUESTIONS.length) {
+    if (currentIdx + 1 < questions.length) {
       setCurrentIdx((prev) => prev + 1);
       setSelectedIds(new Set());
       setTracingCollected(new Set());
@@ -297,7 +388,7 @@ export default function MirrorLetterQuest({ onCompleteQuest }) {
       const errorScore = Math.min(100, Math.round((mistakesCount / totalPossible) * 100));
       const accuracy = Math.max(25, 100 - errorScore);
 
-      const totalTracingDots = MIRROR_QUESTIONS
+      const totalTracingDots = questions
         .filter((q) => q.type === 'direction_trace')
         .reduce((acc, q) => acc + (q.dots?.length || 0), 0);
       const adherence = Math.min(100, Math.round((cumulativeTracingHitsRef.current / Math.max(1, totalTracingDots)) * 100));
@@ -305,7 +396,7 @@ export default function MirrorLetterQuest({ onCompleteQuest }) {
       onCompleteQuest({
         questId: 'mirror_letters',
         metrics: {
-          totalQuestions: MIRROR_QUESTIONS.length,
+          totalQuestions: questions.length,
           reversalErrors: mistakesCount,
           visualReversalScore: errorScore,
           accuracy: accuracy,
@@ -335,10 +426,10 @@ export default function MirrorLetterQuest({ onCompleteQuest }) {
       {/* Question Header & Audio Prompt */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#4F46E5', background: '#EEF2FF', padding: '0.25rem 0.75rem', borderRadius: '9999px' }}>
-          Round 1: Visual Orientation ({currentIdx + 1}/{MIRROR_QUESTIONS.length})
+          {isBengali ? `পর্ব ১: বর্ণ ও দৃষ্টিগত দিক (${currentIdx + 1}/${questions.length})` : `Round 1: Visual Orientation (${currentIdx + 1}/${questions.length})`}
         </span>
         <button
-          onClick={() => speakText(currentQ.audioPrompt)}
+          onClick={() => speakText(currentQ.audioPrompt, isBengali ? 'bn-IN' : 'en-US')}
           style={{
             background: '#F8FAFC',
             border: '1px solid #CBD5E1',
@@ -610,7 +701,7 @@ export default function MirrorLetterQuest({ onCompleteQuest }) {
               boxShadow: '0 4px 14px rgba(79, 70, 229, 0.3)'
             }}
           >
-            <span>Continue</span>
+            <span>{isBengali ? 'পরবর্তী ধাপে যাও' : 'Continue'}</span>
             <ArrowRight size={18} />
           </button>
         </div>

@@ -4,7 +4,7 @@ import confetti from 'canvas-confetti';
 import { useAudio } from '../context/AudioContext';
 import { useProfile } from '../context/ProfileContext';
 
-const STORY_PROMPTS = [
+const STORY_PROMPTS_EN = [
   {
     id: 'story_1',
     title: 'The Big Dog',
@@ -37,6 +37,42 @@ const STORY_PROMPTS = [
     difficulty: 'Grade 2-3',
     targetPhonemes: ['b', 'd', 'gr', 'tr'],
     audioPrompt: 'Read this sentence out loud: Birds sing in the tall green tree.'
+  }
+];
+
+const STORY_PROMPTS_BN = [
+  {
+    id: 'story_bn_1',
+    title: 'টুটুর খেলা',
+    sentence: 'লাল জামা পরে টুটু মাঠে খেলে।',
+    words: ['লাল', 'জামা', 'পরে', 'টুটু', 'মাঠে', 'খেলে।'],
+    cleanWords: ['লাল', 'জামা', 'পরে', 'টুটু', 'মাঠে', 'খেলে'],
+    illustration: '👦 ⚽',
+    difficulty: 'গ্রেড ১-২',
+    targetPhonemes: ['ল', 'ট'],
+    audioPrompt: 'এই বাক্যটি জোরে জোরে পড়ো: লাল জামা পরে টুটু মাঠে খেলে।'
+  },
+  {
+    id: 'story_bn_2',
+    title: 'ছোট পাখি',
+    sentence: 'ছোট পাখি নীল আকাশে ডানা মেলে।',
+    words: ['ছোট', 'পাখি', 'নীল', 'আকাশে', 'ডানা', 'মেলে।'],
+    cleanWords: ['ছোট', 'পাখি', 'নীল', 'আকাশে', 'ডানা', 'মেলে'],
+    illustration: '🐦 ☁️',
+    difficulty: 'গ্রেড ২-৩',
+    targetPhonemes: ['প', 'খ'],
+    audioPrompt: 'এই বাক্যটি জোরে জোরে পড়ো: ছোট পাখি নীল আকাশে ডানা মেলে।'
+  },
+  {
+    id: 'story_bn_3',
+    title: 'সবুজ বাগান',
+    sentence: 'গাছের ডালে সবুজ পাতা দোলে।',
+    words: ['গাছের', 'ডালে', 'সবুজ', 'পাতা', 'দোলে।'],
+    cleanWords: ['গাছের', 'ডালে', 'সবুজ', 'পাতা', 'দোলে'],
+    illustration: '🌳 🍃',
+    difficulty: 'গ্রেড ২-৩',
+    targetPhonemes: ['গ', 'দ'],
+    audioPrompt: 'এই বাক্যটি জোরে জোরে পড়ো: গাছের ডালে সবুজ পাতা দোলে।'
   }
 ];
 
@@ -117,7 +153,9 @@ const isWordMatch = (spokenToken, targetWord) => {
 
 export default function ReadAloudQuest({ onCompleteQuest }) {
   const { playPop, playStarTwinkle, speakText, playChime } = useAudio();
-  const { addStars } = useProfile();
+  const { addStars, activeLanguage } = useProfile();
+  const isBengali = activeLanguage?.id === 'bengali';
+  const prompts = isBengali ? STORY_PROMPTS_BN : STORY_PROMPTS_EN;
 
   const [currentPromptIdx, setCurrentPromptIdx] = useState(0);
   const [isRecording, setIsRecording] = useState(false);
@@ -132,10 +170,10 @@ export default function ReadAloudQuest({ onCompleteQuest }) {
   const isListeningRef = useRef(false);
   const restartTimeoutRef = useRef(null);
   const completedIndicesRef = useRef(new Set());
-  const promptRef = useRef(STORY_PROMPTS[0]);
+  const promptRef = useRef(prompts[0]);
   const recordingStartTimeRef = useRef(null);
 
-  const prompt = STORY_PROMPTS[currentPromptIdx];
+  const prompt = prompts[currentPromptIdx] || prompts[0];
 
   // Stop listening helper
   const stopListening = () => {
@@ -232,7 +270,7 @@ export default function ReadAloudQuest({ onCompleteQuest }) {
   const startListeningInternal = () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      setMicError('Speech recognition not supported in this browser. Please use Chrome/Edge or Sing-Along demo!');
+      setMicError(isBengali ? 'এই ব্রাউজারে ভয়েস সাপোর্ট নেই। অনুগ্রহ করে অটো ক্যারাওকে ডেমো ব্যবহার করুন!' : 'Speech recognition not supported in this browser. Please use Chrome/Edge or Sing-Along demo!');
       runKaraokeDemo();
       return;
     }
@@ -241,7 +279,7 @@ export default function ReadAloudQuest({ onCompleteQuest }) {
       const recognition = new SpeechRecognition();
       recognition.continuous = true;
       recognition.interimResults = true;
-      recognition.lang = 'en-US';
+      recognition.lang = isBengali ? 'bn-IN' : 'en-US';
       recognition.maxAlternatives = 1;
 
       recognition.onstart = () => {
@@ -261,7 +299,7 @@ export default function ReadAloudQuest({ onCompleteQuest }) {
       recognition.onerror = (event) => {
         console.warn('SpeechRecognition error:', event.error);
         if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-          setMicError('Microphone permission blocked. Please allow mic in browser settings, or use Sing-Along demo!');
+          setMicError(isBengali ? 'মাইক্রোফোনের অনুমতি পাওয়া যায়নি। ব্রাউজার সেটিংসে অনুমতি দিন অথবা ক্যারাওকে ব্যবহার করুন।' : 'Microphone permission blocked. Please allow mic in browser settings, or use Sing-Along demo!');
           stopListening();
         }
       };
@@ -301,7 +339,7 @@ export default function ReadAloudQuest({ onCompleteQuest }) {
   // Sequential evaluation of spoken transcript against target words
   const evaluateSpokenTranscript = (transcript) => {
     if (!transcript) return;
-    const tokens = transcript.toLowerCase().replace(/[^a-z0-9 ]/g, '').split(/\s+/).filter(Boolean);
+    const tokens = transcript.toLowerCase().replace(/[^a-z0-9\u0980-\u09FF ]/g, '').split(/\s+/).filter(Boolean);
     if (!tokens.length) return;
 
     const currentPrompt = promptRef.current;
@@ -325,7 +363,7 @@ export default function ReadAloudQuest({ onCompleteQuest }) {
           break;
         }
       }
-      if (ptrZ < cleanTargets.length && isWordMatch(token, cleanTargets[ptrZ])) {
+      if (ptrZ < cleanTargets.length && (isWordMatch(token, cleanTargets[ptrZ]) || cleanTargets[ptrZ].includes(token) || token.includes(cleanTargets[ptrZ]))) {
         matchFromZero.add(ptrZ);
         ptrZ++;
       }
@@ -342,7 +380,7 @@ export default function ReadAloudQuest({ onCompleteQuest }) {
           break;
         }
       }
-      if (ptrU < cleanTargets.length && isWordMatch(token, cleanTargets[ptrU])) {
+      if (ptrU < cleanTargets.length && (isWordMatch(token, cleanTargets[ptrU]) || cleanTargets[ptrU].includes(token) || token.includes(cleanTargets[ptrU]))) {
         matchFromUncompleted.add(ptrU);
         ptrU++;
       }
@@ -374,7 +412,7 @@ export default function ReadAloudQuest({ onCompleteQuest }) {
   // Interactive Tap-to-Read Word Card
   const handleWordClick = (word, idx) => {
     playPop();
-    speakText(word, 'en-US');
+    speakText(word, isBengali ? 'bn-IN' : 'en-US');
     if (!recordingStartTimeRef.current) {
       recordingStartTimeRef.current = Date.now();
     }
@@ -413,12 +451,12 @@ export default function ReadAloudQuest({ onCompleteQuest }) {
   useEffect(() => {
     stopListening();
     resetReadingState();
-    speakText(prompt.audioPrompt, 'en-US');
+    speakText(prompt.audioPrompt, isBengali ? 'bn-IN' : 'en-US');
 
     return () => {
       stopListening();
     };
-  }, [currentPromptIdx]);
+  }, [currentPromptIdx, activeLanguage?.id]);
 
   // Teardown on unmount
   useEffect(() => {
@@ -436,7 +474,7 @@ export default function ReadAloudQuest({ onCompleteQuest }) {
   const handleNextPrompt = () => {
     playPop();
     stopListening();
-    if (currentPromptIdx < STORY_PROMPTS.length - 1) {
+    if (currentPromptIdx < prompts.length - 1) {
       setCurrentPromptIdx(currentPromptIdx + 1);
     } else {
       if (onCompleteQuest) {
@@ -448,19 +486,11 @@ export default function ReadAloudQuest({ onCompleteQuest }) {
           const accuracy = Math.min(100, Math.max(10, Math.round((completedCount / totalWords) * 100)));
 
           // Compute WPM from elapsed time — if they tapped quickly it shows higher fluency
-          const elapsedSeconds = recordingStartTimeRef.current
-            ? Math.max(4, (Date.now() - recordingStartTimeRef.current) / 1000)
-            : null;
-
-          let finalWpm;
-          if (elapsedSeconds && completedCount > 0) {
-            // Real elapsed-time based WPM
-            finalWpm = Math.min(110, Math.max(15, Math.round((completedCount / (elapsedSeconds / 60)))));
-          } else if (completedCount === 0) {
-            // No words tapped at all — genuinely low WPM (child did not attempt)
-            finalWpm = Math.floor(Math.random() * 15) + 15; // 15–30 WPM range (struggling)
-          } else {
-            // Some words tapped but no timer — estimate proportionally
+          const elapsedSec = recordingStartTimeRef.current
+            ? Math.max(3, (Date.now() - recordingStartTimeRef.current) / 1000)
+            : 15;
+          let finalWpm = Math.round((completedCount / (elapsedSec / 60)));
+          if (finalWpm < 15) {
             finalWpm = Math.round(20 + (accuracy / 100) * 40); // 20–60 WPM scaled to accuracy
           }
 
@@ -497,16 +527,18 @@ export default function ReadAloudQuest({ onCompleteQuest }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <span style={{ fontSize: '1.5rem' }}>📖</span>
           <div style={{ textAlign: 'left' }}>
-            <h3 style={{ fontSize: '1.2rem', margin: 0, color: '#1E293B' }}>Quest 3: Read-Aloud Fluency</h3>
+            <h3 style={{ fontSize: '1.2rem', margin: 0, color: '#1E293B' }}>
+              {isBengali ? 'পর্ব ৩: উচ্চস্বরে পড়া ও গতি' : 'Quest 3: Read-Aloud Fluency'}
+            </h3>
             <p style={{ fontSize: '0.78rem', color: '#64748B', margin: 0 }}>
-              Story {currentPromptIdx + 1} of {STORY_PROMPTS.length} • {prompt.title}
+              {isBengali ? `গল্প ${currentPromptIdx + 1} / ${prompts.length} • ${prompt.title}` : `Story ${currentPromptIdx + 1} of ${prompts.length} • ${prompt.title}`}
             </p>
           </div>
         </div>
 
         {/* Story Selector Pills */}
         <div style={{ display: 'flex', gap: '0.3rem' }}>
-          {STORY_PROMPTS.map((st, idx) => (
+          {prompts.map((st, idx) => (
             <button
               key={st.id}
               onClick={() => {
@@ -525,7 +557,7 @@ export default function ReadAloudQuest({ onCompleteQuest }) {
                 cursor: 'pointer'
               }}
             >
-              Story {idx + 1}
+              {isBengali ? `গল্প ${idx + 1}` : `Story ${idx + 1}`}
             </button>
           ))}
         </div>
@@ -558,7 +590,7 @@ export default function ReadAloudQuest({ onCompleteQuest }) {
                 onClick={() => handleWordClick(word, idx)}
                 style={{
                   fontSize: '1.45rem',
-                  fontFamily: "'Lexend', sans-serif",
+                  fontFamily: isBengali ? 'var(--font-bengali)' : "'Lexend', sans-serif",
                   fontWeight: '700',
                   color: isCompleted ? '#065F46' : isTarget ? '#92400E' : '#1E293B',
                   background: isCompleted ? '#D1FAE5' : isTarget ? '#FEF3C7' : '#FFFFFF',
@@ -573,7 +605,7 @@ export default function ReadAloudQuest({ onCompleteQuest }) {
                   gap: '0.35rem',
                   transition: 'all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1)'
                 }}
-                title="Click to hear and mark this word"
+                title={isBengali ? 'শুনতে ও চিহ্নিত করতে ট্যাপ করো' : 'Click to hear and mark this word'}
               >
                 <span>{word}</span>
                 {isCompleted ? (
@@ -600,12 +632,12 @@ export default function ReadAloudQuest({ onCompleteQuest }) {
               margin: '0 auto 0.5rem'
             }}
           >
-            🎙️ <strong>Heard:</strong> "{liveTranscript}"
+            🎙️ <strong>{isBengali ? 'শোনা গেছে:' : 'Heard:'}</strong> "{liveTranscript}"
           </div>
         )}
 
         <p style={{ fontSize: '0.78rem', color: '#64748B', margin: 0 }}>
-          💡 <em>Tip: Speak into the mic, or tap each word to hear and advance!</em>
+          💡 <em>{isBengali ? 'পরামর্শ: মাইক্রোফোনে পড়ো, অথবা প্রতিটি শব্দে স্পর্শ করে এগিয়ে যাও!' : 'Tip: Speak into the mic, or tap each word to hear and advance!'}</em>
         </p>
       </div>
 
@@ -638,7 +670,7 @@ export default function ReadAloudQuest({ onCompleteQuest }) {
             }}
           >
             <Mic size={24} />
-            <span>{currentWordIdx > 0 && currentWordIdx < prompt.words.length ? 'Resume Reading' : 'Tap & Read Aloud'}</span>
+            <span>{currentWordIdx > 0 && currentWordIdx < prompt.words.length ? (isBengali ? 'পুনরায় পড়া শুরু করো' : 'Resume Reading') : (isBengali ? 'মাইক্রোফোনে জোরে পড়ো' : 'Tap & Read Aloud')}</span>
           </button>
         ) : (
           <button
@@ -659,7 +691,7 @@ export default function ReadAloudQuest({ onCompleteQuest }) {
             }}
           >
             <MicOff size={24} />
-            <span>Listening... Tap to Pause</span>
+            <span>{isBengali ? 'শুনছি... থামাতে স্পর্শ করো' : 'Listening... Tap to Pause'}</span>
           </button>
         )}
 
@@ -682,7 +714,7 @@ export default function ReadAloudQuest({ onCompleteQuest }) {
           }}
         >
           <Play size={14} />
-          <span>Karaoke Sing-Along (Auto Demo)</span>
+          <span>{isBengali ? 'ক্যারাওকে একসাথে পড়ো (অটো ডেমো)' : 'Karaoke Sing-Along (Auto Demo)'}</span>
         </button>
       </div>
 
@@ -705,15 +737,15 @@ export default function ReadAloudQuest({ onCompleteQuest }) {
             <CheckCircle size={22} color="#059669" />
             <div style={{ textAlign: 'left' }}>
               <div style={{ fontWeight: '800', color: '#065F46', fontSize: '1rem' }}>
-                Wonderful Reading! (+5 ⭐)
+                {isBengali ? 'চমৎকার পড়া! (+৫ ⭐)' : 'Wonderful Reading! (+5 ⭐)'}
               </div>
               <div style={{ fontSize: '0.75rem', color: '#047857' }}>
-                Fluency Score: {readingResult.accuracy}%
+                {isBengali ? `সাবলীলতা স্কোর: ${readingResult.accuracy}%` : `Fluency Score: ${readingResult.accuracy}%`}
               </div>
             </div>
           </div>
           <div style={{ fontWeight: '800', color: '#047857', fontSize: '1.1rem' }}>
-            {readingResult.wpm} WPM
+            {readingResult.wpm} {isBengali ? 'শব্দ/মিনিট' : 'WPM'}
           </div>
         </div>
       )}
@@ -735,7 +767,7 @@ export default function ReadAloudQuest({ onCompleteQuest }) {
           }}
         >
           <RotateCcw size={15} />
-          <span>Reset</span>
+          <span>{isBengali ? 'পুনরায় শুরু' : 'Reset'}</span>
         </button>
 
         <button
@@ -753,7 +785,7 @@ export default function ReadAloudQuest({ onCompleteQuest }) {
             fontWeight: 'bold'
           }}
         >
-          <span>{currentPromptIdx < STORY_PROMPTS.length - 1 ? 'Next Story' : 'Finish Reading Quest'}</span>
+          <span>{currentPromptIdx < prompts.length - 1 ? (isBengali ? 'পরবর্তী গল্প' : 'Next Story') : (isBengali ? 'পড়ার পর্ব সম্পন্ন' : 'Finish Reading Quest')}</span>
           <ArrowRight size={16} />
         </button>
       </div>
