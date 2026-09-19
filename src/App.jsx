@@ -28,6 +28,9 @@ export default function App() {
   // Stable key: changing language resets game session cleanly
   const langKey = activeLanguage?.id || 'english';
 
+  // Mandatory gating: new or unscreened profiles must complete screening quest first
+  const isScreeningGated = activeProfile && !activeProfile.screeningCompleted && currentView !== 'login';
+
   return (
     <div className="app-container" style={{ paddingBottom: '75px', minHeight: '100vh' }}>
       {/* Universal Header */}
@@ -36,31 +39,34 @@ export default function App() {
       {/* Main Dynamic Viewport */}
       <main className="main-content">
         {(currentView === 'login' || !activeProfile) && <LoginPage />}
-        {activeProfile && currentView === 'landing' && (
+        {isScreeningGated && <ScreeningContainer key={`screening-${langKey}`} />}
+        {!isScreeningGated && activeProfile && currentView === 'landing' && (
           <LandingHero
             onStartOnboarding={() => setShowOnboarding(true)}
             onOpenProfileSelector={() => setShowProfileSelector(true)}
           />
         )}
-        {activeProfile && currentView === 'screening' && <ScreeningContainer key={`screening-${langKey}`} />}
-        {activeProfile && currentView === 'dashboard' && <CompanionDashboard />}
-        {activeProfile && currentView === 'games' && <GamesHub onSelectGame={(gameId) => setCurrentView(gameId)} />}
-        {activeProfile && currentView === 'word-snapper' && (
+        {!isScreeningGated && activeProfile && currentView === 'screening' && (
+          <ScreeningContainer key={`screening-${langKey}`} />
+        )}
+        {!isScreeningGated && activeProfile && currentView === 'dashboard' && <CompanionDashboard />}
+        {!isScreeningGated && activeProfile && currentView === 'games' && <GamesHub onSelectGame={(gameId) => setCurrentView(gameId)} />}
+        {!isScreeningGated && activeProfile && currentView === 'word-snapper' && (
           <WordSnapper key={`ws-${langKey}`} onBack={() => setCurrentView('games')} />
         )}
-        {activeProfile && currentView === 'letter-hunter' && (
+        {!isScreeningGated && activeProfile && currentView === 'letter-hunter' && (
           <LetterHunter key={`lh-${langKey}`} onBack={() => setCurrentView('games')} />
         )}
-        {activeProfile && currentView === 'spelling-clinic' && (
+        {!isScreeningGated && activeProfile && currentView === 'spelling-clinic' && (
           <SpellingClinic key={`sc-${langKey}`} onBack={() => setCurrentView('games')} />
         )}
-        {activeProfile && currentView === 'spelling-traps' && (
+        {!isScreeningGated && activeProfile && currentView === 'spelling-traps' && (
           <SpellingTrapChallenge key={`st-${langKey}`} onBack={() => setCurrentView('games')} />
         )}
-        {activeProfile && currentView === 'abc-fill-in' && (
+        {!isScreeningGated && activeProfile && currentView === 'abc-fill-in' && (
           <AbcFillIn key={`af-${langKey}`} onBack={() => setCurrentView('games')} />
         )}
-        {activeProfile && currentView === 'letter-tracing' && (
+        {!isScreeningGated && activeProfile && currentView === 'letter-tracing' && (
           <LetterTracingQuest key={`lt-${langKey}`} onBack={() => setCurrentView('games')} />
         )}
       </main>

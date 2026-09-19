@@ -33,7 +33,7 @@ export default function Header({ onOpenProfileSelector }) {
         <div
           onClick={() => {
             playPop();
-            setCurrentView('landing');
+            setCurrentView(activeProfile && !activeProfile.screeningCompleted ? 'screening' : 'landing');
           }}
           style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}
         >

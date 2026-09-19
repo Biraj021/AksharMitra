@@ -1,22 +1,29 @@
 import React from 'react';
-import { Home, Compass, BookOpen, BarChart3 } from 'lucide-react';
+import { Home, Compass, BookOpen, BarChart3, Lock } from 'lucide-react';
 import { useProfile } from '../../context/ProfileContext';
 import { useAudio } from '../../context/AudioContext';
 
 export default function BottomNav() {
-  const { currentView, setCurrentView } = useProfile();
-  const { playPop } = useAudio();
+  const { currentView, setCurrentView, activeProfile } = useProfile();
+  const { playPop, speakText } = useAudio();
+
+  const isScreeningDone = Boolean(activeProfile?.screeningCompleted);
 
   const navItems = [
-    { id: 'landing', label: 'Home', icon: Home, matchViews: ['landing'] },
-    { id: 'screening', label: 'Screening', icon: Compass, matchViews: ['screening'] },
-    { id: 'games', label: 'Learning', icon: BookOpen, matchViews: ['games', 'word-snapper', 'letter-hunter', 'spelling-clinic', 'spelling-traps', 'abc-fill-in'] },
-    { id: 'dashboard', label: 'Insights', icon: BarChart3, matchViews: ['dashboard'] }
+    { id: 'landing', label: 'Home', icon: Home, matchViews: ['landing'], locked: !isScreeningDone },
+    { id: 'screening', label: 'Screening', icon: Compass, matchViews: ['screening'], locked: false },
+    { id: 'games', label: 'Learning', icon: BookOpen, matchViews: ['games', 'word-snapper', 'letter-hunter', 'spelling-clinic', 'spelling-traps', 'abc-fill-in'], locked: !isScreeningDone },
+    { id: 'dashboard', label: 'Insights', icon: BarChart3, matchViews: ['dashboard'], locked: !isScreeningDone }
   ];
 
-  const handleNav = (id) => {
+  const handleNav = (item) => {
     playPop();
-    setCurrentView(id);
+    if (item.locked) {
+      speakText('Please finish your 3-step screening quest with Mitra first to unlock this section!', 'en-US');
+      setCurrentView('screening');
+      return;
+    }
+    setCurrentView(item.id);
   };
 
   return (
@@ -42,11 +49,13 @@ export default function BottomNav() {
       {navItems.map((item) => {
         const Icon = item.icon;
         const isActive = item.matchViews.includes(currentView);
+        const isLocked = item.locked;
 
         return (
           <button
             key={item.id}
-            onClick={() => handleNav(item.id)}
+            onClick={() => handleNav(item)}
+            title={isLocked ? 'Complete 3-step screening quest first' : item.label}
             style={{
               background: 'transparent',
               border: 'none',
@@ -57,15 +66,32 @@ export default function BottomNav() {
               gap: '3px',
               padding: '6px 16px',
               cursor: 'pointer',
-              color: isActive ? '#4F46E5' : '#94A3B8',
+              color: isActive ? '#4F46E5' : isLocked ? '#CBD5E1' : '#94A3B8',
               fontWeight: isActive ? '700' : '500',
               fontSize: '0.75rem',
               transition: 'all 0.2s ease',
               position: 'relative',
-              borderRadius: '12px'
+              borderRadius: '12px',
+              opacity: isLocked ? 0.65 : 1
             }}
           >
-            <Icon size={22} strokeWidth={isActive ? 2.5 : 2} color={isActive ? '#4F46E5' : '#94A3B8'} />
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Icon size={22} strokeWidth={isActive ? 2.5 : 2} color={isActive ? '#4F46E5' : isLocked ? '#CBD5E1' : '#94A3B8'} />
+              {isLocked && (
+                <Lock
+                  size={10}
+                  color="#94A3B8"
+                  style={{
+                    position: 'absolute',
+                    top: '-3px',
+                    right: '-7px',
+                    background: 'white',
+                    borderRadius: '50%',
+                    padding: '1px'
+                  }}
+                />
+              )}
+            </div>
             <span>{item.label}</span>
             {isActive && (
               <div

@@ -215,6 +215,31 @@ export default function ScreeningContainer() {
             </p>
           </div>
 
+          {/* Unscreened Initial Onboarding Banner */}
+          {!activeProfile?.screeningCompleted && (
+            <div
+              style={{
+                background: 'linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%)',
+                border: '1.5px solid #F59E0B',
+                borderRadius: '20px',
+                padding: '1rem 1.25rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.85rem'
+              }}
+            >
+              <span style={{ fontSize: '1.8rem' }}>🌟</span>
+              <div>
+                <div style={{ fontWeight: 800, fontSize: '0.92rem', color: '#92400E' }}>
+                  Welcome {activeProfile?.name || 'Explorer'}! Initial Quest Required
+                </div>
+                <div style={{ fontSize: '0.78rem', color: '#B45309', marginTop: '0.15rem', lineHeight: 1.4 }}>
+                  Complete this 3-step screening quest with Mitra to unlock full platform access, identify potential dyslexia risk indicators, and activate your custom learning path!
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Screening Completed Notification Guard */}
           {activeProfile?.screeningCompleted && (
             <div

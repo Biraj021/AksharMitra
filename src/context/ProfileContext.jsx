@@ -106,7 +106,7 @@ export function ProfileProvider({ children }) {
     if (found) {
       setActiveProfile({ ...found });
       setLanguageById(found.language || 'hindi');
-      setCurrentView('landing');
+      setCurrentView(found.screeningCompleted ? 'landing' : 'screening');
       return found;
     }
     return null;
