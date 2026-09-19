@@ -1,12 +1,13 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>" />
+    <link rel="manifest" href="/manifest.json" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="theme-color" content="#4F46E5" />
-    <meta name="description" content="AksharMitra - Gamified, Script-Native Dyslexia Screening and Assistive Learning for Indian Languages" />
-    <title>AksharMitra — अक्षर मित्र | Gamified Learning & Screening</title>
+    <meta name="description" content="AksharMitra - Gamified, Script-Native Dyslexia Screening and Assistive Learning Companion" />
+    <title>AksharMitra | Gamified Phonics & Dyslexia Screening</title>
     
     <!-- Preconnect to Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -16,5 +17,14 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch((err) => {
+            console.log('SW registration skipped:', err);
+          });
+        });
+      }
+    </script>
   </body>
 </html>
