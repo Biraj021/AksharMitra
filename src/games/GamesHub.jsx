@@ -91,7 +91,7 @@ export default function GamesHub({ onSelectGame }) {
             gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
             gap: '1.25rem',
             width: '100%',
-            maxWidth: '680px'
+            maxWidth: '960px'
           }}
         >
           {/* Game 1: Word Snapper */}
@@ -179,6 +179,138 @@ export default function GamesHub({ onSelectGame }) {
             >
               <Play size={18} />
               <span>{isBengali ? 'বর্ণ শিকার শুরু করো' : 'Play Letter Hunter'}</span>
+            </button>
+          </div>
+
+          {/* Game 3: Spelling Clinic */}
+          <div
+            className="glass-card"
+            style={{
+              padding: '1.75rem 1.5rem',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              gap: '1.25rem',
+              borderRadius: '22px',
+              border: '2px solid #E9D5FF',
+              background: 'linear-gradient(180deg, #FFFFFF 0%, #FAF5FF 100%)',
+              cursor: 'pointer',
+              transition: 'all 0.25s ease'
+            }}
+            onClick={() => handleLaunchGame('spelling-clinic')}
+          >
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
+                <div style={{ fontSize: '2.5rem', background: '#F3E8FF', width: '56px', height: '56px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  🧠
+                </div>
+                <span className="badge badge-purple">{isBengali ? 'বানান ক্লিনিক' : 'Look-Cover-Write'}</span>
+              </div>
+
+              <h3 style={{ fontSize: '1.35rem', margin: '0 0 0.4rem', color: '#7E22CE' }}>
+                {isBengali ? 'বানান ক্লিনিক (Spelling Clinic)' : 'Spelling Clinic'}
+              </h3>
+              <p style={{ fontSize: '0.9rem', color: '#64748B', lineHeight: 1.5, margin: 0 }}>
+                {isBengali
+                  ? 'স্মৃতিসহায়িকা এবং ৪-লাইনের হস্তলিপি ক্যানভাসের মাধ্যমে জটিল বানানের ভুল দূর করো।'
+                  : 'Master tricky words with memorable mnemonic hooks, Look-Cover-Write training, and a 4-line handwriting canvas!'}
+              </p>
+            </div>
+
+            <button
+              className="btn btn-primary"
+              style={{ width: '100%', borderRadius: '9999px', padding: '0.7rem', background: '#9333EA', borderColor: '#9333EA' }}
+            >
+              <Play size={18} />
+              <span>{isBengali ? 'ক্লিনিক শুরু করো' : 'Enter Spelling Clinic'}</span>
+            </button>
+          </div>
+
+          {/* Game 4: Spelling Trap Challenge */}
+          <div
+            className="glass-card"
+            style={{
+              padding: '1.75rem 1.5rem',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              gap: '1.25rem',
+              borderRadius: '22px',
+              border: '2px solid #FECDD3',
+              background: 'linear-gradient(180deg, #FFFFFF 0%, #FFF1F2 100%)',
+              cursor: 'pointer',
+              transition: 'all 0.25s ease'
+            }}
+            onClick={() => handleLaunchGame('spelling-traps')}
+          >
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
+                <div style={{ fontSize: '2.5rem', background: '#FFE4E6', width: '56px', height: '56px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  ⚡
+                </div>
+                <span className="badge badge-rose">{isBengali ? 'বর্ণ-বদল ফাঁদ' : 'Transposition Trap'}</span>
+              </div>
+
+              <h3 style={{ fontSize: '1.35rem', margin: '0 0 0.4rem', color: '#BE123C' }}>
+                {isBengali ? 'বানান ফাঁদ চ্যালেঞ্জ (Spelling Traps)' : 'Spelling Trap Challenge'}
+              </h3>
+              <p style={{ fontSize: '0.9rem', color: '#64748B', lineHeight: 1.5, margin: 0 }}>
+                {isBengali
+                  ? 'FROM বনাম FORM এর মতো অক্ষর উল্টে যাওয়া ফাঁদগুলো চটজলদি চিহ্নিত করো।'
+                  : 'Spot sneaky letter-swap traps like FROM vs FORM, PLAY vs PALY, and GIRL vs GRIL in fun sentence quests!'}
+              </p>
+            </div>
+
+            <button
+              className="btn btn-primary"
+              style={{ width: '100%', borderRadius: '9999px', padding: '0.7rem', background: '#E11D48', borderColor: '#E11D48' }}
+            >
+              <Play size={18} />
+              <span>{isBengali ? 'ফাঁদ চ্যালেঞ্জ শুরু' : 'Play Trap Challenge'}</span>
+            </button>
+          </div>
+
+          {/* Game 5: ABC Fill-In */}
+          <div
+            className="glass-card"
+            style={{
+              padding: '1.75rem 1.5rem',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              gap: '1.25rem',
+              borderRadius: '22px',
+              border: '2px solid #A7F3D0',
+              background: 'linear-gradient(180deg, #FFFFFF 0%, #ECFDF5 100%)',
+              cursor: 'pointer',
+              transition: 'all 0.25s ease'
+            }}
+            onClick={() => handleLaunchGame('abc-fill-in')}
+          >
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
+                <div style={{ fontSize: '2.5rem', background: '#D1FAE5', width: '56px', height: '56px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  🚂
+                </div>
+                <span className="badge badge-emerald">{isBengali ? 'বর্ণমালা ট্রেন' : 'Alphabet Train'}</span>
+              </div>
+
+              <h3 style={{ fontSize: '1.35rem', margin: '0 0 0.4rem', color: '#047857' }}>
+                {isBengali ? 'এবিসি পূরণ করো (ABC Fill-In)' : 'ABC Fill-In'}
+              </h3>
+              <p style={{ fontSize: '0.9rem', color: '#64748B', lineHeight: 1.5, margin: 0 }}>
+                {isBengali
+                  ? 'ট্রেনের হারানো বগিগুলোতে সঠিক বর্ণ বসাও এবং বিশেষ ভিজ্যুয়াল কিবোর্ডে অনুশীলন করো।'
+                  : 'Restore missing alphabet train wagons using the dyslexia-friendly keyboard with color-coded vowels and mirror guides!'}
+              </p>
+            </div>
+
+            <button
+              className="btn btn-emerald"
+              style={{ width: '100%', borderRadius: '9999px', padding: '0.7rem' }}
+            >
+              <Play size={18} />
+              <span>{isBengali ? 'ট্রেন খেলা শুরু করো' : 'Play ABC Fill-In'}</span>
             </button>
           </div>
         </div>

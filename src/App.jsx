@@ -5,6 +5,9 @@ import ScreeningContainer from './components/screening/ScreeningContainer';
 import GamesHub from './games/GamesHub';
 import WordSnapper from './games/WordSnapper';
 import LetterHunter from './games/LetterHunter';
+import SpellingClinic from './games/SpellingClinic';
+import SpellingTrapChallenge from './games/SpellingTrapChallenge';
+import AbcFillIn from './games/AbcFillIn';
 import OnboardingModal from './components/auth/OnboardingModal';
 import ProfileSelectorModal from './components/auth/ProfileSelectorModal';
 import { useProfile } from './context/ProfileContext';
@@ -37,6 +40,15 @@ export default function App() {
         )}
         {currentView === 'letter-hunter' && (
           <LetterHunter key={`lh-${langKey}`} onBack={() => setCurrentView('games')} />
+        )}
+        {currentView === 'spelling-clinic' && (
+          <SpellingClinic key={`sc-${langKey}`} onBack={() => setCurrentView('games')} />
+        )}
+        {currentView === 'spelling-traps' && (
+          <SpellingTrapChallenge key={`st-${langKey}`} onBack={() => setCurrentView('games')} />
+        )}
+        {currentView === 'abc-fill-in' && (
+          <AbcFillIn key={`af-${langKey}`} onBack={() => setCurrentView('games')} />
         )}
       </main>
 
