@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Award, CheckCircle, AlertTriangle, Printer, Sparkles, BookOpen, Volume2, Shield, Zap, Target, Mic, Music, Flame, Star } from 'lucide-react';
+import { ArrowLeft, Award, CheckCircle, AlertTriangle, Printer, Sparkles, BookOpen, Volume2, Shield, Zap, Target, Mic, Music, Flame, Star, MessageSquare, Calendar, ArrowRight, Check } from 'lucide-react';
 import { useProfile, getAvatarEmoji } from '../../context/ProfileContext';
 import { useAudio } from '../../context/AudioContext';
+import ParentObservationModal from './ParentObservationModal';
+import { hasParentFeedbackData } from '../../utils/parentFeedbackModel';
+import { getChildRecommendation } from '../../utils/adaptiveLearningStrategy';
 
 export default function CompanionDashboard() {
-  const { activeProfile, setCurrentView, activeLanguage, t } = useProfile();
+  const { activeProfile, setCurrentView, activeLanguage, t, updateParentFeedback, calculateLearningProfile } = useProfile();
   const { playPop, playStarTwinkle, speakText } = useAudio();
   const [viewMode, setViewMode] = useState('educator'); // 'kid' | 'educator'
+  const [showObservationModal, setShowObservationModal] = useState(false);
+
 
   const handleBack = () => {
     playPop();
@@ -42,6 +47,24 @@ export default function CompanionDashboard() {
   const isElevated = profile.riskLevel && profile.riskLevel !== 'typical';
   const metrics = profile.screeningMetrics || {};
 
+  const learningProfile = profile.learningProfile || (calculateLearningProfile ? calculateLearningProfile(profile) : null);
+  const parentFeedback = profile.parentFeedback;
+  const hasFeedback = hasParentFeedbackData(parentFeedback);
+  const parentSignals = learningProfile?.parentObservation || {};
+
+  const getStatusBadge = (status) => {
+    if (status === 'needs_support') {
+      return { label: t('statusNeedsSupport'), bg: '#FEE2E2', color: '#991B1B', border: '#FCA5A5', dot: '🔴' };
+    }
+    if (status === 'developing') {
+      return { label: t('statusDeveloping'), bg: '#FEF3C7', color: '#92400E', border: '#FCD34D', dot: '🟡' };
+    }
+    if (status === 'comfortable') {
+      return { label: t('statusComfortable'), bg: '#DCFCE7', color: '#166534', border: '#86EFAC', dot: '🟢' };
+    }
+    return { label: t('statusNotObserved'), bg: '#F1F5F9', color: '#64748B', border: '#E2E8F0', dot: '⚪' };
+  };
+
   const handleMitraCoachAudio = () => {
     playPop();
     const coachText = isElevated
@@ -49,6 +72,7 @@ export default function CompanionDashboard() {
       : (isBengali ? t('mitraCoachDescTypical') : t('mitraCoachDescTypical'));
     speakText(coachText, isBengali ? 'bn-IN' : 'en-US');
   };
+
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', maxWidth: '780px', margin: '0 auto', width: '100%' }}>
@@ -347,52 +371,65 @@ export default function CompanionDashboard() {
               </div>
 
               {/* Kid Mission Launcher Action Card */}
-              <div
-                style={{
-                  background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
-                  borderRadius: '24px',
-                  padding: '1.25rem 1.5rem',
-                  color: 'white',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  flexWrap: 'wrap',
-                  gap: '1rem',
-                  boxShadow: '0 8px 20px rgba(16, 185, 129, 0.25)'
-                }}
-              >
-                <div>
-                  <h4 style={{ fontSize: '1.1rem', fontWeight: 900, margin: '0 0 0.2rem', color: 'white' }}>
-                    {t('missionTodayTitle')}
-                  </h4>
-                  <p style={{ fontSize: '0.8rem', color: '#D1FAE5', margin: 0 }}>
-                    {isElevated
-                      ? (isBengali ? 'বর্ণ শিকারী ও বানান নিরাময় খেলে নতুন স্টার আনলক করো!' : 'Play Letter Hunter & Spelling Clinic to boost your superpowers!')
-                      : (isBengali ? 'ওয়ার্ড স্ন্যাপার ও দ্রুত গল্প পড়ার খেলায় যোগ দাও!' : 'Play Word Snapper speed challenges and earn 50+ stars!')}
-                  </p>
-                </div>
+              {(() => {
+                const kidRec = getChildRecommendation(profile, activeLanguage?.id);
+                return (
+                  <div
+                    style={{
+                      background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+                      borderRadius: '24px',
+                      padding: '1.25rem 1.5rem',
+                      color: 'white',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      flexWrap: 'wrap',
+                      gap: '1rem',
+                      boxShadow: '0 8px 20px rgba(16, 185, 129, 0.25)'
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                      <span style={{ fontSize: '2rem' }}>{kidRec.icon || '🌟'}</span>
+                      <div>
+                        <div style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', color: '#A7F3D0', letterSpacing: '0.04em' }}>
+                          {isBengali ? '🌟 আজকের বিশেষ মিশন' : '🌟 YOUR ADVENTURE MISSION'}
+                        </div>
+                        <h4 style={{ fontSize: '1.1rem', fontWeight: 900, margin: '0.1rem 0 0.2rem', color: 'white' }}>
+                          {kidRec.title}
+                        </h4>
+                        <p style={{ fontSize: '0.82rem', color: '#D1FAE5', margin: 0 }}>
+                          {kidRec.childPrompt}
+                        </p>
+                      </div>
+                    </div>
 
-                <button
-                  onClick={() => {
-                    playStarTwinkle();
-                    setCurrentView('games');
-                  }}
-                  className="animate-pulse-glow"
-                  style={{
-                    background: 'white',
-                    color: '#065F46',
-                    border: 'none',
-                    borderRadius: '9999px',
-                    padding: '0.65rem 1.4rem',
-                    fontSize: '0.88rem',
-                    fontWeight: 900,
-                    cursor: 'pointer',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
-                  }}
-                >
-                  {t('playMissionBtn')}
-                </button>
-              </div>
+                    <button
+                      onClick={() => {
+                        playStarTwinkle();
+                        if (kidRec.activityId && kidRec.activityId !== 'games') {
+                          setCurrentView(kidRec.activityId);
+                        } else {
+                          setCurrentView('games');
+                        }
+                      }}
+                      className="animate-pulse-glow"
+                      style={{
+                        background: 'white',
+                        color: '#065F46',
+                        border: 'none',
+                        borderRadius: '9999px',
+                        padding: '0.65rem 1.4rem',
+                        fontSize: '0.88rem',
+                        fontWeight: 900,
+                        cursor: 'pointer',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                      }}
+                    >
+                      {kidRec.buttonText || t('playMissionBtn')}
+                    </button>
+                  </div>
+                );
+              })()}
             </>
           )}
         </div>
@@ -477,7 +514,308 @@ export default function CompanionDashboard() {
             </div>
           </div>
 
+          {/* ─────────────────────────────────────────────────────────────
+              PARENT OBSERVATIONS & CROSS-SIGNAL INTELLIGENCE
+             ───────────────────────────────────────────────────────────── */}
+          <div
+            style={{
+              background: '#F8FAFC',
+              borderRadius: '20px',
+              border: '1.5px solid #E2E8F0',
+              padding: '1.25rem',
+              marginBottom: '1.5rem'
+            }}
+          >
+            {/* Header: Title, Last Updated & Action Button */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '1rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                <span style={{ fontSize: '1.4rem' }}>🏠</span>
+                <div>
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: 800, margin: 0, color: '#1E293B' }}>
+                    {t('parentDashboardTitle')}
+                  </h3>
+                  <p style={{ fontSize: '0.75rem', color: '#64748B', margin: '0.1rem 0 0' }}>
+                    {t('lastUpdatedLabel')} <strong>{parentFeedback?.lastUpdatedAt ? new Date(parentFeedback.lastUpdatedAt).toLocaleDateString(isBengali ? 'bn-IN' : 'en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : (isBengali ? 'এখনও কোনো তথ্য নেই' : 'No observations recorded yet')}</strong>
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => {
+                  playPop();
+                  setShowObservationModal(true);
+                }}
+                className="btn btn-primary"
+                style={{
+                  fontSize: '0.8rem',
+                  fontWeight: 700,
+                  padding: '0.45rem 1rem',
+                  borderRadius: '9999px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.35rem',
+                  boxShadow: '0 2px 8px rgba(79, 70, 229, 0.2)'
+                }}
+              >
+                <MessageSquare size={14} />
+                <span>{hasFeedback ? t('updateObservationBtn') : t('provideObservationBtn')}</span>
+              </button>
+            </div>
+
+            {/* 4 Observed Areas Grid */}
+            <div style={{ marginBottom: '1.25rem' }}>
+              <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#475569', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                {t('areasObservedTitle')}
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.5rem' }}>
+                {[
+                  { name: t('sectionReading'), status: parentSignals.reading, icon: '📖' },
+                  { name: t('sectionSounds'), status: parentSignals.speech, icon: '🔊' },
+                  { name: t('sectionWriting'), status: parentSignals.tracing, icon: '✍️' },
+                  { name: t('sectionUnderstanding'), status: parentSignals.understanding ?? parentSignals.comprehension, icon: '💡' }
+                ].map((item, idx) => {
+                  const badge = getStatusBadge(item.status);
+                  return (
+                    <div
+                      key={idx}
+                      style={{
+                        background: 'white',
+                        padding: '0.65rem 0.75rem',
+                        borderRadius: '14px',
+                        border: '1px solid #E2E8F0',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '0.35rem'
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.8rem', fontWeight: 700, color: '#1E293B' }}>
+                        <span>{item.icon}</span>
+                        <span>{item.name}</span>
+                      </div>
+                      <span
+                        style={{
+                          fontSize: '0.7rem',
+                          fontWeight: 700,
+                          padding: '0.15rem 0.5rem',
+                          borderRadius: '9999px',
+                          background: badge.bg,
+                          color: badge.color,
+                          border: `1px solid ${badge.border}`,
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.25rem',
+                          width: 'fit-content'
+                        }}
+                      >
+                        <span>{badge.dot}</span>
+                        <span>{badge.label}</span>
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Local AI On-Device Semantic Reasoning Panel */}
+            {learningProfile?.localAiReasoning && (
+              <div
+                style={{
+                  background: 'linear-gradient(135deg, #1E1B4B 0%, #312E81 100%)',
+                  color: 'white',
+                  borderRadius: '18px',
+                  padding: '1.15rem 1.25rem',
+                  marginBottom: '1rem',
+                  boxShadow: '0 4px 14px rgba(49, 46, 129, 0.25)',
+                  border: '1px solid #4338CA'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <span style={{ fontSize: '1.3rem' }}>🤖</span>
+                    <div>
+                      <div style={{ fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', color: '#A5B4FC', letterSpacing: '0.04em' }}>
+                        {isBengali ? 'অন-ডিভাইস লোকাল এআই বিশ্লেষণ' : 'LOCAL AI ON-DEVICE REASONING'}
+                      </div>
+                      <div style={{ fontSize: '0.85rem', fontWeight: 800, color: 'white' }}>
+                        {learningProfile.localAiReasoning.model || 'Edge Transformer (all-MiniLM-L6-v2)'}
+                      </div>
+                    </div>
+                  </div>
+
+                  <span
+                    style={{
+                      background: 'rgba(79, 70, 229, 0.4)',
+                      border: '1px solid #6366F1',
+                      borderRadius: '9999px',
+                      padding: '0.2rem 0.6rem',
+                      fontSize: '0.72rem',
+                      fontWeight: 800,
+                      color: '#E0E7FF'
+                    }}
+                  >
+                    🔒 {isBengali ? '১০০% প্রাইভেট অন-ডিভাইস' : '100% Edge Offline (Zero Cloud)'}
+                  </span>
+                </div>
+
+                {/* Extracted Concept Tags */}
+                {learningProfile.localAiReasoning.extractedConcepts && learningProfile.localAiReasoning.extractedConcepts.length > 0 && (
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem', marginBottom: '0.75rem' }}>
+                    {learningProfile.localAiReasoning.extractedConcepts.map((tag, i) => (
+                      <span
+                        key={i}
+                        style={{
+                          background: 'rgba(255, 255, 255, 0.15)',
+                          border: '1px solid rgba(255, 255, 255, 0.25)',
+                          borderRadius: '8px',
+                          padding: '0.15rem 0.55rem',
+                          fontSize: '0.72rem',
+                          fontWeight: 700,
+                          color: '#FDE047'
+                        }}
+                      >
+                        ⚡ {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                {/* Semantic Affinity Vector Bars */}
+                {learningProfile.localAiReasoning.affinityScores && (
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.5rem', background: 'rgba(0, 0, 0, 0.2)', padding: '0.65rem 0.75rem', borderRadius: '12px', marginBottom: '0.75rem' }}>
+                    <div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: '#C7D2FE', marginBottom: '0.15rem' }}>
+                        <span>📖 {isBengali ? 'পঠন' : 'Reading'}</span>
+                        <strong style={{ color: 'white' }}>{Math.round((learningProfile.localAiReasoning.affinityScores.reading || 0) * 100)}%</strong>
+                      </div>
+                      <div style={{ height: '4px', background: 'rgba(255, 255, 255, 0.15)', borderRadius: '9999px', overflow: 'hidden' }}>
+                        <div style={{ height: '100%', width: `${Math.round((learningProfile.localAiReasoning.affinityScores.reading || 0) * 100)}%`, background: '#60A5FA', borderRadius: '9999px' }} />
+                      </div>
+                    </div>
+
+                    <div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: '#C7D2FE', marginBottom: '0.15rem' }}>
+                        <span>🗣️ {isBengali ? 'ধ্বনি' : 'Phonics'}</span>
+                        <strong style={{ color: 'white' }}>{Math.round((learningProfile.localAiReasoning.affinityScores.speech || 0) * 100)}%</strong>
+                      </div>
+                      <div style={{ height: '4px', background: 'rgba(255, 255, 255, 0.15)', borderRadius: '9999px', overflow: 'hidden' }}>
+                        <div style={{ height: '100%', width: `${Math.round((learningProfile.localAiReasoning.affinityScores.speech || 0) * 100)}%`, background: '#F59E0B', borderRadius: '9999px' }} />
+                      </div>
+                    </div>
+
+                    <div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: '#C7D2FE', marginBottom: '0.15rem' }}>
+                        <span>✍️ {isBengali ? 'ট্রেসিং' : 'Tracing'}</span>
+                        <strong style={{ color: 'white' }}>{Math.round((learningProfile.localAiReasoning.affinityScores.tracing || 0) * 100)}%</strong>
+                      </div>
+                      <div style={{ height: '4px', background: 'rgba(255, 255, 255, 0.15)', borderRadius: '9999px', overflow: 'hidden' }}>
+                        <div style={{ height: '100%', width: `${Math.round((learningProfile.localAiReasoning.affinityScores.tracing || 0) * 100)}%`, background: '#34D399', borderRadius: '9999px' }} />
+                      </div>
+                    </div>
+
+                    <div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: '#C7D2FE', marginBottom: '0.15rem' }}>
+                        <span>🧠 {isBengali ? 'প্যাসিং' : 'Pacing'}</span>
+                        <strong style={{ color: 'white' }}>{Math.round((learningProfile.localAiReasoning.affinityScores.understanding || 0) * 100)}%</strong>
+                      </div>
+                      <div style={{ height: '4px', background: 'rgba(255, 255, 255, 0.15)', borderRadius: '9999px', overflow: 'hidden' }}>
+                        <div style={{ height: '100%', width: `${Math.round((learningProfile.localAiReasoning.affinityScores.understanding || 0) * 100)}%`, background: '#A78BFA', borderRadius: '9999px' }} />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <p style={{ fontSize: '0.8rem', color: '#E0E7FF', margin: 0, lineHeight: 1.45 }}>
+                  {isBengali
+                    ? (learningProfile.localAiReasoning.aiSummaryBn || learningProfile.localAiReasoning.aiSummary)
+                    : learningProfile.localAiReasoning.aiSummary}
+                </p>
+              </div>
+            )}
+
+            {/* Synthesis: What AksharMitra Noticed & What We Recommend Next */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '0.75rem', marginBottom: '1rem' }}>
+              <div style={{ background: '#EEF2FF', padding: '1rem', borderRadius: '16px', border: '1px solid #C7D2FE' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.4rem' }}>
+                  <span style={{ fontSize: '1.1rem' }}>🦉</span>
+                  <strong style={{ fontSize: '0.85rem', color: '#3730A3' }}>{t('whatAksharMitraNoticed')}</strong>
+                </div>
+                <p style={{ fontSize: '0.82rem', color: '#4338CA', lineHeight: 1.45, margin: 0 }}>
+                  {learningProfile?.observedPattern || (isBengali ? 'পর্যবেক্ষণের তথ্য প্রক্রিয়া করা হচ্ছে।' : 'Observations are being processed.')}
+                </p>
+              </div>
+
+              <div style={{ background: '#ECFDF5', padding: '1rem', borderRadius: '16px', border: '1px solid #A7F3D0', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.4rem' }}>
+                    <span style={{ fontSize: '1.1rem' }}>🎯</span>
+                    <strong style={{ fontSize: '0.85rem', color: '#065F46' }}>{t('whatWeRecommendNext')}</strong>
+                  </div>
+                  <p style={{ fontSize: '0.82rem', color: '#047857', lineHeight: 1.45, margin: '0 0 0.6rem' }}>
+                    {learningProfile?.recommendedPractice || (isBengali ? 'ব্যক্তিগত পাঠপরিকল্পনা তৈরি হচ্ছে।' : 'Preparing personalized practice plan.')}
+                  </p>
+                </div>
+
+                {learningProfile?.recommendedActivityId && learningProfile.recommendedActivityId !== 'screening' && (
+                  <button
+                    onClick={() => {
+                      playPop();
+                      setCurrentView(learningProfile.recommendedActivityId);
+                    }}
+                    style={{
+                      background: '#10B981',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '9999px',
+                      padding: '0.45rem 1rem',
+                      fontSize: '0.78rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.35rem',
+                      width: 'fit-content',
+                      boxShadow: '0 2px 6px rgba(16, 185, 129, 0.25)'
+                    }}
+                  >
+                    <span>{t('playRecommendedPractice')}</span>
+                    <ArrowRight size={13} />
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Evidence & Context Box */}
+            {((learningProfile?.evidence?.appActivity && learningProfile.evidence.appActivity.length > 0) ||
+              (learningProfile?.evidence?.parentObservation && learningProfile.evidence.parentObservation.length > 0)) && (
+              <div style={{ background: 'white', borderRadius: '14px', padding: '0.85rem 1rem', border: '1px solid #E2E8F0', marginTop: '0.5rem' }}>
+                <div style={{ fontSize: '0.78rem', fontWeight: 800, color: '#334155', marginBottom: '0.4rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                  <Target size={14} color="#4F46E5" />
+                  <span>{t('evidenceTitle')}</span>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', fontSize: '0.78rem' }}>
+                  {learningProfile.evidence.appActivity?.map((item, i) => (
+                    <div key={`app-${i}`} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.4rem', color: '#475569' }}>
+                      <span style={{ background: '#EEF2FF', color: '#4338CA', padding: '0.1rem 0.4rem', borderRadius: '4px', fontSize: '0.68rem', fontWeight: 700, flexShrink: 0 }}>
+                        {t('sourceAppActivity')}
+                      </span>
+                      <span>{item}</span>
+                    </div>
+                  ))}
+                  {learningProfile.evidence.parentObservation?.map((item, i) => (
+                    <div key={`parent-${i}`} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.4rem', color: '#475569' }}>
+                      <span style={{ background: '#FEF3C7', color: '#92400E', padding: '0.1rem 0.4rem', borderRadius: '4px', fontSize: '0.68rem', fontWeight: 700, flexShrink: 0 }}>
+                        {t('sourceParentObs')}
+                      </span>
+                      <span>{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
           {!isCompleted ? (
+
             /* Empty State for Educators */
             <div
               style={{
@@ -663,6 +1001,16 @@ export default function CompanionDashboard() {
           </div>
         </div>
       )}
+
+      {/* Parent Observation Modal Wizard */}
+      <ParentObservationModal
+        isOpen={showObservationModal}
+        onClose={() => setShowObservationModal(false)}
+        onSave={(data) => {
+          if (updateParentFeedback) updateParentFeedback(data);
+        }}
+      />
     </div>
   );
 }
+

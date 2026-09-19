@@ -53,7 +53,7 @@ const KEYBOARD_ROWS = [
 const VOWELS = new Set(['A', 'E', 'I', 'O', 'U']);
 const CONFUSION_LETTERS = new Set(['B', 'D', 'P', 'Q']);
 
-export default function AbcFillIn({ onBack }) {
+export default function AbcFillIn({ onBack, adaptiveConfig }) {
   const { addStars, activeLanguage } = useProfile();
   const { playPop, playChime, playSuccessChord, playStarTwinkle, speakText } = useAudio();
 

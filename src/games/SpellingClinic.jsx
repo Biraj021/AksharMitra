@@ -68,7 +68,7 @@ const DYSGRAPHIA_WORDS = [
   { word: 'bed', tip: "'b' and 'd' are tall skyline letters! 'e' stays snug in the middle grass." }
 ];
 
-export default function SpellingClinic({ onBack }) {
+export default function SpellingClinic({ onBack, adaptiveConfig }) {
   const { playPop, playChime, playStarTwinkle, speakText } = useAudio();
   const { addStars } = useProfile();
 

@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Play, Sparkles, Star, Volume2, ArrowRight } from 'lucide-react';
 import { useProfile } from '../context/ProfileContext';
 import { useAudio } from '../context/AudioContext';
+import { getChildRecommendation } from '../utils/adaptiveLearningStrategy';
 
 const LEARNING_MODULES_EN = [
   {
@@ -192,8 +193,23 @@ const LEARNING_MODULES_BN = [
 export default function GamesHub({ onSelectGame }) {
   const { activeProfile, setCurrentView, activeLanguage, t } = useProfile();
   const { playPop, playStarTwinkle } = useAudio();
-  const [activeModuleId, setActiveModuleId] = useState('word-snapper');
+
+  const recommendedActivityId = activeProfile?.learningProfile?.recommendedActivityId;
+  const recommendation = getChildRecommendation(activeProfile, activeLanguage?.id);
+
+  const [activeModuleId, setActiveModuleId] = useState(() => {
+    return recommendedActivityId && recommendedActivityId !== 'screening'
+      ? recommendedActivityId
+      : 'word-snapper';
+  });
   const [trackFilter, setTrackFilter] = useState('all'); // 'all' | 'track_a' | 'track_b'
+
+  // Keep activeModuleId synchronized with real-time profile updates
+  useEffect(() => {
+    if (recommendedActivityId && recommendedActivityId !== 'screening') {
+      setActiveModuleId(recommendedActivityId);
+    }
+  }, [recommendedActivityId]);
 
   const isBengali = activeLanguage?.id === 'bengali';
   const LEARNING_MODULES = isBengali ? LEARNING_MODULES_BN : LEARNING_MODULES_EN;
@@ -238,29 +254,10 @@ export default function GamesHub({ onSelectGame }) {
           boxShadow: '0 12px 28px rgba(6, 78, 59, 0.25)'
         }}
       >
-        <div
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.4rem',
-            background: 'rgba(255, 255, 255, 0.18)',
-            padding: '0.3rem 0.8rem',
-            borderRadius: '9999px',
-            fontSize: '0.75rem',
-            fontWeight: 800,
-            color: '#D1FAE5',
-            marginBottom: '0.85rem',
-            letterSpacing: '0.04em'
-          }}
-        >
-          <span>📖</span>
-          <span>{isBengali ? 'অভিযোজিত দ্বৈত-ট্র্যাক শিক্ষণ ল্যাব' : 'ADAPTIVE DUAL-TRACK LEARNING LAB'}</span>
-        </div>
-
-        <h2 style={{ fontSize: '1.65rem', fontWeight: 800, color: 'white', margin: '0 0 0.4rem' }}>
+        <h2 style={{ fontSize: '1.8rem', fontWeight: 800, color: 'white', margin: '0 0 0.4rem' }}>
           {t('gamesHubTitle')}
         </h2>
-        <p style={{ fontSize: '0.88rem', color: '#A7F3D0', lineHeight: 1.45, margin: 0 }}>
+        <p style={{ fontSize: '1rem', color: '#A7F3D0', lineHeight: 1.45, margin: 0 }}>
           {t('gamesHubSubtitle')}
         </p>
       </div>
@@ -268,8 +265,8 @@ export default function GamesHub({ onSelectGame }) {
       {/* 2. Personalized Student Adaptive Pathway Banner */}
       <div
         style={{
-          background: isAtRisk ? '#FEF3C7' : '#ECFDF5',
-          border: isAtRisk ? '1.5px solid #FDE68A' : '1.5px solid #A7F3D0',
+          background: recommendation.hasPersonalized ? '#ECFDF5' : '#F0FDF4',
+          border: recommendation.hasPersonalized ? '1.5px solid #A7F3D0' : '1.5px solid #BBF7D0',
           borderRadius: '20px',
           padding: '0.85rem 1.15rem',
           display: 'flex',
@@ -277,85 +274,22 @@ export default function GamesHub({ onSelectGame }) {
           gap: '0.75rem'
         }}
       >
-        <span style={{ fontSize: '1.8rem' }}>{isAtRisk ? '🦉' : '🌟'}</span>
+        <span style={{ fontSize: '1.8rem' }}>{recommendation.icon || '🌟'}</span>
         <div style={{ flex: 1, textAlign: 'left' }}>
-          <div style={{ fontSize: '0.82rem', fontWeight: 800, color: isAtRisk ? '#92400E' : '#065F46' }}>
-            {activeProfile?.name || (isBengali ? 'অভিযাত্রী' : 'Explorer')}'s Pathway: {isAtRisk ? (isBengali ? 'ট্র্যাক খ (মাল্টি-সেন্সরি নিরাময়)' : 'Track B (Multisensory Remediation)') : (isBengali ? 'ট্র্যাক ক (পড়ার গতি ও সাবলীলতা)' : 'Track A (Fluency & Speed)')}
+          <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#065F46' }}>
+            {recommendation.hasPersonalized
+              ? (isBengali ? `⭐ তোমার জন্য নির্দেশিত: ${recommendation.title}` : `⭐ Recommended for You: ${recommendation.title}`)
+              : (isBengali ? `🌟 ${activeProfile?.name || 'অভিযাত্রী'}র শিক্ষণ ল্যাব` : `🌟 ${activeProfile?.name || 'Explorer'}'s Learning Lab`)}
           </div>
-          <div style={{ fontSize: '0.75rem', color: isAtRisk ? '#B45309' : '#047857', marginTop: '0.15rem' }}>
-            {isAtRisk
-              ? (isBengali ? 'স্পর্শভিত্তিক বর্ণাভ্যাস এবং ব/র এর মতো বিভ্রান্তিকর বর্ণ অনুশীলন নির্দেশিত।' : 'Tactile letter tracing and b/d mirror discrimination highlighted.')
-              : (isBengali ? 'দ্রুত পঠন, শব্দের ধাঁধা এবং উন্নত যুক্তবর্ণের খেলা আনলক করা হয়েছে।' : 'Speed reading, sight-word traps, and advanced blends unlocked.')}
+          <div style={{ fontSize: '0.75rem', color: '#047857', marginTop: '0.15rem' }}>
+            {recommendation.hasPersonalized
+              ? recommendation.childPrompt
+              : (isBengali ? 'পড়ার গতি, বর্ণাভ্যাস ও শব্দ গঠনের মজার খেলাগুলো উপভোগ করো!' : 'Explore fun games for reading fluency, letter tracing, and word building!')}
           </div>
         </div>
       </div>
 
-      {/* 3. Dual-Track Pathway Filter Tabs */}
-      <div style={{ display: 'flex', gap: '0.35rem', background: '#F1F5F9', padding: '0.3rem', borderRadius: '16px' }}>
-        <button
-          onClick={() => {
-            playPop();
-            setTrackFilter('all');
-          }}
-          style={{
-            flex: 1,
-            border: 'none',
-            background: trackFilter === 'all' ? 'white' : 'transparent',
-            color: trackFilter === 'all' ? '#1E293B' : '#64748B',
-            fontWeight: '800',
-            fontSize: '0.75rem',
-            padding: '0.5rem 0.4rem',
-            borderRadius: '12px',
-            cursor: 'pointer',
-            boxShadow: trackFilter === 'all' ? '0 2px 6px rgba(0,0,0,0.08)' : 'none',
-            transition: 'all 0.15s ease'
-          }}
-        >
-          🌟 {isBengali ? 'সব গেমস' : 'All Games'} ({LEARNING_MODULES.length})
-        </button>
-        <button
-          onClick={() => {
-            playPop();
-            setTrackFilter('track_a');
-          }}
-          style={{
-            flex: 1,
-            border: 'none',
-            background: trackFilter === 'track_a' ? '#EFF6FF' : 'transparent',
-            color: trackFilter === 'track_a' ? '#1D4ED8' : '#64748B',
-            fontWeight: '800',
-            fontSize: '0.75rem',
-            padding: '0.5rem 0.4rem',
-            borderRadius: '12px',
-            cursor: 'pointer',
-            boxShadow: trackFilter === 'track_a' ? '0 2px 6px rgba(59,130,246,0.15)' : 'none',
-            transition: 'all 0.15s ease'
-          }}
-        >
-          🚀 {isBengali ? 'ট্র্যাক ক: গতি' : 'Track A: Fluency'}
-        </button>
-        <button
-          onClick={() => {
-            playPop();
-            setTrackFilter('track_b');
-          }}
-          style={{
-            flex: 1,
-            border: 'none',
-            background: trackFilter === 'track_b' ? '#FEF3C7' : 'transparent',
-            color: trackFilter === 'track_b' ? '#B45309' : '#64748B',
-            fontWeight: '800',
-            fontSize: '0.75rem',
-            padding: '0.5rem 0.4rem',
-            borderRadius: '12px',
-            cursor: 'pointer',
-            boxShadow: trackFilter === 'track_b' ? '0 2px 6px rgba(245,158,11,0.2)' : 'none',
-            transition: 'all 0.15s ease'
-          }}
-        >
-          🧠 {isBengali ? 'ট্র্যাক খ: নিরাময়' : 'Track B: Multisensory'}
-        </button>
-      </div>
+      {/* 3. Dual-Track Pathway Filter Tabs (Removed for simplicity) */}
 
       {/* 4. Top Activity Category Pills Grid */}
       <div
@@ -367,7 +301,11 @@ export default function GamesHub({ onSelectGame }) {
       >
         {filteredModules.map((mod) => {
           const isActive = mod.id === activeModuleId;
-          const isRecommendedForProfile = (isAtRisk && mod.track === 'track_b') || (!isAtRisk && mod.track === 'track_a');
+          const isRecommendedForProfile = Boolean(
+            recommendedActivityId &&
+            recommendedActivityId !== 'screening' &&
+            mod.id === recommendedActivityId
+          );
           return (
             <button
               key={mod.id}
@@ -377,7 +315,7 @@ export default function GamesHub({ onSelectGame }) {
               }}
               style={{
                 background: isActive ? '#ECFDF5' : 'white',
-                border: isActive ? '2px solid #10B981' : isRecommendedForProfile ? '1.5px solid #FCD34D' : '1.5px solid #E2E8F0',
+                border: isActive ? '2px solid #10B981' : isRecommendedForProfile ? '2px solid #F59E0B' : '1.5px solid #E2E8F0',
                 borderRadius: '16px',
                 padding: '0.65rem 0.4rem',
                 display: 'flex',
@@ -388,11 +326,11 @@ export default function GamesHub({ onSelectGame }) {
                 cursor: 'pointer',
                 position: 'relative',
                 transition: 'all 0.15s ease',
-                boxShadow: isActive ? '0 4px 12px rgba(16, 185, 129, 0.18)' : '0 2px 6px rgba(0,0,0,0.02)'
+                boxShadow: isActive ? '0 4px 12px rgba(16, 185, 129, 0.18)' : isRecommendedForProfile ? '0 3px 10px rgba(245, 158, 11, 0.18)' : '0 2px 6px rgba(0,0,0,0.02)'
               }}
             >
               {isRecommendedForProfile && (
-                <span style={{ position: 'absolute', top: '-6px', right: '-4px', background: '#F59E0B', color: 'white', fontSize: '9px', fontWeight: 900, padding: '1px 5px', borderRadius: '9999px' }}>
+                <span style={{ position: 'absolute', top: '-6px', right: '-4px', background: '#F59E0B', color: 'white', fontSize: '9px', fontWeight: 900, padding: '1px 6px', borderRadius: '9999px', boxShadow: '0 2px 4px rgba(245, 158, 11, 0.3)' }}>
                   ★ TOP
                 </span>
               )}
@@ -401,7 +339,7 @@ export default function GamesHub({ onSelectGame }) {
                 style={{
                   fontSize: '0.75rem',
                   fontWeight: 800,
-                  color: isActive ? '#065F46' : '#475569',
+                  color: isActive ? '#065F46' : isRecommendedForProfile ? '#92400E' : '#475569',
                   textAlign: 'center',
                   lineHeight: 1.2
                 }}
@@ -429,13 +367,10 @@ export default function GamesHub({ onSelectGame }) {
           gap: '1rem'
         }}
       >
-        {/* Level & Category Badge */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', borderBottom: '1px solid #F1F5F9', paddingBottom: '0.75rem' }}>
-          <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#4338CA', textTransform: 'uppercase' }}>
-            {selectedModule.levelLabel}
-          </span>
-          <span style={{ fontSize: '0.72rem', fontWeight: 700, padding: '0.2rem 0.6rem', borderRadius: '9999px', background: '#EEF2FF', color: '#4F46E5' }}>
-            {selectedModule.categoryBadge}
+        {/* Clean Activity Banner */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', borderBottom: '1px solid #F1F5F9', paddingBottom: '0.75rem' }}>
+          <span style={{ fontSize: '1rem', fontWeight: 800, color: '#4338CA', textTransform: 'uppercase' }}>
+            {selectedModule.title}
           </span>
         </div>
 

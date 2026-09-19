@@ -23,7 +23,7 @@ import MascotMitra from '../components/common/MascotMitra';
 import { useProfile } from '../context/ProfileContext';
 import { useAudio } from '../context/AudioContext';
 
-export default function WordSnapper({ onBack }) {
+export default function WordSnapper({ onBack, adaptiveConfig }) {
   const { activeProfile, addStars, activeLanguage, setCurrentView } = useProfile();
   const { playPop, playChime, playStarTwinkle } = useAudio();
 
@@ -37,8 +37,8 @@ export default function WordSnapper({ onBack }) {
   const [currentItemIndex, setCurrentItemIndex] = useState(0);
   // Temporary ID of a tile that was selected incorrectly (for feedback).
   const [incorrectTileId, setIncorrectTileId] = useState(null);
-  // Show hint (brown highlight on correct tile) after a wrong guess
-  const [showHint, setShowHint] = useState(false);
+  // Show hint (brown highlight on correct tile) after a wrong guess or in guided mode
+  const [showHint, setShowHint] = useState(Boolean(adaptiveConfig?.showExtraHints));
   // Simple lock to prevent rapid double‑clicks from advancing the index twice.
   const [isProcessing, setIsProcessing] = useState(false);
 

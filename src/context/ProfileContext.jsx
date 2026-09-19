@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { SUPPORTED_LANGUAGES } from '../data/languages';
 import { DEMO_PROFILES } from '../data/demoProfiles';
 import { TRANSLATIONS, getTranslation } from '../data/translations';
+import { calculateLearningProfile } from '../utils/crossSignalIntelligence';
 
 const ProfileContext = createContext(null);
 
@@ -33,11 +34,15 @@ export const getAvatarEmoji = (avatarIdOrEmoji) => {
 
 const normalizeProfile = (p) => {
   if (!p) return p;
-  return {
+  const normalized = {
     ...p,
-    avatarEmoji: getAvatarEmoji(p.avatarEmoji || p.avatar)
+    avatarEmoji: getAvatarEmoji(p.avatarEmoji || p.avatar),
+    parentFeedback: p.parentFeedback || null
   };
+  normalized.learningProfile = calculateLearningProfile(normalized);
+  return normalized;
 };
+
 
 export function ProfileProvider({ children }) {
   const [activeLanguage, setActiveLanguage] = useState(() => {
@@ -215,6 +220,39 @@ export function ProfileProvider({ children }) {
     }));
   };
 
+  // Update Parent Observation & Feedback
+  const updateParentFeedback = (feedbackData) => {
+    if (!activeProfile) return null;
+    const updated = {
+      ...activeProfile,
+      parentFeedback: feedbackData
+    };
+    updated.learningProfile = calculateLearningProfile(updated);
+    setActiveProfile(updated);
+    return updated;
+  };
+
+  // Record Activity Completion & Trigger Reassessment
+  const recordActivityCompletion = ({ activityId, starsEarned = 5, metricUpdates = {} }) => {
+    if (!activeProfile) return null;
+    const existingMetrics = activeProfile.screeningMetrics || {};
+    const updatedMetrics = {
+      ...existingMetrics,
+      ...metricUpdates,
+      lastActivityCompleted: activityId,
+      lastActivityDate: new Date().toISOString()
+    };
+
+    const updated = {
+      ...activeProfile,
+      stars: (activeProfile.stars || 0) + starsEarned,
+      screeningMetrics: updatedMetrics
+    };
+    updated.learningProfile = calculateLearningProfile(updated);
+    setActiveProfile(updated);
+    return updated;
+  };
+
   const t = (key) => getTranslation(key, activeLanguage?.id || 'english');
 
   return (
@@ -232,6 +270,9 @@ export function ProfileProvider({ children }) {
         loadDemoProfile,
         logoutProfile,
         addStars,
+        updateParentFeedback,
+        recordActivityCompletion,
+        calculateLearningProfile,
         currentView,
         setCurrentView,
         isParentUnlocked,
@@ -248,6 +289,7 @@ export function ProfileProvider({ children }) {
       {children}
     </ProfileContext.Provider>
   );
+
 }
 
 export function useProfile() {

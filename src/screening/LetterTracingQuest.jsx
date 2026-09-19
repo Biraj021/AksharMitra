@@ -339,13 +339,14 @@ const getLetterConfig = (char) => {
   };
 };
 
-export default function LetterTracingQuest({ onCompleteQuest, onBack }) {
+export default function LetterTracingQuest({ onCompleteQuest, onBack, adaptiveConfig }) {
   const { playPop, playChime, playStarTwinkle, speakText } = useAudio();
   const { addStars } = useProfile();
 
   const canvasRef = useRef(null);
-  const [selectedLetter, setSelectedLetter] = useState('i');
-  const [viewFilter, setViewFilter] = useState('focus');
+  const initialLetter = adaptiveConfig?.initialLetter || 'i';
+  const [selectedLetter, setSelectedLetter] = useState(initialLetter);
+  const [viewFilter, setViewFilter] = useState(adaptiveConfig?.focusArea === 'tracing' ? 'focus' : 'all');
   const [isDrawing, setIsDrawing] = useState(false);
   const [collectedDotIds, setCollectedDotIds] = useState(new Set());
   const [tracingStatus, setTracingStatus] = useState('idle'); // 'idle' | 'need_dot' | 'need_cross' | 'success'

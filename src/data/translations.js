@@ -188,8 +188,93 @@ export const TRANSLATIONS = {
     readingRulerLabel: "Reading Focus Ruler",
     bionicLabel: "Syllable Bionic Emphasis",
     resetDefaults: "Reset to Defaults",
-    doneBtn: "Done"
+    doneBtn: "Done",
+
+    // Parent Feedback & Observation System (Simplified 4-Section Design)
+    parentObsTitle: "Parent Observation",
+    parentObsSubtitle: "Tell us what you notice while your child learns at home.",
+    parentObsDisclaimer: "AksharMitra uses observations to personalize learning practice. It does not diagnose learning or medical conditions.",
+    parentObsSavedSuccess: "Thank you! Your observation has been added to your child's learning profile.",
+    sectionReading: "Reading",
+    sectionSounds: "Sounds & Phonics",
+    sectionWriting: "Writing & Letters",
+    sectionUnderstanding: "Understanding & Learning",
+    sectionNotes: "Optional Note",
+    sectionReview: "Review Observation",
+    stepIndicator: "Section",
+    ofText: "of",
+    nextBtn: "Next",
+    prevBtn: "Back",
+    saveObservationBtn: "Save Observation",
+    editObservationBtn: "Edit",
+    provideObservationBtn: "Provide Observation",
+    updateObservationBtn: "Update Observation",
+    notAnswered: "Not answered",
+    optionalLabel: "Optional",
+    
+    // Section 1: Reading
+    qReadingComfort: "How does your child read simple words?",
+    optReadingComfortable: "Reads comfortably",
+    optReadingSlowly: "Reads slowly",
+    optReadingHelp: "Often needs help",
+    optReadingStruggle: "Has difficulty reading independently",
+    
+    qReadingSkipping: "Does your child skip or miss words while reading?",
+    optRarely: "Rarely",
+    optSometimes: "Sometimes",
+    optOften: "Often",
+    optNotSure: "Not sure",
+
+    // Section 2: Sounds & Phonics
+    qSoundsLetter: "How does your child handle letter sounds?",
+    optSoundsComfortable: "Comfortable",
+    optSoundsSometimesHelp: "Sometimes needs help",
+    optSoundsOftenHelp: "Often needs help",
+
+    qSoundsBlending: "Can your child combine sounds to make a word?",
+    optUsually: "Usually",
+    optSoundsBlendingSometimes: "Sometimes",
+    optSoundsBlendingHelp: "Needs help",
+
+    // Section 3: Writing & Letters
+    qWritingTracing: "How does your child handle tracing or writing?",
+    optWritingComfortable: "Comfortable",
+    optWritingDeveloping: "Developing",
+    optWritingHelp: "Needs help",
+
+    qWritingConfusion: "Does your child sometimes confuse similar-looking letter shapes?",
+    qWritingConfusionHint: "(For example: b / d or p / q letter shape observations)",
+
+    // Section 4: Understanding & Learning
+    qUnderstandsInstructions: "Does your child understand instructions when you explain them?",
+    optSometimesRepetition: "Sometimes needs repetition",
+    optOftenNeedsHelp: "Often needs help",
+
+    qHandlesChallenge: "What happens when your child finds a learning activity difficult?",
+    optKeepsTrying: "Keeps trying",
+    optNeedsEncouragement: "Needs some encouragement",
+    optUsuallyNeedsHelp: "Usually needs help",
+
+    // Section 5: Parent Note
+    parentNoteLabel: "Anything else you'd like us to know?",
+    parentNotePlaceholder: "For example: My child understands when I explain verbally but struggles when reading independently.",
+
+    // Dashboard Parent Observations Section
+    parentDashboardTitle: "Parent Observations",
+    lastUpdatedLabel: "Last updated:",
+    areasObservedTitle: "Areas Observed at Home",
+    statusNeedsSupport: "Needs support",
+    statusDeveloping: "Developing",
+    statusComfortable: "Comfortable",
+    statusNotObserved: "Not observed",
+    whatAksharMitraNoticed: "What AksharMitra Noticed",
+    whatWeRecommendNext: "What We Recommend Next",
+    evidenceTitle: "Evidence & Context",
+    sourceAppActivity: "Based on app activity",
+    sourceParentObs: "Based on your observation",
+    playRecommendedPractice: "Start Recommended Practice"
   },
+
 
   bengali: {
     // Header & Nav
@@ -378,8 +463,93 @@ export const TRANSLATIONS = {
     readingRulerLabel: "রিডিং ফোকাস রুলার",
     bionicLabel: "শব্দাংশ বায়োনিক জোর",
     resetDefaults: "ডিফল্ট সেটিংসে ফিরুন",
-    doneBtn: "সম্পন্ন"
+    doneBtn: "সম্পন্ন",
+
+    // Parent Feedback & Observation System (Simplified 4-Section Design)
+    parentObsTitle: "অভিভাবকের পর্যবেক্ষণ",
+    parentObsSubtitle: "আপনার সন্তান বাড়িতে পড়ার সময় আপনি যা লক্ষ্য করেন তা জানান।",
+    parentObsDisclaimer: "অক্ষরমিত্র অনুশীলনের পথ সুনির্দিষ্ট করতে পর্যবেক্ষণ ব্যবহার করে। এটি কোনো চিকিৎসার বিকল্প বা ক্লিনিক্যাল ডায়াগনোসিস নয়।",
+    parentObsSavedSuccess: "ধন্যবাদ! আপনার পর্যবেক্ষণ সন্তানের শিক্ষা প্রোফাইলে যুক্ত হয়েছে।",
+    sectionReading: "পঠন দক্ষতা",
+    sectionSounds: "ধ্বনি ও বর্ণজ্ঞান",
+    sectionWriting: "লেখনী ও বর্ণগঠন",
+    sectionUnderstanding: "অনুধাবন ও শিক্ষণ",
+    sectionNotes: "ঐচ্ছিক মন্তব্য",
+    sectionReview: "পর্যবেক্ষণ পর্যালোচনা",
+    stepIndicator: "ধাপ",
+    ofText: "/",
+    nextBtn: "পরবর্তী",
+    prevBtn: "পূর্ববর্তী",
+    saveObservationBtn: "পর্যবেক্ষণ সংরক্ষণ করুন",
+    editObservationBtn: "সম্পাদনা",
+    provideObservationBtn: "পর্যবেক্ষণ প্রদান করুন",
+    updateObservationBtn: "পর্যবেক্ষণ আপডেট করুন",
+    notAnswered: "উত্তর দেওয়া হয়নি",
+    optionalLabel: "ঐচ্ছিক",
+
+    // Section 1: Reading
+    qReadingComfort: "আপনার সন্তান কীভাবে সহজ শব্দ পড়তে পারে?",
+    optReadingComfortable: "সহজেই পড়তে পারে",
+    optReadingSlowly: "ধীরে ধীরে পড়ে",
+    optReadingHelp: "প্রায়ই সাহায্যের প্রয়োজন হয়",
+    optReadingStruggle: "একা পড়তে গিয়ে সমস্যা হয়",
+
+    qReadingSkipping: "পড়ার সময় আপনার সন্তান কি শব্দ এড়িয়ে বা বাদ দিয়ে পড়ে?",
+    optRarely: "কদাচিৎ",
+    optSometimes: "মাঝে মাঝে",
+    optOften: "প্রায়ই",
+    optNotSure: "নিশ্চিত নই",
+
+    // Section 2: Sounds & Phonics
+    qSoundsLetter: "আপনার সন্তান বর্ণের ধ্বনি কীভাবে মনে রাখে?",
+    optSoundsComfortable: "সহজেই পারে",
+    optSoundsSometimesHelp: "মাঝে মাঝে সাহায্য লাগে",
+    optSoundsOftenHelp: "প্রায়ই সাহায্য লাগে",
+
+    qSoundsBlending: "আপনার সন্তান কি ধ্বনি মিলিয়ে শব্দ তৈরি করতে পারে?",
+    optUsually: "সাধারণত পারে",
+    optSoundsBlendingSometimes: "মাঝে মাঝে",
+    optSoundsBlendingHelp: "সাহায্য প্রয়োজন",
+
+    // Section 3: Writing & Letters
+    qWritingTracing: "আপনার সন্তান বর্ণ লেখা বা ট্রেসিং কীভাবে করে?",
+    optWritingComfortable: "সহজেই পারে",
+    optWritingDeveloping: "ধীরে ধীরে শিখছে",
+    optWritingHelp: "সাহায্য প্রয়োজন",
+
+    qWritingConfusion: "আপনার সন্তান কি কাছাকাছি দেখতে বর্ণের বিভ্রান্তিতে পড়ে?",
+    qWritingConfusionHint: "(যেমন: ব / র বা ক / ধ বর্ণের দিক নির্ধারণের ক্ষেত্রে পর্যবেক্ষণ)",
+
+    // Section 4: Understanding & Learning
+    qUnderstandsInstructions: "মুখে বুঝিয়ে বললে সন্তান কি নির্দেশনা সহজে বোঝে?",
+    optSometimesRepetition: "মাঝে মাঝে পুনরাবৃত্তি প্রয়োজন",
+    optOftenNeedsHelp: "প্রায়ই সাহায্য লাগে",
+
+    qHandlesChallenge: "কোনো পড়া কঠিন মনে হলে আপনার সন্তান কী করে?",
+    optKeepsTrying: "চেষ্টা চালিয়ে যায়",
+    optNeedsEncouragement: "উৎসাহ দিলে চেষ্টা করে",
+    optUsuallyNeedsHelp: "সাধারণত সাহায্য লাগে",
+
+    // Section 5: Parent Note
+    parentNoteLabel: "আর এমন কিছু আছে যা আপনি আমাদের জানাতে চান?",
+    parentNotePlaceholder: "যেমন: মুখে বুঝিয়ে বললে আমার সন্তান সহজে বোঝে, কিন্তু নিজে একা পড়তে গেলে সমস্যায় পড়ে।",
+
+    // Dashboard Parent Observations Section
+    parentDashboardTitle: "অভিভাবকের পর্যবেক্ষণ",
+    lastUpdatedLabel: "সর্বশেষ আপডেট:",
+    areasObservedTitle: "বাড়ির পরিবেশের পর্যবেক্ষণ",
+    statusNeedsSupport: "সহায়তা প্রয়োজন",
+    statusDeveloping: "উন্নতিশীল",
+    statusComfortable: "স্বাচ্ছন্দ্যপূর্ণ",
+    statusNotObserved: "তথ্য নেই",
+    whatAksharMitraNoticed: "অক্ষরমিত্র কী লক্ষ্য করেছে",
+    whatWeRecommendNext: "পরবর্তী অনুশীলনের জন্য সুপারিশ",
+    evidenceTitle: "তথ্যপ্রমাণ ও প্রেক্ষাপট",
+    sourceAppActivity: "অ্যাপের কার্যক্রমের ভিত্তিতে",
+    sourceParentObs: "আপনার পর্যবেক্ষণের ভিত্তিতে",
+    playRecommendedPractice: "সুপারিশকৃত অনুশীলন শুরু করুন"
   }
+
 };
 
 export function getTranslation(key, lang = 'english') {

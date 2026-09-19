@@ -9,7 +9,7 @@ import MascotMitra from '../components/common/MascotMitra';
 import { useProfile } from '../context/ProfileContext';
 import { useAudio } from '../context/AudioContext';
 
-export default function LetterHunter({ onBack }) {
+export default function LetterHunter({ onBack, adaptiveConfig }) {
   const { activeProfile, addStars, activeLanguage, setCurrentView } = useProfile();
   const { playPop, playChime, playStarTwinkle, speakText } = useAudio();
 
@@ -173,8 +173,9 @@ export default function LetterHunter({ onBack }) {
       setMascotMessage(content.mascotDistractor(tile.char, currentChallenge.target));
       speakText(tile.char, speechLang);
 
-      // Offer gentle Help Me automatically if child struggles 3 times
-      if (newMistakesCount >= 3) {
+      // Offer gentle Help Me automatically if child struggles (adjust based on adaptiveConfig)
+      const mistakeThreshold = adaptiveConfig?.showExtraHints ? 2 : 3;
+      if (newMistakesCount >= mistakeThreshold) {
         setTimeout(() => {
           setShowHelpModal(true);
         }, 600);

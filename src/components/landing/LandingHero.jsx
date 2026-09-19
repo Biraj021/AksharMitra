@@ -1,7 +1,8 @@
 import React from 'react';
-import { Volume2, ArrowRight, Trophy, Flame, Target, Puzzle, Sparkles } from 'lucide-react';
+import { Volume2, ArrowRight, Trophy, Flame, Target, Puzzle, Sparkles, Star, Compass } from 'lucide-react';
 import { useProfile, getAvatarEmoji } from '../../context/ProfileContext';
 import { useAudio } from '../../context/AudioContext';
+import { getChildRecommendation } from '../../utils/adaptiveLearningStrategy';
 
 export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }) {
   const { activeProfile, setCurrentView, activeLanguage, t } = useProfile();
@@ -12,6 +13,25 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
   const studentEmoji = getAvatarEmoji(activeProfile?.avatarEmoji || activeProfile?.avatar);
   const starsCount = activeProfile?.stars || 55;
   const streakDays = activeProfile?.streak || 4;
+
+  const recommendation = getChildRecommendation(activeProfile, activeLanguage?.id);
+
+  const handleLaunchRecommended = () => {
+    playStarTwinkle();
+    if (recommendation.activityId && recommendation.activityId !== 'games') {
+      setCurrentView(recommendation.activityId);
+    } else {
+      setCurrentView('games');
+    }
+  };
+
+  const handleRecommendedAudio = () => {
+    playPop();
+    speakText(
+      recommendation.childPrompt,
+      isBengali ? 'bn-IN' : 'en-US'
+    );
+  };
 
   const handleLaunchScreening = () => {
     playStarTwinkle();
@@ -97,52 +117,88 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
           <span>{streakDays} {t('readingStreak')}</span>
         </div>
 
-        {/* 3 Stat Boxes */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.6rem' }}>
-          <div
-            style={{
-              background: 'rgba(255, 255, 255, 0.12)',
-              borderRadius: '16px',
-              padding: '0.75rem 0.5rem',
-              textAlign: 'center',
-              border: '1px solid rgba(255, 255, 255, 0.15)'
-            }}
-          >
-            <div style={{ fontSize: '1.35rem', fontWeight: 800, color: 'white' }}>
-              {activeProfile?.screeningCompleted ? 1 : 0}
-            </div>
-            <div style={{ fontSize: '0.72rem', color: '#C7D2FE', fontWeight: 600 }}>{t('screening')}</div>
-          </div>
-
-          <div
-            style={{
-              background: 'rgba(255, 255, 255, 0.12)',
-              borderRadius: '16px',
-              padding: '0.75rem 0.5rem',
-              textAlign: 'center',
-              border: '1px solid rgba(255, 255, 255, 0.15)'
-            }}
-          >
-            <div style={{ fontSize: '1.35rem', fontWeight: 800, color: 'white' }}>5m</div>
-            <div style={{ fontSize: '0.72rem', color: '#C7D2FE', fontWeight: 600 }}>{t('learning')}</div>
-          </div>
-
-          <div
-            style={{
-              background: 'rgba(255, 255, 255, 0.12)',
-              borderRadius: '16px',
-              padding: '0.75rem 0.5rem',
-              textAlign: 'center',
-              border: '1px solid rgba(255, 255, 255, 0.15)'
-            }}
-          >
-            <div style={{ fontSize: '1.35rem', fontWeight: 800, color: 'white' }}>5</div>
-            <div style={{ fontSize: '0.72rem', color: '#C7D2FE', fontWeight: 600 }}>{t('stars')}</div>
-          </div>
-        </div>
+        {/* 3 Stat Boxes (Removed for simplicity) */}
       </div>
 
-      {/* 2. Mitra's Daily Tip Card */}
+      {/* 2. Personalized Child Next Adventure Mission Card */}
+      <div
+        style={{
+          background: recommendation.hasPersonalized
+            ? 'linear-gradient(135deg, #059669 0%, #047857 100%)'
+            : 'linear-gradient(135deg, #4338CA 0%, #3730A3 100%)',
+          color: 'white',
+          borderRadius: '24px',
+          padding: '1.25rem 1.35rem',
+          boxShadow: '0 10px 24px rgba(5, 150, 105, 0.2)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0.85rem'
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{ fontSize: '1.5rem' }}>{recommendation.icon}</span>
+            <div>
+              <div style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', color: '#A7F3D0', letterSpacing: '0.04em' }}>
+                {isBengali ? '🌟 তোমার পরবর্তী অভিযান' : '🌟 YOUR NEXT ADVENTURE'}
+              </div>
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: '0.1rem 0 0', color: 'white' }}>
+                {recommendation.title}
+              </h3>
+            </div>
+          </div>
+
+          <button
+            onClick={handleRecommendedAudio}
+            style={{
+              background: 'rgba(255, 255, 255, 0.2)',
+              border: '1px solid rgba(255, 255, 255, 0.3)',
+              borderRadius: '50%',
+              width: '32px',
+              height: '32px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              color: 'white'
+            }}
+            title={t('listen')}
+          >
+            <Volume2 size={16} />
+          </button>
+        </div>
+
+        <p style={{ fontSize: '0.88rem', color: '#ECFDF5', margin: 0, lineHeight: 1.45, fontWeight: 500 }}>
+          {recommendation.childPrompt}
+        </p>
+
+        <button
+          onClick={handleLaunchRecommended}
+          style={{
+            background: 'white',
+            color: '#065F46',
+            border: 'none',
+            borderRadius: '9999px',
+            padding: '0.65rem 1.4rem',
+            fontSize: '0.88rem',
+            fontWeight: 800,
+            cursor: 'pointer',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '0.4rem',
+            transition: 'all 0.15s ease'
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-1px)')}
+          onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
+        >
+          <span>{recommendation.buttonText}</span>
+          <ArrowRight size={16} />
+        </button>
+      </div>
+
+      {/* 3. Mitra's Daily Tip Card */}
       <div
         style={{
           background: '#F0F4FF',

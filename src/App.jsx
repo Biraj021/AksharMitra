@@ -19,6 +19,7 @@ import ProfileSelectorModal from './components/auth/ProfileSelectorModal';
 import ReadingRuler from './components/common/ReadingRuler';
 import DyslexiaSettingsModal from './components/common/DyslexiaSettingsModal';
 import { useProfile } from './context/ProfileContext';
+import { getAdaptiveLearningConfig } from './utils/adaptiveLearningStrategy';
 
 export default function App() {
   const { currentView, setCurrentView, activeLanguage, activeProfile } = useProfile();
@@ -30,6 +31,9 @@ export default function App() {
 
   // Mandatory gating: new or unscreened profiles must complete screening quest first
   const isScreeningGated = activeProfile && !activeProfile.screeningCompleted && currentView !== 'login';
+
+  // Compute deterministic adaptive learning parameters from active profile
+  const adaptiveConfig = getAdaptiveLearningConfig(activeProfile);
 
   return (
     <div
@@ -56,22 +60,22 @@ export default function App() {
         {!isScreeningGated && activeProfile && currentView === 'dashboard' && <CompanionDashboard />}
         {!isScreeningGated && activeProfile && currentView === 'games' && <GamesHub onSelectGame={(gameId) => setCurrentView(gameId)} />}
         {!isScreeningGated && activeProfile && currentView === 'word-snapper' && (
-          <WordSnapper key={`ws-${langKey}`} onBack={() => setCurrentView('games')} />
+          <WordSnapper key={`ws-${langKey}`} onBack={() => setCurrentView('games')} adaptiveConfig={adaptiveConfig} />
         )}
         {!isScreeningGated && activeProfile && currentView === 'letter-hunter' && (
-          <LetterHunter key={`lh-${langKey}`} onBack={() => setCurrentView('games')} />
+          <LetterHunter key={`lh-${langKey}`} onBack={() => setCurrentView('games')} adaptiveConfig={adaptiveConfig} />
         )}
         {!isScreeningGated && activeProfile && currentView === 'spelling-clinic' && (
-          <SpellingClinic key={`sc-${langKey}`} onBack={() => setCurrentView('games')} />
+          <SpellingClinic key={`sc-${langKey}`} onBack={() => setCurrentView('games')} adaptiveConfig={adaptiveConfig} />
         )}
         {!isScreeningGated && activeProfile && currentView === 'spelling-traps' && (
-          <SpellingTrapChallenge key={`st-${langKey}`} onBack={() => setCurrentView('games')} />
+          <SpellingTrapChallenge key={`st-${langKey}`} onBack={() => setCurrentView('games')} adaptiveConfig={adaptiveConfig} />
         )}
         {!isScreeningGated && activeProfile && currentView === 'abc-fill-in' && (
-          <AbcFillIn key={`af-${langKey}`} onBack={() => setCurrentView('games')} />
+          <AbcFillIn key={`af-${langKey}`} onBack={() => setCurrentView('games')} adaptiveConfig={adaptiveConfig} />
         )}
         {!isScreeningGated && activeProfile && currentView === 'letter-tracing' && (
-          <LetterTracingQuest key={`lt-${langKey}`} onBack={() => setCurrentView('games')} />
+          <LetterTracingQuest key={`lt-${langKey}`} onBack={() => setCurrentView('games')} adaptiveConfig={adaptiveConfig} />
         )}
       </main>
 

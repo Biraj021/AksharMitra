@@ -61,7 +61,7 @@ const TRAP_CHALLENGES = [
   }
 ];
 
-export default function SpellingTrapChallenge({ onBack }) {
+export default function SpellingTrapChallenge({ onBack, adaptiveConfig }) {
   const { playPop, playChime, playStarTwinkle, speakText } = useAudio();
   const { addStars } = useProfile();
 
