@@ -8,6 +8,9 @@ import LetterHunter from './games/LetterHunter';
 import SpellingClinic from './games/SpellingClinic';
 import SpellingTrapChallenge from './games/SpellingTrapChallenge';
 import AbcFillIn from './games/AbcFillIn';
+import CompanionDashboard from './components/dashboard/CompanionDashboard';
+import PitchModal from './components/common/PitchModal';
+import ParentPinModal from './components/auth/ParentPinModal';
 import OnboardingModal from './components/auth/OnboardingModal';
 import ProfileSelectorModal from './components/auth/ProfileSelectorModal';
 import { useProfile } from './context/ProfileContext';
@@ -34,6 +37,7 @@ export default function App() {
           />
         )}
         {currentView === 'screening' && <ScreeningContainer />}
+        {currentView === 'dashboard' && <CompanionDashboard />}
         {currentView === 'games' && <GamesHub onSelectGame={(gameId) => setCurrentView(gameId)} />}
         {currentView === 'word-snapper' && (
           <WordSnapper key={`ws-${langKey}`} onBack={() => setCurrentView('games')} />
@@ -66,6 +70,9 @@ export default function App() {
           setShowOnboarding(true);
         }}
       />
+
+      <PitchModal />
+      <ParentPinModal />
     </div>
   );
 }

@@ -1,10 +1,10 @@
 {
-  "name": "AksharMitra - Assistive Dyslexia & Phonics Learning",
+  "name": "AksharMitra - Early Phonics & Assistive Literacy Companion",
   "short_name": "AksharMitra",
-  "description": "Gamified, non-stigmatizing early dyslexia risk-screening and phonics learning companion",
+  "description": "Playful early literacy learning support and adaptive phonics practice for every child.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#FAF8F2",
+  "background_color": "#FFFDF7",
   "theme_color": "#4F46E5",
   "orientation": "portrait-primary",
   "categories": ["education", "kids", "accessibility"],

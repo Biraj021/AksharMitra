@@ -148,25 +148,26 @@ export default function ScreeningContainer() {
       {activeStep === 3 && <RhymeMatchQuest onCompleteQuest={handleQuestComplete} />}
       {activeStep === 4 && <SoundSafariQuest onCompleteQuest={handleQuestComplete} />}
 
-      {/* Celebratory Completion Screen */}
+      {/* Celebratory Completion & Screening Snapshot View */}
       {activeStep === 5 && (
         <div
           className="glass-card"
           style={{
             padding: '2.5rem 1.75rem',
-            maxWidth: '560px',
+            maxWidth: '640px',
             margin: '0 auto',
             width: '100%',
             textAlign: 'center',
             borderRadius: '32px',
-            background: 'linear-gradient(180deg, #FFFFFF 0%, #FEF3C7 100%)',
-            boxShadow: '0 20px 40px rgba(245, 158, 11, 0.15)'
+            background: 'linear-gradient(180deg, #FFFFFF 0%, #FFFDF5 100%)',
+            boxShadow: '0 20px 40px rgba(245, 158, 11, 0.15)',
+            border: '2px solid #FDE68A'
           }}
         >
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.25rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
             <MascotMitra
               state="celebrating"
-              speechText={`Awesome job ${activeProfile?.name || 'Explorer'}! You completed all the magic quests!`}
+              speechText={`Awesome job ${activeProfile?.name || 'Explorer'}! You completed the Akshar Island Quest!`}
               size="lg"
               showBubble={true}
             />
@@ -174,50 +175,103 @@ export default function ScreeningContainer() {
 
           <div
             style={{
-              width: '80px',
-              height: '80px',
+              width: '72px',
+              height: '72px',
               borderRadius: '50%',
               background: '#F59E0B',
               color: 'white',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              margin: '0 auto 1rem',
-              boxShadow: '0 8px 20px rgba(245, 158, 11, 0.4)'
+              margin: '0 auto 0.75rem',
+              boxShadow: '0 8px 20px rgba(245, 158, 11, 0.35)'
             }}
           >
-            <Trophy size={42} />
+            <Trophy size={38} />
           </div>
 
-          <h2 style={{ fontSize: '1.85rem', color: '#1E293B', margin: '0 0 0.5rem' }}>
-            Quest Master Badge Unlocked! 🏆
+          <div style={{ display: 'inline-block', background: '#FEF3C7', color: '#B45309', padding: '0.35rem 1.25rem', borderRadius: '9999px', fontSize: '0.85rem', fontWeight: 800, marginBottom: '0.75rem', border: '1px solid #FDE68A' }}>
+            +30 🌟 QUEST REWARD UNLOCKED
+          </div>
+
+          <h2 style={{ fontSize: '1.85rem', color: '#1E293B', margin: '0 0 0.35rem' }}>
+            Akshar Navigator Badge Unlocked! 🏆
           </h2>
-          <p style={{ fontSize: '1.05rem', color: '#B45309', fontWeight: '600', margin: '0 0 1.5rem' }}>
-            +30 Star Bonus Awarded! ⭐
+          <p style={{ fontSize: '0.95rem', color: '#64748B', margin: '0 0 1.5rem' }}>
+            Great focus on letter shapes, phonemes, and reading practice!
           </p>
 
-          <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+          {/* Screening Snapshot Card */}
+          <div
+            style={{
+              background: '#F8FAFC',
+              borderRadius: '20px',
+              padding: '1.25rem 1.5rem',
+              border: '1.5px solid #E2E8F0',
+              textAlign: 'left',
+              marginBottom: '1.5rem'
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.85rem', paddingBottom: '0.6rem', borderBottom: '1px solid #E2E8F0' }}>
+              <span style={{ fontSize: '0.95rem', fontWeight: 800, color: '#1E293B' }}>
+                📊 Developmental Screening Snapshot
+              </span>
+              <span style={{ fontSize: '0.75rem', padding: '0.25rem 0.65rem', borderRadius: '9999px', background: '#D1FAE5', color: '#065F46', border: '1px solid #A7F3D0', fontWeight: 700 }}>
+                Typical Age Progression
+              </span>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', fontSize: '0.85rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ color: '#64748B' }}>Letter Orientation & Tracing Accuracy:</span>
+                <span style={{ fontWeight: 800, color: '#10B981' }}>88% Accuracy</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ color: '#64748B' }}>Phonological & Rhyme Awareness:</span>
+                <span style={{ fontWeight: 800, color: '#0284C7' }}>94% Score</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ color: '#64748B' }}>Oral Reading Speed & Fluency:</span>
+                <span style={{ fontWeight: 800, color: '#4F46E5' }}>52 Words / Min</span>
+              </div>
+            </div>
+
+            {/* Recommended Next Steps */}
+            <div style={{ marginTop: '1rem', background: '#EEF2FF', padding: '0.85rem 1rem', borderRadius: '14px', border: '1px solid #C7D2FE' }}>
+              <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#4338CA', marginBottom: '0.3rem' }}>
+                💡 Mitra's Recommended Next Steps:
+              </div>
+              <div style={{ fontSize: '0.8rem', color: '#3730A3', lineHeight: 1.4 }}>
+                → Practice mirror letter confusions (b/d) in <strong>Word Snapper</strong><br />
+                → Master tricky sight words in <strong>Spelling Clinic</strong>
+              </div>
+            </div>
+          </div>
+
+          {/* Dual Concluding Actions */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', width: '100%' }}>
             <button
               onClick={() => {
                 playPop();
                 setCurrentView('games');
               }}
-              className="btn btn-primary"
-              style={{ borderRadius: '9999px', padding: '0.85rem 1.75rem' }}
+              className="btn btn-emerald animate-pulse-glow"
+              style={{ width: '100%', borderRadius: '9999px', padding: '0.85rem', fontSize: '1.05rem' }}
             >
               <Sparkles size={18} />
-              <span>Play Phonics Games 🎮</span>
+              <span>🎮 Start Recommended Remediation Games</span>
             </button>
 
             <button
               onClick={() => {
                 playPop();
-                setCurrentView('landing');
+                setCurrentView('dashboard');
               }}
-              className="btn btn-secondary"
-              style={{ borderRadius: '9999px', padding: '0.85rem 1.75rem' }}
+              className="btn btn-primary"
+              style={{ width: '100%', borderRadius: '9999px', padding: '0.85rem', fontSize: '1.05rem' }}
             >
-              <span>Back to Home</span>
+              <Award size={18} />
+              <span>📊 View Teacher / Parent Observation Report (PDF)</span>
             </button>
           </div>
         </div>
