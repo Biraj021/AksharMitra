@@ -20,7 +20,7 @@ export default function MascotMitra({
   const handleSpeak = () => {
     playPop();
     if (speechText) {
-      const speechLang = activeLanguage?.id === 'bengali' ? 'bn-IN' : 'en-US';
+      const speechLang = activeLanguage?.id === 'hindi' ? 'hi-IN' : (activeLanguage?.id === 'bengali' ? 'bn-IN' : 'en-US');
       speakText(speechText, speechLang);
     }
     if (onSpeechClick) onSpeechClick();
@@ -129,7 +129,7 @@ export default function MascotMitra({
             fill="#D97706"
             fontFamily="Fredoka, sans-serif"
           >
-            {activeLanguage?.id === 'bengali' ? 'অ' : 'M'}
+            {activeLanguage?.id === 'hindi' ? 'अ' : (activeLanguage?.id === 'bengali' ? 'অ' : 'M')}
           </text>
 
           {/* Gradients */}

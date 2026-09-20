@@ -5,14 +5,16 @@ import { useAudio } from '../../context/AudioContext';
 import { getChildRecommendation } from '../../utils/adaptiveLearningStrategy';
 
 export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }) {
-  const { activeProfile, setCurrentView, activeLanguage, t } = useProfile();
+  const { activeProfile, setCurrentView, activeLanguage, t, setShowStreakModal, setShowEditProfileModal } = useProfile();
   const { playPop, playStarTwinkle, speakText } = useAudio();
 
   const isBengali = activeLanguage?.id === 'bengali';
-  const studentName = activeProfile?.name || (isBengali ? 'অভিযাত্রী' : 'Explorer');
+  const isHindi = activeLanguage?.id === 'hindi';
+  const speechLang = isHindi ? 'hi-IN' : (isBengali ? 'bn-IN' : 'en-US');
+  const studentName = activeProfile?.name || (isHindi ? 'खोजी' : (isBengali ? 'অভিযাত্রী' : 'Explorer'));
   const studentEmoji = getAvatarEmoji(activeProfile?.avatarEmoji || activeProfile?.avatar);
   const starsCount = activeProfile?.stars || 55;
-  const streakDays = activeProfile?.streak || 4;
+  const streakDays = activeProfile?.streak || 2;
 
   const recommendation = getChildRecommendation(activeProfile, activeLanguage?.id);
 
@@ -29,7 +31,7 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
     playPop();
     speakText(
       recommendation.childPrompt,
-      isBengali ? 'bn-IN' : 'en-US'
+      speechLang
     );
   };
 
@@ -51,7 +53,7 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
     playPop();
     speakText(
       t('dailyTipDesc'),
-      isBengali ? 'bn-IN' : 'en-US'
+      speechLang
     );
   };
 
@@ -84,9 +86,37 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
             <div style={{ fontSize: '0.9rem', color: '#C7D2FE', fontWeight: 500, marginBottom: '0.2rem' }}>
               {t('welcomeBack')}
             </div>
-            <h2 style={{ fontSize: '1.6rem', fontWeight: 800, margin: 0, color: 'white' }}>
-              {studentName}! {studentEmoji}
-            </h2>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', flexWrap: 'wrap' }}>
+              <h2 style={{ fontSize: '1.6rem', fontWeight: 800, margin: 0, color: 'white' }}>
+                {studentName}! {studentEmoji}
+              </h2>
+              <button
+                type="button"
+                onClick={() => {
+                  playPop();
+                  if (setShowEditProfileModal) setShowEditProfileModal(true);
+                }}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.22)',
+                  border: '1px solid rgba(255, 255, 255, 0.4)',
+                  borderRadius: '9999px',
+                  padding: '0.2rem 0.65rem',
+                  fontSize: '0.74rem',
+                  fontWeight: 800,
+                  color: 'white',
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.25rem',
+                  transition: 'all 0.15s ease',
+                  backdropFilter: 'blur(4px)'
+                }}
+                title={isHindi ? 'प्रोफ़ाइल संपादित करें' : (isBengali ? 'প্রোফাইল সম্পাদনা করুন' : 'Edit Profile')}
+              >
+                <span>✏️</span>
+                <span>{isHindi ? 'बदलें' : (isBengali ? 'বদলান' : 'Edit')}</span>
+              </button>
+            </div>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -98,23 +128,51 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
           </div>
         </div>
 
-        {/* Reading Streak Pill */}
+        {/* Reading Streak Pill with Interactive Attendance Tracker */}
         <div
+          onClick={() => {
+            playPop();
+            if (setShowStreakModal) setShowStreakModal(true);
+          }}
+          title={isHindi ? 'दैनिक उपस्थिति व सिलसिला कैलेंडर देखें' : (isBengali ? 'উপস্থিতি ও ধারার ক্যালেন্ডার দেখো' : 'View Daily Attendance & Streak Calendar')}
           style={{
             display: 'inline-flex',
             alignItems: 'center',
-            gap: '0.4rem',
-            background: 'rgba(255, 255, 255, 0.18)',
-            padding: '0.35rem 0.85rem',
+            gap: '0.45rem',
+            background: 'rgba(255, 255, 255, 0.22)',
+            padding: '0.4rem 0.95rem',
             borderRadius: '9999px',
-            fontSize: '0.82rem',
-            fontWeight: 700,
+            fontSize: '0.84rem',
+            fontWeight: 800,
             marginBottom: '1.25rem',
-            border: '1px solid rgba(255, 255, 255, 0.25)'
+            border: '1.5px solid rgba(255, 255, 255, 0.38)',
+            cursor: 'pointer',
+            transition: 'all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-2px) scale(1.03)';
+            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.32)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0) scale(1)';
+            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.22)';
           }}
         >
-          <Flame size={16} fill="#F97316" color="#F97316" />
+          <Flame size={18} fill="#F97316" color="#F97316" className="animate-pulse" />
           <span>{streakDays} {t('readingStreak')}</span>
+          <span
+            style={{
+              fontSize: '0.75rem',
+              background: 'rgba(255, 255, 255, 0.3)',
+              padding: '2px 8px',
+              borderRadius: '9999px',
+              fontWeight: 800,
+              marginLeft: '0.2rem'
+            }}
+          >
+            📅 {isHindi ? 'कैलेंडर' : (isBengali ? 'ক্যালেন্ডার' : 'Calendar')}
+          </span>
         </div>
 
         {/* 3 Stat Boxes (Removed for simplicity) */}
@@ -140,7 +198,7 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
             <span style={{ fontSize: '1.5rem' }}>{recommendation.icon}</span>
             <div>
               <div style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', color: '#A7F3D0', letterSpacing: '0.04em' }}>
-                {isBengali ? '🌟 তোমার পরবর্তী অভিযান' : '🌟 YOUR NEXT ADVENTURE'}
+                {isHindi ? '🌟 आपका अगला अभियान' : (isBengali ? '🌟 তোমার পরবর্তী অভিযান' : '🌟 YOUR NEXT ADVENTURE')}
               </div>
               <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: '0.1rem 0 0', color: 'white' }}>
                 {recommendation.title}

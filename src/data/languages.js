@@ -33,6 +33,24 @@ export const SUPPORTED_LANGUAGES = [
       { pair: ['ড', 'ড়'], name: 'Da vs Rra (Flap distinction)' }
     ],
     sampleWords: ['জল', 'ফুল', 'পাতা', 'কলম', 'বই', 'আকাশ']
+  },
+  {
+    id: 'hindi',
+    name: 'हिन्दी',
+    englishName: 'Hindi',
+    script: 'Devanagari',
+    fontFamily: "'Noto Sans Devanagari', sans-serif",
+    flagEmoji: '🇮🇳',
+    greeting: 'नमस्ते दोस्त! मैं मित्रा हूँ।',
+    subGreeting: 'चलो मिलकर अक्षरों और शब्दों की जादुई दुनिया की सैर करें!',
+    startAdventure: 'रोमांच शुरू करें 🚀',
+    demoConfusions: [
+      { pair: ['ब', 'भ'], name: 'ब vs भ (पेट कटी रेखा vs घुंडी)' },
+      { pair: ['द', 'ध'], name: 'द vs ध (पूंछ vs घुंडी)' },
+      { pair: ['घ', 'ध'], name: 'घ vs ध (शिरोरेखा भेद)' },
+      { pair: ['प', 'ष'], name: 'प vs ष (पेट कटी लकीर)' }
+    ],
+    sampleWords: ['घर', 'कमल', 'जल', 'तारा', 'किताब', 'पेड़']
   }
 ];
 

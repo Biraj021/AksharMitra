@@ -9,6 +9,8 @@ export default function BottomNav() {
 
   const isScreeningDone = Boolean(activeProfile?.screeningCompleted);
   const isBengali = activeLanguage?.id === 'bengali';
+  const isHindi = activeLanguage?.id === 'hindi';
+  const speechLang = isHindi ? 'hi-IN' : (isBengali ? 'bn-IN' : 'en-US');
 
   const navItems = [
     { id: 'landing', label: t('home'), icon: Home, matchViews: ['landing'], locked: !isScreeningDone },
@@ -22,7 +24,7 @@ export default function BottomNav() {
     if (item.locked) {
       speakText(
         t('screeningLockedAlert'),
-        isBengali ? 'bn-IN' : 'en-US'
+        speechLang
       );
       setCurrentView('screening');
       return;

@@ -4,9 +4,10 @@ import confetti from 'canvas-confetti';
 import { useAudio } from '../context/AudioContext';
 import { useProfile } from '../context/ProfileContext';
 
-const TRAIN_LEVELS = [
+// ── English Train Levels ──────────────────────────────────────────────────────
+const TRAIN_LEVELS_EN = [
   {
-    id: 'lvl_1',
+    id: 'lvl_en_1',
     title: 'Beginner Express: Jump into the ABCs',
     wagons: [
       { sequence: ['A', 'B', null, 'D', 'E'], missingIndex: 2, answer: 'C', hint: 'What comes right after B?' },
@@ -16,7 +17,7 @@ const TRAIN_LEVELS = [
     ]
   },
   {
-    id: 'lvl_2',
+    id: 'lvl_en_2',
     title: 'Mirror Letter Tracks: b, d, p, q',
     wagons: [
       { sequence: ['A', null, 'C', 'D', 'E'], missingIndex: 1, answer: 'B', hint: 'B has a belly on the right! (b)' },
@@ -26,7 +27,7 @@ const TRAIN_LEVELS = [
     ]
   },
   {
-    id: 'lvl_3',
+    id: 'lvl_en_3',
     title: 'Speedy Engine: Two Missing Letters',
     wagons: [
       { sequence: ['A', null, 'C', null, 'E', 'F'], missingIndices: [1, 3], answers: { 1: 'B', 3: 'D' }, hint: 'Fill B and D in the alphabet line!' },
@@ -35,7 +36,7 @@ const TRAIN_LEVELS = [
     ]
   },
   {
-    id: 'lvl_4',
+    id: 'lvl_en_4',
     title: 'Grand Master Train: Long Alphabet Trail',
     wagons: [
       { sequence: ['U', 'V', null, 'X', null, 'Z'], missingIndices: [2, 4], answers: { 2: 'W', 4: 'Y' }, hint: 'Almost to the end of the alphabet!' },
@@ -44,22 +45,128 @@ const TRAIN_LEVELS = [
   }
 ];
 
-const KEYBOARD_ROWS = [
+// ── Bengali Train Levels ──────────────────────────────────────────────────────
+const TRAIN_LEVELS_BN = [
+  {
+    id: 'lvl_bn_1',
+    title: 'স্বরবর্ণ এক্সপ্রেস: অ থেকে ঔ',
+    wagons: [
+      { sequence: ['অ', 'আ', null, 'ঈ', 'উ'], missingIndex: 2, answer: 'ই', hint: 'অ, আ এর পরে কী আসে?' },
+      { sequence: ['উ', 'ঊ', null, 'এ', 'ঐ'], missingIndex: 2, answer: 'ঋ', hint: 'ঊ এর পরের স্বরবর্ণটি বসাও!' },
+      { sequence: ['ঋ', 'এ', 'ঐ', null, 'ঔ'], missingIndex: 3, answer: 'ও', hint: 'ঐ এর পরে কোনটি বসবে?' },
+    ]
+  },
+  {
+    id: 'lvl_bn_2',
+    title: 'ব্যঞ্জনবর্ণ ট্রেইল: ক থেকে ঞ',
+    wagons: [
+      { sequence: ['ক', 'খ', null, 'ঘ', 'ঙ'], missingIndex: 2, answer: 'গ', hint: 'খ এর পরের বর্ণটি বেছে নাও!' },
+      { sequence: ['চ', 'ছ', null, 'ঝ', 'ঞ'], missingIndex: 2, answer: 'জ', hint: 'ছ এর পরে বর্গীয় জ!' },
+      { sequence: ['ট', 'ঠ', null, 'ঢ', 'ণ'], missingIndex: 2, answer: 'ড', hint: 'ঠ এর পরে কোনটি?' },
+    ]
+  },
+  {
+    id: 'lvl_bn_3',
+    title: 'বর্ণের বিভ্রান্তি ট্র্যাক: ব, র, ক, ধ',
+    wagons: [
+      { sequence: ['প', 'ফ', null, 'ভ', 'ম'], missingIndex: 2, answer: 'ব', hint: 'ফ এর পরে "ব" বর্ণটি বসাও!' },
+      { sequence: ['য', null, 'ল', 'শ', 'ষ'], missingIndex: 1, answer: 'র', hint: 'য এর পরে ফুটকি দেওয়া "র"!' },
+      { sequence: ['ত', 'থ', 'দ', null, 'ন'], missingIndex: 3, answer: 'ধ', hint: 'দ এর পরে ছোট ঘুন্ডি দেওয়া "ধ"!' },
+    ]
+  },
+  {
+    id: 'lvl_bn_4',
+    title: 'মাস্টার ট্রেইল: দুই বর্ণের শূন্যস্থান',
+    wagons: [
+      { sequence: ['ক', null, 'গ', null, 'ঙ'], missingIndices: [1, 3], answers: { 1: 'খ', 3: 'ঘ' }, hint: 'খ এবং ঘ বসিয়ে ট্রেন পূরণ করো!' },
+      { sequence: ['প', null, 'ব', null, 'ম'], missingIndices: [1, 3], answers: { 1: 'ফ', 3: 'ভ' }, hint: 'ফ এবং ভ বসাও!' },
+    ]
+  }
+];
+
+// ── Hindi Train Levels ────────────────────────────────────────────────────────
+const TRAIN_LEVELS_HI = [
+  {
+    id: 'lvl_hi_1',
+    title: 'स्वर एक्सप्रेस: अ से औ',
+    wagons: [
+      { sequence: ['अ', 'आ', null, 'ई', 'उ'], missingIndex: 2, answer: 'इ', hint: 'अ, आ के बाद क्या आता है?' },
+      { sequence: ['उ', 'ऊ', null, 'ए', 'ऐ'], missingIndex: 2, answer: 'ऋ', hint: 'ऊ के बाद आने वाला स्वर चुनें!' },
+      { sequence: ['ऋ', 'ए', 'ऐ', null, 'औ'], missingIndex: 3, answer: 'ओ', hint: 'ऐ के बाद क्या आएगा?' },
+    ]
+  },
+  {
+    id: 'lvl_hi_2',
+    title: 'व्यंजन एक्सप्रेस: क से ङ',
+    wagons: [
+      { sequence: ['क', 'ख', null, 'घ', 'ङ'], missingIndex: 2, answer: 'ग', hint: 'ख के बाद कौन सा अक्षर आता है?' },
+      { sequence: ['च', 'छ', null, 'झ', 'ञ'], missingIndex: 2, answer: 'ज', hint: 'छ के बाद ज चुनें!' },
+      { sequence: ['ट', 'ठ', null, 'ढ', 'ण'], missingIndex: 2, answer: 'ड', hint: 'ठ के बाद ड आता है!' },
+    ]
+  },
+  {
+    id: 'lvl_hi_3',
+    title: 'अक्षर भेद व दर्पण ट्रैक: ब, भ, द, ध',
+    wagons: [
+      { sequence: ['प', 'फ', null, 'भ', 'म'], missingIndex: 2, answer: 'ब', hint: 'फ के बाद "ब" अक्षर चुनें!' },
+      { sequence: ['य', null, 'ल', 'व', 'श'], missingIndex: 1, answer: 'र', hint: 'य के बाद "र" चुनें!' },
+      { sequence: ['त', 'थ', 'द', null, 'न'], missingIndex: 3, answer: 'ध', hint: 'द के बाद घुंडी वाला "ध" चुनें!' },
+    ]
+  },
+  {
+    id: 'lvl_hi_4',
+    title: 'मास्टर ट्रेन: दो छूटे हुए अक्षर',
+    wagons: [
+      { sequence: ['क', null, 'ग', null, 'ङ'], missingIndices: [1, 3], answers: { 1: 'ख', 3: 'घ' }, hint: 'ख और घ भरकर ट्रेन पूरी करें!' },
+      { sequence: ['प', null, 'ब', null, 'म'], missingIndices: [1, 3], answers: { 1: 'फ', 3: 'भ' }, hint: 'फ और भ भरें!' },
+    ]
+  }
+];
+
+// Keyboards
+const KEYBOARD_ROWS_EN = [
   ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
   ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
   ['Z', 'X', 'C', 'V', 'B', 'N', 'M']
 ];
 
-const VOWELS = new Set(['A', 'E', 'I', 'O', 'U']);
-const CONFUSION_LETTERS = new Set(['B', 'D', 'P', 'Q']);
+const KEYBOARD_ROWS_BN = [
+  ['অ', 'আ', 'ই', 'ঈ', 'উ', 'ঊ', 'ঋ', 'এ', 'ঐ', 'ও', 'ঔ'],
+  ['ক', 'খ', 'গ', 'ঘ', 'ঙ', 'চ', 'ছ', 'জ', 'ঝ', 'ঞ', 'ট', 'ঠ', 'ড', 'ঢ', 'ণ'],
+  ['ত', 'থ', 'দ', 'ধ', 'ন', 'প', 'ফ', 'ব', 'ভ', 'ম', 'য', 'র', 'ল', 'শ', 'ষ', 'স', 'হ']
+];
+
+const KEYBOARD_ROWS_HI = [
+  ['अ', 'आ', 'इ', 'ई', 'उ', 'ऊ', 'ऋ', 'ए', 'ऐ', 'ओ', 'औ'],
+  ['क', 'ख', 'ग', 'घ', 'ङ', 'च', 'छ', 'ज', 'झ', 'ञ', 'ट', 'ठ', 'ड', 'ढ', 'ण'],
+  ['त', 'थ', 'द', 'ध', 'न', 'प', 'फ', 'ब', 'भ', 'म', 'य', 'र', 'ल', 'व', 'श', 'ष', 'स', 'ह']
+];
+
+const VOWELS_EN = new Set(['A', 'E', 'I', 'O', 'U']);
+const VOWELS_BN = new Set(['অ', 'আ', 'ই', 'ঈ', 'উ', 'ঊ', 'ঋ', 'এ', 'ঐ', 'ও', 'ঔ']);
+const VOWELS_HI = new Set(['अ', 'आ', 'इ', 'ई', 'उ', 'ऊ', 'ऋ', 'ए', 'ऐ', 'ओ', 'औ']);
+
+const CONFUSION_EN = new Set(['B', 'D', 'P', 'Q']);
+const CONFUSION_BN = new Set(['ব', 'র', 'ক', 'ধ', 'ড', 'ড়', 'প', 'ফ']);
+const CONFUSION_HI = new Set(['ब', 'भ', 'द', 'ध', 'घ', 'प', 'ष']);
 
 export default function AbcFillIn({ onBack, adaptiveConfig }) {
-  const { addStars, activeLanguage } = useProfile();
+  const { addStars, activeLanguage, t } = useProfile();
   const { playPop, playChime, playSuccessChord, playStarTwinkle, speakText } = useAudio();
+
+  const langId = activeLanguage?.id || 'english';
+  const isBengali = langId === 'bengali';
+  const isHindi = langId === 'hindi';
+  const speechLang = isHindi ? 'hi-IN' : (isBengali ? 'bn-IN' : 'en-US');
+
+  const TRAIN_LEVELS = isHindi ? TRAIN_LEVELS_HI : (isBengali ? TRAIN_LEVELS_BN : TRAIN_LEVELS_EN);
+  const KEYBOARD_ROWS = isHindi ? KEYBOARD_ROWS_HI : (isBengali ? KEYBOARD_ROWS_BN : KEYBOARD_ROWS_EN);
+  const VOWELS = isHindi ? VOWELS_HI : (isBengali ? VOWELS_BN : VOWELS_EN);
+  const CONFUSION_LETTERS = isHindi ? CONFUSION_HI : (isBengali ? CONFUSION_BN : CONFUSION_EN);
 
   const [currentLevelIdx, setCurrentLevelIdx] = useState(0);
   const [currentWagonIdx, setCurrentWagonIdx] = useState(0);
-  
+
   // Wagon slots state: array of letter strings or null
   const [wagonState, setWagonState] = useState([]);
   const [selectedSlot, setSelectedSlot] = useState(null);
@@ -67,8 +174,8 @@ export default function AbcFillIn({ onBack, adaptiveConfig }) {
   const [isCompleted, setIsCompleted] = useState(false);
   const [showCaseToggle, setShowCaseToggle] = useState('upper'); // 'upper' | 'both'
 
-  const currentLevel = TRAIN_LEVELS[currentLevelIdx];
-  const currentWagon = currentLevel.wagons[currentWagonIdx];
+  const currentLevel = TRAIN_LEVELS[currentLevelIdx] || TRAIN_LEVELS[0];
+  const currentWagon = currentLevel?.wagons[currentWagonIdx] || currentLevel?.wagons[0];
 
   // Initialize wagon slots
   useEffect(() => {
@@ -83,12 +190,12 @@ export default function AbcFillIn({ onBack, adaptiveConfig }) {
     } else if (currentWagon.missingIndices?.length) {
       setSelectedSlot(currentWagon.missingIndices[0]);
     }
-  }, [currentLevelIdx, currentWagonIdx]);
+  }, [currentLevelIdx, currentWagonIdx, langId]);
 
   // Read letter aloud
   const handleHearLetter = (letter) => {
     if (!letter) return;
-    speakText(`${letter}, ${letter.toLowerCase()}`);
+    speakText(letter, speechLang);
   };
 
   // Select letter from visual dyslexia keyboard
@@ -119,65 +226,67 @@ export default function AbcFillIn({ onBack, adaptiveConfig }) {
       // Check if all missing slots are now filled
       const allFilled = isSingle
         ? true
-        : currentWagon.missingIndices.every(idx => updated[idx] === currentWagon.answers[idx]);
+        : currentWagon.missingIndices.every(idx => (idx === selectedSlot ? true : updated[idx] !== null));
 
       if (allFilled) {
-        setFeedback('correct');
         playSuccessChord();
-        addStars(5);
-        playStarTwinkle();
-        confetti({
-          particleCount: 40,
-          spread: 55,
-          origin: { y: 0.6 }
-        });
+        setFeedback('correct');
+        addStars(3);
+
+        try {
+          confetti({
+            particleCount: 35,
+            spread: 50,
+            origin: { y: 0.6 }
+          });
+        } catch (e) { }
+
+        const victoryMsg = isHindi
+          ? `शानदार! ${letter} बिल्कुल सही है!`
+          : (isBengali ? `চমৎকার! ${letter} একদম সঠিক!` : `Spot on! ${letter} connects the train!`);
+        speakText(victoryMsg, speechLang);
+
+        setTimeout(() => {
+          advanceToNextWagon();
+        }, 1500);
       } else {
-        // Move to the next empty slot
-        const nextBlank = currentWagon.missingIndices.find(idx => !updated[idx]);
-        if (nextBlank !== undefined) {
-          setSelectedSlot(nextBlank);
+        // Find next empty slot
+        const nextEmpty = currentWagon.missingIndices.find(idx => updated[idx] === null);
+        if (nextEmpty !== undefined) {
+          setSelectedSlot(nextEmpty);
         }
       }
     } else {
-      // Gentle encouragement
+      playChime(250);
       setFeedback('try_again');
-      playChime(300);
-      setTimeout(() => setFeedback(null), 1400);
+      const retryMsg = isHindi
+        ? `दोबारा सोचें! ${currentWagon.hint || 'क्रम ध्यान से देखें।'}`
+        : (isBengali ? `আবার চেষ্টা করো! ${currentWagon.hint || 'ক্রমটি ভালো করে দেখো।'}` : `Not quite! Check the train order!`);
+      speakText(retryMsg, speechLang);
+
+      setTimeout(() => {
+        setFeedback(null);
+      }, 1200);
     }
   };
 
-  // Physical keyboard listener
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      const key = e.key.toUpperCase();
-      if (/^[A-Z]$/.test(key)) {
-        handleKeyPress(key);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedSlot, wagonState, feedback, currentWagon]);
-
-  // Advance to next wagon or next level
-  const handleNextWagon = () => {
-    setFeedback(null);
-    if (currentWagonIdx + 1 < currentLevel.wagons.length) {
+  const advanceToNextWagon = () => {
+    if (currentWagonIdx < currentLevel.wagons.length - 1) {
       setCurrentWagonIdx(prev => prev + 1);
-    } else if (currentLevelIdx + 1 < TRAIN_LEVELS.length) {
+    } else if (currentLevelIdx < TRAIN_LEVELS.length - 1) {
       setCurrentLevelIdx(prev => prev + 1);
       setCurrentWagonIdx(0);
-      confetti({
-        particleCount: 80,
-        spread: 80,
-        origin: { y: 0.5 }
-      });
+      playStarTwinkle();
     } else {
       setIsCompleted(true);
-      confetti({
-        particleCount: 120,
-        spread: 90,
-        origin: { y: 0.4 }
-      });
+      playStarTwinkle();
+      try {
+        confetti({
+          particleCount: 80,
+          spread: 80,
+          origin: { y: 0.5 }
+        });
+      } catch (e) { }
     }
   };
 
@@ -185,37 +294,35 @@ export default function AbcFillIn({ onBack, adaptiveConfig }) {
     setCurrentLevelIdx(0);
     setCurrentWagonIdx(0);
     setIsCompleted(false);
-    setFeedback(null);
   };
 
   return (
-    <div className="game-viewport">
-      {/* Top Bar */}
-      <div className="game-top-bar">
+    <div className="game-viewport" style={{ maxWidth: '880px', margin: '0 auto', padding: '1rem' }}>
+      {/* Navigation & Header */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
         <button
-          onClick={() => {
-            playPop();
-            onBack();
-          }}
+          onClick={onBack}
           className="btn-secondary btn-pill"
           style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}
         >
           <ArrowLeft size={16} />
-          <span>Games Hub</span>
+          <span>{isHindi ? 'खेल हब' : (isBengali ? 'গেমস হাব' : 'Games Hub')}</span>
         </button>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-          <button
-            onClick={() => setShowCaseToggle(prev => (prev === 'upper' ? 'both' : 'upper'))}
-            className="btn-secondary btn-pill"
-            style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem' }}
-            title="Toggle letter casing preview"
-          >
-            {showCaseToggle === 'upper' ? 'Aa (Show Lowercase)' : 'A (Uppercase Only)'}
-          </button>
+          {!isBengali && !isHindi && (
+            <button
+              onClick={() => setShowCaseToggle(prev => (prev === 'upper' ? 'both' : 'upper'))}
+              className="btn-secondary btn-pill"
+              style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem' }}
+              title="Toggle letter casing preview"
+            >
+              {showCaseToggle === 'upper' ? 'Aa (Show Lowercase)' : 'A (Uppercase Only)'}
+            </button>
+          )}
           <div className="game-stat-pill" style={{ color: '#047857', background: '#D1FAE5', borderColor: '#A7F3D0' }}>
             <Train size={16} />
-            <span>Train {currentLevelIdx + 1}.{currentWagonIdx + 1}</span>
+            <span>{isHindi ? `ट्रेन ${currentLevelIdx + 1}.${currentWagonIdx + 1}` : (isBengali ? `ট্রেন ${currentLevelIdx + 1}.${currentWagonIdx + 1}` : `Train ${currentLevelIdx + 1}.${currentWagonIdx + 1}`)}</span>
           </div>
         </div>
       </div>
@@ -241,11 +348,11 @@ export default function AbcFillIn({ onBack, adaptiveConfig }) {
             {/* Level & Task Banner */}
             <div style={{ textAlign: 'center', width: '100%' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
-                <span className="badge badge-emerald">🔡 ABC Alphabet Train</span>
+                <span className="badge badge-emerald">🔡 {isHindi ? 'अक्षर एक्सप्रेस' : (isBengali ? 'বর্ণমালা এক্সপ্রেস' : 'ABC Alphabet Train')}</span>
                 <span className="badge badge-amber">{currentLevel.title}</span>
               </div>
               <p style={{ color: '#64748B', fontSize: '0.95rem', margin: 0 }}>
-                {currentWagon?.hint || 'Tap on the missing train wagon and pick the correct letter!'}
+                {currentWagon?.hint || (isHindi ? 'छूटे हुए डिब्बे पर टैप करें और सही अक्षर चुनें!' : (isBengali ? 'খালি বগিতে স্পর্শ করো এবং সঠিক বর্ণ বেছে নাও!' : 'Tap on the missing train wagon and pick the correct letter!'))}
               </p>
             </div>
 
@@ -298,52 +405,70 @@ export default function AbcFillIn({ onBack, adaptiveConfig }) {
                 </div>
 
                 {/* Wagons */}
-                {wagonState.map((letter, idx) => {
-                  const isMissingSlot =
-                    currentWagon.missingIndex === idx ||
-                    (currentWagon.missingIndices && currentWagon.missingIndices.includes(idx));
-                  const isSelected = selectedSlot === idx;
-                  const isFilled = letter !== null;
+                {wagonState.map((char, slotIdx) => {
+                  const isMissingSlot = currentWagon.missingIndex === slotIdx || currentWagon.missingIndices?.includes(slotIdx);
+                  const isSelected = selectedSlot === slotIdx;
+                  const isFilled = char !== null;
 
                   return (
                     <div
-                      key={idx}
+                      key={slotIdx}
                       onClick={() => {
-                        playPop();
                         if (isMissingSlot) {
-                          setSelectedSlot(idx);
-                        } else if (letter) {
-                          handleHearLetter(letter);
+                          playPop();
+                          setSelectedSlot(slotIdx);
+                        } else if (char) {
+                          handleHearLetter(char);
                         }
                       }}
                       style={{
-                        width: '74px',
+                        width: '70px',
                         height: '90px',
-                        borderRadius: '18px',
+                        borderRadius: '16px',
+                        background: isFilled
+                          ? (isMissingSlot ? '#FEF08A' : '#FFFFFF')
+                          : (isSelected ? '#EEF2FF' : '#F1F5F9'),
+                        border: isSelected
+                          ? '3px solid #4F46E5'
+                          : isFilled
+                          ? '2px solid #E2E8F0'
+                          : '2px dashed #94A3B8',
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
                         justifyContent: 'center',
                         cursor: isMissingSlot ? 'pointer' : 'default',
-                        transition: 'all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                        position: 'relative',
-                        boxShadow: isSelected
-                          ? '0 0 0 4px #10B981, 0 8px 16px rgba(16, 185, 129, 0.25)'
-                          : '0 4px 8px rgba(0, 0, 0, 0.05)',
-                        background: isMissingSlot
-                          ? isFilled
-                            ? '#ECFDF5'
-                            : '#FFFFFF'
-                          : '#FFFFFF',
-                        border: isMissingSlot
-                          ? isFilled
-                            ? '3px solid #10B981'
-                            : '3px dashed #F59E0B'
-                          : '2px solid #E2E8F0',
-                        transform: isSelected ? 'scale(1.06)' : 'scale(1)'
+                        transform: isSelected ? 'scale(1.08)' : 'scale(1)',
+                        boxShadow: isSelected ? '0 6px 16px rgba(79, 70, 229, 0.25)' : '0 2px 6px rgba(0, 0, 0, 0.04)',
+                        transition: 'all 0.15s ease',
+                        position: 'relative'
                       }}
                     >
-                      {/* Car Wheels Indicator */}
+                      {isFilled ? (
+                        <>
+                          <span
+                            style={{
+                              fontSize: '2rem',
+                              fontWeight: 800,
+                              color: isMissingSlot ? '#854D0E' : '#1E293B',
+                              fontFamily: isHindi ? 'var(--font-devanagari)' : (isBengali ? 'var(--font-bengali)' : 'Lexend, sans-serif')
+                            }}
+                          >
+                            {char}
+                          </span>
+                          {!isBengali && !isHindi && showCaseToggle === 'both' && (
+                            <span style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: 600 }}>
+                              {char.toLowerCase()}
+                            </span>
+                          )}
+                        </>
+                      ) : (
+                        <span style={{ fontSize: '1.8rem', color: '#94A3B8', fontWeight: 800 }}>
+                          ?
+                        </span>
+                      )}
+
+                      {/* Small train wheels */}
                       <div
                         style={{
                           position: 'absolute',
@@ -352,152 +477,41 @@ export default function AbcFillIn({ onBack, adaptiveConfig }) {
                           gap: '24px'
                         }}
                       >
-                        <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#334155' }} />
-                        <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#334155' }} />
+                        <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#334155', border: '2px solid white' }} />
+                        <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#334155', border: '2px solid white' }} />
                       </div>
-
-                      {letter ? (
-                        <div style={{ textAlign: 'center' }}>
-                          <span
-                            style={{
-                              fontSize: '2rem',
-                              fontWeight: 900,
-                              color: isMissingSlot ? '#047857' : '#1E293B',
-                              fontFamily: 'Lexend, sans-serif'
-                            }}
-                          >
-                            {letter}
-                          </span>
-                          {showCaseToggle === 'both' && (
-                            <div style={{ fontSize: '0.85rem', color: '#64748B', fontWeight: 600 }}>
-                              {letter.toLowerCase()}
-                            </div>
-                          )}
-                        </div>
-                      ) : (
-                        <div style={{ textAlign: 'center' }}>
-                          <span style={{ fontSize: '1.8rem', color: '#F59E0B', fontWeight: 900 }}>?</span>
-                          <div style={{ fontSize: '0.65rem', color: '#B45309', fontWeight: 700 }}>
-                            {isSelected ? 'TAP KEY' : 'BLANK'}
-                          </div>
-                        </div>
-                      )}
                     </div>
                   );
                 })}
               </div>
-
-              {/* Train Track Line */}
-              <div
-                style={{
-                  width: '95%',
-                  height: '6px',
-                  background: '#64748B',
-                  borderRadius: '3px',
-                  marginTop: '0.2rem'
-                }}
-              />
             </div>
 
-            {/* Audio Hear Button */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <button
-                onClick={() => {
-                  const seq = wagonState.filter(Boolean).join(', ');
-                  speakText(`Train wagon sequence: ${seq}`);
-                }}
-                className="btn-secondary btn-pill"
-                style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.85rem' }}
-              >
-                <Volume2 size={16} color="#059669" />
-                <span>Listen to Train Sequence</span>
-              </button>
-            </div>
-
-            {/* Feedback & Next Wagon Banner */}
-            {feedback === 'correct' ? (
-              <div
-                style={{
-                  width: '100%',
-                  padding: '1rem',
-                  borderRadius: '16px',
-                  background: '#ECFDF5',
-                  border: '2px solid #6EE7B7',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  animation: 'popIn 0.3s ease-out'
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                  <CheckCircle size={24} color="#059669" />
-                  <span style={{ fontWeight: 700, color: '#065F46', fontSize: '1.05rem' }}>
-                    Choo-choo! Great job restoring the train! (+5 Stars 🌟)
-                  </span>
-                </div>
-                <button
-                  onClick={handleNextWagon}
-                  className="btn btn-emerald"
-                  style={{ borderRadius: '9999px', padding: '0.6rem 1.25rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
-                >
-                  <span>Next Wagon</span>
-                  <ArrowRight size={16} />
-                </button>
-              </div>
-            ) : feedback === 'try_again' ? (
-              <div
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  borderRadius: '14px',
-                  background: '#FEF3C7',
-                  border: '1.5px solid #FCD34D',
-                  textAlign: 'center',
-                  color: '#92400E',
-                  fontWeight: 600,
-                  fontSize: '0.9rem'
-                }}
-              >
-                Gently check the alphabet order! Try another letter key below 💡
-              </div>
-            ) : null}
-
-            {/* Visual Dyslexia-Friendly On-Screen Keyboard */}
-            <div
-              style={{
-                width: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '0.5rem',
-                background: '#F8FAFC',
-                padding: '1.25rem',
-                borderRadius: '20px',
-                border: '1.5px solid #E2E8F0'
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
-                <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#475569' }}>
-                  ⌨️ Dyslexia Visual Keyboard (Touch or type)
+            {/* Visual Dyslexia-Optimized Keyboard */}
+            <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 0.5rem' }}>
+                <span style={{ fontSize: '0.8rem', color: '#64748B', fontWeight: 700 }}>
+                  {isHindi ? '🟡 स्वर  •  🟣 मुख्य अक्षर' : (isBengali ? '🟡 স্বরবর্ণ  •  🟣 বিশেষ বর্ণ' : '🟡 Vowels  •  🟣 Confusion Pairs')}
                 </span>
-                <div style={{ display: 'flex', gap: '0.75rem', fontSize: '0.75rem', color: '#64748B' }}>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                    <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#F59E0B' }} />
-                    Vowel
+                {feedback === 'try_again' && (
+                  <span style={{ fontSize: '0.82rem', color: '#DC2626', fontWeight: 800 }}>
+                    {isHindi ? '⚠️ दोबारा सोचें!' : (isBengali ? '⚠️ আবার চেষ্টা করো!' : '⚠️ Keep looking!')}
                   </span>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                    <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#8B5CF6' }} />
-                    Mirror Pair (b/d/p/q)
+                )}
+                {feedback === 'correct' && (
+                  <span style={{ fontSize: '0.82rem', color: '#16A34A', fontWeight: 800 }}>
+                    {isHindi ? '✓ बहुत बढ़िया!' : (isBengali ? '✓ চমৎকার!' : '✓ Perfect connection!')}
                   </span>
-                </div>
+                )}
               </div>
 
-              {KEYBOARD_ROWS.map((row, rIdx) => (
+              {KEYBOARD_ROWS.map((row, rowIdx) => (
                 <div
-                  key={rIdx}
+                  key={rowIdx}
                   style={{
                     display: 'flex',
                     justifyContent: 'center',
-                    gap: '0.4rem'
+                    gap: '0.35rem',
+                    flexWrap: 'wrap'
                   }}
                 >
                   {row.map((char) => {
@@ -509,13 +523,13 @@ export default function AbcFillIn({ onBack, adaptiveConfig }) {
                         key={char}
                         onClick={() => handleKeyPress(char)}
                         style={{
-                          flex: 1,
-                          maxWidth: '52px',
-                          height: '48px',
+                          minWidth: '42px',
+                          height: '46px',
+                          padding: '0 0.35rem',
                           borderRadius: '12px',
-                          fontSize: '1.25rem',
+                          fontSize: '1.2rem',
                           fontWeight: 800,
-                          fontFamily: 'Lexend, sans-serif',
+                          fontFamily: isHindi ? 'var(--font-devanagari)' : (isBengali ? 'var(--font-bengali)' : 'Lexend, sans-serif'),
                           cursor: 'pointer',
                           display: 'flex',
                           flexDirection: 'column',
@@ -541,7 +555,7 @@ export default function AbcFillIn({ onBack, adaptiveConfig }) {
                         }}
                       >
                         <span>{char}</span>
-                        {showCaseToggle === 'both' && (
+                        {!isBengali && !isHindi && showCaseToggle === 'both' && (
                           <span style={{ fontSize: '0.65rem', opacity: 0.75 }}>{char.toLowerCase()}</span>
                         )}
                       </button>
@@ -579,10 +593,14 @@ export default function AbcFillIn({ onBack, adaptiveConfig }) {
             </div>
             <div>
               <h2 style={{ fontSize: '2rem', margin: '0 0 0.5rem', color: '#065F46' }}>
-                Alphabet Train Grand Master!
+                {isHindi ? 'अक्षर एक्सप्रेस मास्टर!' : (isBengali ? 'বর্ণমালা এক্সপ্রেস গ্র্যান্ড মাস্টার!' : 'Alphabet Train Grand Master!')}
               </h2>
               <p style={{ color: '#64748B', maxWidth: '440px', margin: '0 auto', fontSize: '1rem', lineHeight: 1.5 }}>
-                You repaired every single wagon on the tracks from A to Z! Your sequencing and letter recognition are outstanding!
+                {isHindi
+                  ? 'आपने ट्रेन के सभी डिब्बों को सही अक्षरों से जोड़ दिया! आपका वर्णमाला ज्ञान शानदार है!'
+                  : (isBengali
+                    ? 'তুমি ট্রেনের সমস্ত বগিকে সঠিক বর্ণ দিয়ে পূর্ণ করেছো! তোমার বর্ণ চেনার দক্ষতা দারুণ!'
+                    : 'You repaired every single wagon on the tracks from start to finish! Your sequencing and letter recognition are outstanding!')}
               </p>
             </div>
 
@@ -593,14 +611,14 @@ export default function AbcFillIn({ onBack, adaptiveConfig }) {
                 style={{ borderRadius: '9999px', padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
               >
                 <RotateCcw size={18} />
-                <span>Play Again</span>
+                <span>{isHindi ? 'पुनः खेलें' : (isBengali ? 'আবার খেলো' : 'Play Again')}</span>
               </button>
               <button
                 onClick={onBack}
                 className="btn btn-emerald"
                 style={{ borderRadius: '9999px', padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
               >
-                <span>Back to Hub</span>
+                <span>{isHindi ? 'हब पर वापस' : (isBengali ? 'হাবে ফিরে যান' : 'Back to Hub')}</span>
                 <ArrowRight size={18} />
               </button>
             </div>

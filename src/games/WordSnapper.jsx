@@ -24,7 +24,7 @@ import { useProfile } from '../context/ProfileContext';
 import { useAudio } from '../context/AudioContext';
 
 export default function WordSnapper({ onBack, adaptiveConfig }) {
-  const { activeProfile, addStars, activeLanguage, setCurrentView } = useProfile();
+  const { activeProfile, addStars, recordActivityCompletion, activeLanguage, setCurrentView } = useProfile();
   const { playPop, playChime, playStarTwinkle } = useAudio();
 
   // ── Session language is LOCKED at mount. Any language change should unmount
@@ -306,6 +306,16 @@ export default function WordSnapper({ onBack, adaptiveConfig }) {
       // ── SESSION COMPLETE — never auto-loop ──
       setIsSessionComplete(true);
       playStarTwinkle();
+      if (recordActivityCompletion) {
+        recordActivityCompletion({
+          activityId: 'word-snapper',
+          starsEarned: 10,
+          metricUpdates: {
+            wpm: Math.min(65, (activeProfile?.screeningMetrics?.wpm || 30) + 3),
+            phonologicalScore: Math.min(100, (activeProfile?.screeningMetrics?.phonologicalScore || 70) + 4)
+          }
+        });
+      }
       try {
         confetti({ particleCount: 90, spread: 80, origin: { y: 0.5 } });
       } catch (_) {}
@@ -315,7 +325,7 @@ export default function WordSnapper({ onBack, adaptiveConfig }) {
       setCurrentItemIndex(0);
       setIsWordSolved(false);
     }
-  }, [currentWordIndex, sessionWords.length, playPop, playStarTwinkle]);
+  }, [currentWordIndex, sessionWords.length, playPop, playStarTwinkle, recordActivityCompletion, activeProfile]);
 
   // ── Practice Again — build a NEW session, excluding just-done words ───────
   const handlePracticeAgain = useCallback(() => {

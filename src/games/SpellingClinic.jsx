@@ -4,9 +4,10 @@ import confetti from 'canvas-confetti';
 import { useAudio } from '../context/AudioContext';
 import { useProfile } from '../context/ProfileContext';
 
-const TRICKY_WORDS = [
+// ── English Tricky Words ──────────────────────────────────────────────────────
+const TRICKY_WORDS_EN = [
   {
-    id: 'sp_1',
+    id: 'sp_en_1',
     word: 'FRIEND',
     icon: '🤝',
     trapLetters: ['IE'],
@@ -15,7 +16,7 @@ const TRICKY_WORDS = [
     phoneticTip: 'Starts with /fr/, has silent tricky /i/, ends with /end/.'
   },
   {
-    id: 'sp_2',
+    id: 'sp_en_2',
     word: 'BECAUSE',
     icon: '💡',
     trapLetters: ['AU'],
@@ -24,7 +25,7 @@ const TRICKY_WORDS = [
     phoneticTip: 'BE + CAUSE = BECAUSE'
   },
   {
-    id: 'sp_3',
+    id: 'sp_en_3',
     word: 'SAID',
     icon: '🗣️',
     trapLetters: ['AI'],
@@ -33,7 +34,7 @@ const TRICKY_WORDS = [
     phoneticTip: "'AI' makes the short /e/ sound in SAID."
   },
   {
-    id: 'sp_4',
+    id: 'sp_en_4',
     word: 'PEOPLE',
     icon: '👥',
     trapLetters: ['EO'],
@@ -42,7 +43,7 @@ const TRICKY_WORDS = [
     phoneticTip: 'PEO + PLE = PEOPLE'
   },
   {
-    id: 'sp_5',
+    id: 'sp_en_5',
     word: 'NIGHT',
     icon: '🌙',
     trapLetters: ['IGH'],
@@ -51,7 +52,7 @@ const TRICKY_WORDS = [
     phoneticTip: 'N + IGH + T = NIGHT'
   },
   {
-    id: 'sp_6',
+    id: 'sp_en_6',
     word: 'COULD',
     icon: '🤔',
     trapLetters: ['OUL'],
@@ -61,16 +62,134 @@ const TRICKY_WORDS = [
   }
 ];
 
-const DYSGRAPHIA_WORDS = [
+// ── Bengali Tricky Words ──────────────────────────────────────────────────────
+const TRICKY_WORDS_BN = [
+  {
+    id: 'sp_bn_1',
+    word: 'বই',
+    icon: '📚',
+    trapLetters: ['ব', 'ই'],
+    mnemonic: 'ব দিয়ে বই, পড়ো তবেই শিখবে সই!',
+    explanation: 'প্রথমে "ব", তারপর "ই": বই।',
+    phoneticTip: 'ব + ই = বই'
+  },
+  {
+    id: 'sp_bn_2',
+    word: 'জল',
+    icon: '💧',
+    trapLetters: ['জ', 'ল'],
+    mnemonic: 'জল পড়ে পাতা নড়ে!',
+    explanation: 'প্রথমে "জ", তারপর "ল": জল।',
+    phoneticTip: 'জ + ল = জল'
+  },
+  {
+    id: 'sp_bn_3',
+    word: 'ফুল',
+    icon: '🌸',
+    trapLetters: ['ফ', 'ল'],
+    mnemonic: 'ফ এ ফুল, লাল গোলাপে সুন্দর দুল!',
+    explanation: 'ফ এর সাথে হ্রস্ব-উ কার ও ল: ফুল।',
+    phoneticTip: 'ফ + ু + ল = ফুল'
+  },
+  {
+    id: 'sp_bn_4',
+    word: 'কলম',
+    icon: '✒️',
+    trapLetters: ['ক', 'ল', 'ম'],
+    mnemonic: 'কলম দিয়ে সুন্দর লেখা!',
+    explanation: 'ক এর পর ল, শেষে ম: কলম।',
+    phoneticTip: 'ক + ল + ম = কলম'
+  },
+  {
+    id: 'sp_bn_5',
+    word: 'আকাশ',
+    icon: '☁️',
+    trapLetters: ['আ', 'শ'],
+    mnemonic: 'নীল আকাশ উড়ে যায় পাখি!',
+    explanation: 'আ + ক-আ-কার + তালব্য-শ: আকাশ।',
+    phoneticTip: 'আ + ক + া + শ = আকাশ'
+  }
+];
+
+// ── Hindi Tricky Words ────────────────────────────────────────────────────────
+const TRICKY_WORDS_HI = [
+  {
+    id: 'sp_hi_1',
+    word: 'जल',
+    icon: '💧',
+    trapLetters: ['ज', 'ल'],
+    mnemonic: 'जल ही जीवन की अनमोल धारा है!',
+    explanation: 'पहले "ज", फिर "ल": जल।',
+    phoneticTip: 'ज + ल = जल'
+  },
+  {
+    id: 'sp_hi_2',
+    word: 'घर',
+    icon: '🏠',
+    trapLetters: ['घ', 'र'],
+    mnemonic: 'पूरी शिरोरेखा वाला घ और र = घर!',
+    explanation: 'शिरोरेखा पूरी खींचे घ और र: घर।',
+    phoneticTip: 'घ + र = घर'
+  },
+  {
+    id: 'sp_hi_3',
+    word: 'फल',
+    icon: '🍎',
+    trapLetters: ['फ', 'ल'],
+    mnemonic: 'ताजे और मीठे रसीले फल!',
+    explanation: 'पहले "फ", फिर "ल": फल।',
+    phoneticTip: 'फ + ल = फल'
+  },
+  {
+    id: 'sp_hi_4',
+    word: 'कमल',
+    icon: '🪷',
+    trapLetters: ['क', 'म', 'ल'],
+    mnemonic: 'हमारा राष्ट्रीय सुंदर फूल कमल!',
+    explanation: 'क के बाद म, अंत में ल: कमल।',
+    phoneticTip: 'क + म + ल = कमल'
+  },
+  {
+    id: 'sp_hi_5',
+    word: 'तारा',
+    icon: '⭐',
+    trapLetters: ['त', 'र'],
+    mnemonic: 'आसमान में चमचमाता तारा!',
+    explanation: 'त-आ-की-मात्रा और र-आ-की-मात्रा: तारा।',
+    phoneticTip: 'त + ा + र + ा = तारा'
+  }
+];
+
+const DYSGRAPHIA_WORDS_EN = [
   { word: 'cat', tip: "'c' and 'a' stay between midline & baseline. 't' reaches up to the skyline!" },
   { word: 'dog', tip: "'d' reaches high to the sky, 'o' stays in middle, 'g' dips underground to the worm line!" },
   { word: 'boy', tip: "'b' is a tall skyline letter, 'o' is middle, 'y' drops its tail to the worm line!" },
   { word: 'bed', tip: "'b' and 'd' are tall skyline letters! 'e' stays snug in the middle grass." }
 ];
 
+const DYSGRAPHIA_WORDS_BN = [
+  { word: 'বই', tip: 'ব এবং ই মাত্রা বরাবর সোজা লাইনে সুন্দরভাবে বসবে।' },
+  { word: 'জল', tip: 'জ এবং ল সমান উচ্চতায় রেখার মাঝে থাকবে।' },
+  { word: 'গাছ', tip: 'গ এর অর্ধমাত্রা এবং ছ এর গোল অংশ সমানভাবে আঁকো।' }
+];
+
+const DYSGRAPHIA_WORDS_HI = [
+  { word: 'जल', tip: 'ज और ल दोनों शिरोरेखा के नीचे समान अनुपात में रहेंगे।' },
+  { word: 'घर', tip: 'घ की शिरोरेखा पूरी खींचें और र को संतुलित रखें।' },
+  { word: 'कमल', tip: 'क, म और ल तीनों अक्षर समान ऊंचाई पर शिरोरेखा से लटकेंगे।' }
+];
+
 export default function SpellingClinic({ onBack, adaptiveConfig }) {
   const { playPop, playChime, playStarTwinkle, speakText } = useAudio();
-  const { addStars } = useProfile();
+  const { addStars, activeLanguage } = useProfile();
+
+  const langId = activeLanguage?.id || 'english';
+  const isBengali = langId === 'bengali';
+  const isHindi = langId === 'hindi';
+  const speechLang = isHindi ? 'hi-IN' : (isBengali ? 'bn-IN' : 'en-US');
+
+  const TRICKY_WORDS = isHindi ? TRICKY_WORDS_HI : (isBengali ? TRICKY_WORDS_BN : TRICKY_WORDS_EN);
+  const DYSGRAPHIA_WORDS = isHindi ? DYSGRAPHIA_WORDS_HI : (isBengali ? DYSGRAPHIA_WORDS_BN : DYSGRAPHIA_WORDS_EN);
 
   const [activeTab, setActiveTab] = useState('look_cover'); // 'look_cover' | 'dysgraphia_lines'
   const [wordIdx, setWordIdx] = useState(0);
@@ -78,34 +197,40 @@ export default function SpellingClinic({ onBack, adaptiveConfig }) {
   const [spelledLetters, setSpelledLetters] = useState([]);
   const [feedback, setFeedback] = useState(null);
 
-  const currentWord = TRICKY_WORDS[wordIdx];
+  const currentWord = TRICKY_WORDS[wordIdx] || TRICKY_WORDS[0];
 
   // Scrambled letter pool for current word
   const letterPool = React.useMemo(() => {
     const letters = currentWord.word.split('');
-    const distractors = ['A', 'E', 'I', 'O', 'U', 'R', 'S', 'T'].filter(c => !letters.includes(c)).slice(0, 2);
+    const extraDistractors = isHindi
+      ? ['क', 'म', 'न', 'र', 'स']
+      : (isBengali ? ['ক', 'ম', 'ন', 'র', 'ল'] : ['A', 'E', 'I', 'O', 'U', 'R', 'S', 'T']);
+    const distractors = extraDistractors.filter(c => !letters.includes(c)).slice(0, 2);
     return [...letters, ...distractors].sort(() => 0.5 - Math.random());
-  }, [currentWord.id]);
+  }, [currentWord.id, langId]);
 
   useEffect(() => {
     setMode('look');
     setSpelledLetters([]);
     setFeedback(null);
-    speakText(`${currentWord.word}. Mnemonic trick: ${currentWord.mnemonic}`, 'en-US');
-  }, [wordIdx]);
+    speakText(`${currentWord.word}. ${currentWord.mnemonic}`, speechLang);
+  }, [wordIdx, langId]);
 
   const handleCover = () => {
     playPop();
     setMode('cover');
     setSpelledLetters([]);
     setFeedback(null);
-    speakText(`Now spell ${currentWord.word} from your memory!`, 'en-US');
+    const coverMsg = isHindi
+      ? `अब बिना देखे ${currentWord.word} की स्पेलिंग बनाएं!`
+      : (isBengali ? `এবার স্মৃতি থেকে ${currentWord.word} বানানটি লেখো!` : `Now spell ${currentWord.word} from your memory!`);
+    speakText(coverMsg, speechLang);
   };
 
   const handleTileClick = (letter) => {
     if (spelledLetters.length >= currentWord.word.length) return;
     playPop();
-    speakText(letter, 'en-US');
+    speakText(letter, speechLang);
     setSpelledLetters((prev) => [...prev, letter]);
   };
 
@@ -122,18 +247,24 @@ export default function SpellingClinic({ onBack, adaptiveConfig }) {
     if (isMatch) {
       playStarTwinkle();
       addStars(5);
-      setFeedback({ type: 'success', message: `🌟 Perfect! You spelled "${currentWord.word}" correctly!` });
-      speakText(`Outstanding! You spelled ${currentWord.word} perfectly!`, 'en-US');
+      const successMsg = isHindi
+        ? `🌟 बहुत बढ़िया! आपने "${currentWord.word}" बिल्कुल सही लिखा!`
+        : (isBengali ? `🌟 দারুণ! তুমি "${currentWord.word}" একদম সঠিক লিখেছো!` : `🌟 Perfect! You spelled "${currentWord.word}" correctly!`);
+      setFeedback({ type: 'success', message: successMsg });
+      speakText(successMsg, speechLang);
       try {
         confetti({ particleCount: 45, spread: 60, origin: { y: 0.6 } });
-      } catch (e) {}
+      } catch (e) { }
     } else {
       playChime(300);
+      const retryMsg = isHindi
+        ? `लगभग! आपने "${spelled}" लिखा। ध्यान से देखें: "${currentWord.explanation}"`
+        : (isBengali ? `খুব কাছাকাছি! তুমি লিখেছো "${spelled}"। মনে রাখো: "${currentWord.explanation}"` : `Almost! You wrote "${spelled}". Watch the tricky part: "${currentWord.trapLetters.join(', ')}".`);
       setFeedback({
         type: 'retry',
-        message: `Almost! You wrote "${spelled}". Watch the tricky part: "${currentWord.trapLetters.join(', ')}".`
+        message: retryMsg
       });
-      speakText(`Nice try! Look at ${currentWord.word} again: ${currentWord.explanation}`, 'en-US');
+      speakText(retryMsg, speechLang);
     }
   };
 
@@ -150,7 +281,7 @@ export default function SpellingClinic({ onBack, adaptiveConfig }) {
   const canvasRef = useRef(null);
   const [dysgraphiaIdx, setDysgraphiaIdx] = useState(0);
   const [isDrawing, setIsDrawing] = useState(false);
-  const currentDysWord = DYSGRAPHIA_WORDS[dysgraphiaIdx];
+  const currentDysWord = DYSGRAPHIA_WORDS[dysgraphiaIdx] || DYSGRAPHIA_WORDS[0];
 
   const drawLinesAndGhost = React.useCallback(() => {
     const canvas = canvasRef.current;
@@ -164,10 +295,10 @@ export default function SpellingClinic({ onBack, adaptiveConfig }) {
 
     // 4 Clinical Dysgraphia Lines
     const lines = [
-      { y: h * 0.18, color: '#38BDF8', dash: [4, 4], width: 1.5, label: '🌤️ Skyline (Ascenders: b, d, t, l, h)' },
-      { y: h * 0.44, color: '#FB923C', dash: [6, 4], width: 1.5, label: '✈️ Midline (Middle: a, c, e, o, s)' },
-      { y: h * 0.70, color: '#22C55E', dash: [], width: 2.5, label: '🌱 Baseline (Ground Line)' },
-      { y: h * 0.92, color: '#EF4444', dash: [4, 4], width: 1.5, label: '🪱 Wormline (Descenders: g, j, p, q, y)' }
+      { y: h * 0.18, color: '#38BDF8', dash: [4, 4], width: 1.5, label: isHindi ? '🌤️ शिरोरेखा (Top)' : (isBengali ? '🌤️ শীর্ষরেখা' : '🌤️ Skyline') },
+      { y: h * 0.44, color: '#FB923C', dash: [6, 4], width: 1.5, label: isHindi ? '✈️ मध्यरेखा (Middle)' : (isBengali ? '✈️ মধ্যরেখা' : '✈️ Midline') },
+      { y: h * 0.70, color: '#22C55E', dash: [], width: 2.5, label: isHindi ? '🌱 आधार रेखा (Base)' : (isBengali ? '🌱 মূলরেখা' : '🌱 Baseline') },
+      { y: h * 0.92, color: '#EF4444', dash: [4, 4], width: 1.5, label: isHindi ? '🪱 निचली रेखा (Bottom)' : (isBengali ? '🪱 নিম্নরেখা' : '🪱 Bottom line') }
     ];
 
     lines.forEach(({ y, color, dash, width }) => {
@@ -182,60 +313,54 @@ export default function SpellingClinic({ onBack, adaptiveConfig }) {
       ctx.restore();
     });
 
-    // Ghost letters
+    // Ghost letters for tracing alignment
     ctx.save();
-    ctx.font = "bold 92px 'Lexend', sans-serif";
-    ctx.fillStyle = 'rgba(79, 70, 229, 0.12)';
+    ctx.font = isHindi ? 'bold 64px Noto Sans Devanagari, sans-serif' : (isBengali ? 'bold 64px Noto Sans Bengali, sans-serif' : 'bold 72px Lexend, sans-serif');
+    ctx.fillStyle = 'rgba(203, 213, 225, 0.45)';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'alphabetic';
     ctx.fillText(currentDysWord.word, w / 2, h * 0.70);
-    ctx.strokeStyle = 'rgba(79, 70, 229, 0.35)';
-    ctx.lineWidth = 2;
-    ctx.setLineDash([5, 5]);
-    ctx.strokeText(currentDysWord.word, w / 2, h * 0.70);
     ctx.restore();
-  }, [currentDysWord]);
+  }, [currentDysWord, isHindi, isBengali]);
 
   useEffect(() => {
     if (activeTab === 'dysgraphia_lines') {
       drawLinesAndGhost();
     }
-  }, [activeTab, dysgraphiaIdx, drawLinesAndGhost]);
+  }, [activeTab, dysgraphiaIdx, drawLinesAndGhost, langId]);
 
-  // Touch & Mouse Drawing on Canvas
   const getCanvasCoords = (e) => {
     const canvas = canvasRef.current;
     if (!canvas) return { x: 0, y: 0 };
     const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
     return {
-      x: (clientX - rect.left) * scaleX,
-      y: (clientY - rect.top) * scaleY
+      x: (clientX - rect.left) * (canvas.width / rect.width),
+      y: (clientY - rect.top) * (canvas.height / rect.height)
     };
   };
 
   const startDraw = (e) => {
     e.preventDefault();
     setIsDrawing(true);
-    const { x, y } = getCanvasCoords(e);
-    const ctx = canvasRef.current.getContext('2d');
+    const coords = getCanvasCoords(e);
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
     ctx.beginPath();
-    ctx.moveTo(x, y);
-  };
-
-  const doDraw = (e) => {
-    if (!isDrawing) return;
-    e.preventDefault();
-    const { x, y } = getCanvasCoords(e);
-    const ctx = canvasRef.current.getContext('2d');
-    ctx.lineWidth = 14;
+    ctx.moveTo(coords.x, coords.y);
+    ctx.strokeStyle = '#4F46E5';
+    ctx.lineWidth = 6;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
-    ctx.strokeStyle = '#4F46E5';
-    ctx.lineTo(x, y);
+  };
+
+  const drawMove = (e) => {
+    if (!isDrawing) return;
+    e.preventDefault();
+    const coords = getCanvasCoords(e);
+    const ctx = canvasRef.current.getContext('2d');
+    ctx.lineTo(coords.x, coords.y);
     ctx.stroke();
   };
 
@@ -243,403 +368,341 @@ export default function SpellingClinic({ onBack, adaptiveConfig }) {
     setIsDrawing(false);
   };
 
+  const clearCanvas = () => {
+    playPop();
+    drawLinesAndGhost();
+  };
+
   return (
-    <div className="game-viewport">
-      {/* Top Bar */}
-      <div className="game-top-bar">
+    <div className="game-viewport" style={{ maxWidth: '840px', margin: '0 auto', padding: '1rem' }}>
+      {/* Header Bar */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
         <button
-          onClick={() => {
-            playPop();
-            onBack();
-          }}
+          onClick={onBack}
           className="btn-secondary btn-pill"
           style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}
         >
           <ArrowLeft size={16} />
-          <span>Games Hub</span>
+          <span>{isHindi ? 'खेल हब' : (isBengali ? 'গেমস হাব' : 'Games Hub')}</span>
         </button>
 
-        {/* Tab Toggle */}
-        <div style={{ display: 'flex', gap: '0.4rem' }}>
+        {/* Tab Toggle: Look-Cover-Write vs Dysgraphia Lines */}
+        <div style={{ display: 'flex', background: '#F1F5F9', padding: '0.25rem', borderRadius: '9999px', gap: '0.3rem' }}>
           <button
             onClick={() => {
               playPop();
               setActiveTab('look_cover');
             }}
             style={{
-              padding: '0.4rem 0.85rem',
+              padding: '0.35rem 0.85rem',
               borderRadius: '9999px',
-              border: activeTab === 'look_cover' ? '2px solid #7C3AED' : '1px solid #E2E8F0',
-              background: activeTab === 'look_cover' ? '#F5F3FF' : 'white',
-              color: activeTab === 'look_cover' ? '#6D28D9' : '#64748B',
+              border: 'none',
+              background: activeTab === 'look_cover' ? 'white' : 'transparent',
+              color: activeTab === 'look_cover' ? '#4F46E5' : '#64748B',
+              fontWeight: 800,
               fontSize: '0.82rem',
-              fontWeight: '700',
-              cursor: 'pointer'
+              cursor: 'pointer',
+              boxShadow: activeTab === 'look_cover' ? '0 1px 4px rgba(0,0,0,0.08)' : 'none'
             }}
           >
-            🧠 Look-Cover-Write
+            🧠 {isHindi ? 'देखें-ढकें-लिखें' : (isBengali ? 'দেখো-ঢাকো-লেখো' : 'Look-Cover-Write')}
           </button>
-
           <button
             onClick={() => {
               playPop();
               setActiveTab('dysgraphia_lines');
             }}
             style={{
-              padding: '0.4rem 0.85rem',
+              padding: '0.35rem 0.85rem',
               borderRadius: '9999px',
-              border: activeTab === 'dysgraphia_lines' ? '2px solid #059669' : '1px solid #E2E8F0',
-              background: activeTab === 'dysgraphia_lines' ? '#ECFDF5' : 'white',
-              color: activeTab === 'dysgraphia_lines' ? '#065F46' : '#64748B',
+              border: 'none',
+              background: activeTab === 'dysgraphia_lines' ? 'white' : 'transparent',
+              color: activeTab === 'dysgraphia_lines' ? '#4F46E5' : '#64748B',
+              fontWeight: 800,
               fontSize: '0.82rem',
-              fontWeight: '700',
-              cursor: 'pointer'
+              cursor: 'pointer',
+              boxShadow: activeTab === 'dysgraphia_lines' ? '0 1px 4px rgba(0,0,0,0.08)' : 'none'
             }}
           >
-            📏 4-Line Handwriting
+            ✍️ {isHindi ? '4-रेखा सुलेख अभ्यास' : (isBengali ? '৪-রেখা হস্তলিপি' : '4-Line Alignment')}
           </button>
         </div>
       </div>
 
-      {/* Mode 1: Look-Cover-Write Clinic */}
-      {activeTab === 'look_cover' && (
+      {/* Mode 1: Look Cover Write */}
+      {activeTab === 'look_cover' ? (
         <div
           className="glass-card"
           style={{
             padding: '2rem 1.5rem',
-            borderRadius: '28px',
-            textAlign: 'center',
+            borderRadius: '26px',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            gap: '1.25rem',
-            maxWidth: '620px',
-            margin: '0 auto',
-            width: '100%',
+            gap: '1.5rem',
             background: 'white'
           }}
         >
+          {/* Top Word Status */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-            <span style={{ fontSize: '0.85rem', color: '#6D28D9', fontWeight: '800' }}>
-              Word {wordIdx + 1} of {TRICKY_WORDS.length} • Look-Cover-Write
+            <span className="badge badge-purple">
+              {isHindi ? `शब्द ${wordIdx + 1} / ${TRICKY_WORDS.length}` : (isBengali ? `শব্দ ${wordIdx + 1} / ${TRICKY_WORDS.length}` : `Word ${wordIdx + 1} of ${TRICKY_WORDS.length}`)}
             </span>
             <button
-              onClick={() => speakText(`${currentWord.word}! ${currentWord.explanation}`, 'en-US')}
-              style={{
-                background: '#F5F3FF',
-                border: 'none',
-                borderRadius: '50%',
-                width: '36px',
-                height: '36px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                color: '#7C3AED'
-              }}
-              title="Hear word & tip"
+              onClick={() => speakText(`${currentWord.word}. ${currentWord.mnemonic}`, speechLang)}
+              className="btn-secondary btn-pill"
+              style={{ fontSize: '0.8rem', padding: '0.3rem 0.65rem' }}
             >
-              <Volume2 size={18} />
+              <Volume2 size={16} />
+              <span>{isHindi ? 'सुनें' : (isBengali ? 'শুনুন' : 'Hear Word')}</span>
             </button>
           </div>
 
-          {/* Word Display Card */}
-          <div
-            style={{
-              width: '100%',
-              padding: '1.75rem 1rem',
-              borderRadius: '24px',
-              background: mode === 'cover' ? '#1E1B4B' : 'linear-gradient(135deg, #F5F3FF 0%, #EDE9FE 100%)',
-              border: '2px solid #DDD6FE',
-              boxShadow: '0 8px 24px rgba(124, 58, 237, 0.1)',
-              transition: 'all 0.3s ease'
-            }}
-          >
-            {mode === 'look' && (
-              <div>
-                <div style={{ fontSize: '2.8rem', marginBottom: '0.35rem' }}>{currentWord.icon}</div>
-                <h2
-                  style={{
-                    fontSize: '3rem',
-                    color: '#4C1D95',
-                    margin: '0 0 0.5rem',
-                    fontFamily: "'Lexend', sans-serif",
-                    letterSpacing: '0.08em'
-                  }}
-                >
-                  {currentWord.word}
-                </h2>
-                <div
-                  style={{
-                    background: '#FAF5FF',
-                    border: '1.5px solid #DDD6FE',
-                    borderRadius: '16px',
-                    padding: '0.75rem 1rem',
-                    textAlign: 'left'
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#7C3AED', fontWeight: 'bold', fontSize: '0.85rem' }}>
-                    <Lightbulb size={16} />
-                    <span>Memory Hook / Rhyme:</span>
-                  </div>
-                  <p style={{ color: '#4C1D95', fontWeight: '600', margin: '0.25rem 0', fontSize: '0.95rem' }}>
-                    "{currentWord.mnemonic}"
-                  </p>
-                  <span style={{ fontSize: '0.8rem', color: '#6D28D9' }}>💡 {currentWord.explanation}</span>
+          {/* LOOK Mode View */}
+          {mode === 'look' && (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', width: '100%', textAlign: 'center' }}>
+              <span style={{ fontSize: '3rem' }}>{currentWord.icon}</span>
+
+              {/* Target Word Display */}
+              <div
+                style={{
+                  fontSize: '3rem',
+                  fontWeight: 800,
+                  letterSpacing: '0.08em',
+                  color: '#1E293B',
+                  background: '#F8FAFC',
+                  padding: '0.75rem 2rem',
+                  borderRadius: '20px',
+                  border: '2px solid #E2E8F0',
+                  fontFamily: isHindi ? 'var(--font-devanagari)' : (isBengali ? 'var(--font-bengali)' : 'Lexend, sans-serif')
+                }}
+              >
+                {currentWord.word}
+              </div>
+
+              {/* Mnemonic Trick Card */}
+              <div
+                style={{
+                  background: '#FEF3C7',
+                  border: '1.5px solid #FDE68A',
+                  borderRadius: '16px',
+                  padding: '1rem',
+                  maxWidth: '460px',
+                  color: '#92400E'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 800, marginBottom: '0.3rem' }}>
+                  <Lightbulb size={18} />
+                  <span>{isHindi ? 'जादुई याददाश्त सूत्र:' : (isBengali ? 'মনে রাখার কৌশল:' : 'Memory Trick:')}</span>
+                </div>
+                <div style={{ fontSize: '1rem', fontWeight: 700 }}>
+                  "{currentWord.mnemonic}"
                 </div>
               </div>
-            )}
 
-            {mode === 'cover' && (
-              <div style={{ padding: '2rem 1rem', color: '#C7D2FE' }}>
-                <EyeOff size={48} style={{ margin: '0 auto 0.75rem', opacity: 0.8 }} />
-                <h3 style={{ color: 'white', margin: '0 0 0.5rem', fontSize: '1.5rem' }}>Word is Covered!</h3>
-                <p style={{ color: '#A5B4FC', margin: 0, fontSize: '0.9rem' }}>
-                  Tap the letter tiles below in the right order from memory!
-                </p>
-              </div>
-            )}
-
-            {mode === 'checked' && (
-              <div>
-                <div style={{ fontSize: '2.4rem', marginBottom: '0.25rem' }}>{currentWord.icon}</div>
-                <h2 style={{ fontSize: '2.6rem', color: '#4C1D95', margin: '0 0 0.5rem', fontFamily: "'Lexend', sans-serif" }}>
-                  {currentWord.word}
-                </h2>
-                {feedback && (
-                  <div
-                    style={{
-                      background: feedback.type === 'success' ? '#D1FAE5' : '#FEE2E2',
-                      color: feedback.type === 'success' ? '#065F46' : '#991B1B',
-                      border: feedback.type === 'success' ? '2px solid #10B981' : '2px solid #EF4444',
-                      padding: '0.75rem 1rem',
-                      borderRadius: '16px',
-                      fontWeight: '700',
-                      fontSize: '0.95rem'
-                    }}
-                  >
-                    {feedback.message}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Child Spell Input Slots */}
-          {mode !== 'look' && (
-            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-              {Array.from({ length: currentWord.word.length }).map((_, idx) => {
-                const char = spelledLetters[idx];
-                return (
-                  <div
-                    key={idx}
-                    style={{
-                      width: '46px',
-                      height: '56px',
-                      borderRadius: '12px',
-                      border: char ? '2.5px solid #7C3AED' : '2px dashed #CBD5E1',
-                      background: char ? '#EDE9FE' : '#F8FAFC',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '1.8rem',
-                      fontWeight: '800',
-                      color: '#4C1D95',
-                      fontFamily: "'Lexend', sans-serif"
-                    }}
-                  >
-                    {char || ''}
-                  </div>
-                );
-              })}
+              <button
+                onClick={handleCover}
+                className="btn btn-primary"
+                style={{ borderRadius: '9999px', padding: '0.85rem 2rem', fontSize: '1.05rem', marginTop: '0.5rem' }}
+              >
+                <EyeOff size={18} />
+                <span>{isHindi ? 'अब ढकें और लिखें!' : (isBengali ? 'এবার ঢাকো এবং লেখো!' : 'Cover & Spell!')}</span>
+              </button>
             </div>
           )}
 
-          {/* Scrambled Tile Bank (During Cover/Spell) */}
-          {mode === 'cover' && (
-            <div style={{ width: '100%' }}>
-              <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '1rem' }}>
-                {letterPool.map((letter, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => handleTileClick(letter)}
-                    style={{
-                      width: '48px',
-                      height: '54px',
-                      borderRadius: '12px',
-                      background: 'white',
-                      border: '2px solid #DDD6FE',
-                      fontSize: '1.6rem',
-                      fontWeight: '800',
-                      color: '#4C1D95',
-                      cursor: 'pointer',
-                      boxShadow: '0 4px 10px rgba(0,0,0,0.06)',
-                      fontFamily: "'Lexend', sans-serif",
-                      transition: 'transform 0.1s'
-                    }}
-                  >
-                    {letter}
-                  </button>
-                ))}
+          {/* COVER & CHECKED Mode View */}
+          {(mode === 'cover' || mode === 'checked') && (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.25rem', width: '100%' }}>
+              <span style={{ fontSize: '2.5rem' }}>{currentWord.icon}</span>
+
+              {/* Spelling Slots */}
+              <div style={{ display: 'flex', gap: '0.5rem', minHeight: '65px', alignItems: 'center' }}>
+                {Array.from({ length: currentWord.word.length }).map((_, i) => {
+                  const letter = spelledLetters[i];
+                  return (
+                    <div
+                      key={i}
+                      style={{
+                        width: '52px',
+                        height: '62px',
+                        borderRadius: '14px',
+                        border: letter ? '2px solid #4F46E5' : '2px dashed #94A3B8',
+                        background: letter ? '#EEF2FF' : '#F8FAFC',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '1.8rem',
+                        fontWeight: 800,
+                        color: '#312E81',
+                        fontFamily: isHindi ? 'var(--font-devanagari)' : (isBengali ? 'var(--font-bengali)' : 'Lexend, sans-serif')
+                      }}
+                    >
+                      {letter || ''}
+                    </div>
+                  );
+                })}
               </div>
 
-              <div style={{ display: 'flex', gap: '0.6rem', justifyContent: 'center' }}>
-                <button
-                  onClick={handleBackspace}
-                  className="btn btn-secondary"
-                  style={{ borderRadius: '9999px', padding: '0.6rem 1.2rem' }}
-                >
-                  ⌫ Delete
-                </button>
-                <button
-                  onClick={handleCheck}
-                  disabled={spelledLetters.length === 0}
-                  className="btn btn-primary"
+              {/* Feedback Alert */}
+              {feedback && (
+                <div
                   style={{
-                    borderRadius: '9999px',
-                    padding: '0.6rem 1.75rem',
-                    background: 'linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%)',
-                    border: 'none',
-                    opacity: spelledLetters.length > 0 ? 1 : 0.6
+                    padding: '0.75rem 1.25rem',
+                    borderRadius: '14px',
+                    background: feedback.type === 'success' ? '#DCFCE7' : '#FEF2F2',
+                    color: feedback.type === 'success' ? '#15803D' : '#B91C1C',
+                    fontWeight: 700,
+                    fontSize: '0.92rem',
+                    textAlign: 'center',
+                    maxWidth: '460px'
                   }}
                 >
-                  Check Spelling (+5 ⭐)
-                </button>
+                  {feedback.message}
+                </div>
+              )}
+
+              {/* Scrambled Letter Bank */}
+              {mode === 'cover' && (
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+                  {letterPool.map((char, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => handleTileClick(char)}
+                      style={{
+                        width: '52px',
+                        height: '52px',
+                        borderRadius: '14px',
+                        border: '2px solid #E2E8F0',
+                        background: 'white',
+                        fontSize: '1.4rem',
+                        fontWeight: 800,
+                        color: '#1E293B',
+                        cursor: 'pointer',
+                        boxShadow: '0 3px 8px rgba(0, 0, 0, 0.06)',
+                        fontFamily: isHindi ? 'var(--font-devanagari)' : (isBengali ? 'var(--font-bengali)' : 'Lexend, sans-serif')
+                      }}
+                    >
+                      {char}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Actions */}
+              <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
+                {mode === 'cover' && (
+                  <>
+                    <button
+                      onClick={handleBackspace}
+                      disabled={spelledLetters.length === 0}
+                      className="btn btn-secondary"
+                      style={{ borderRadius: '9999px', padding: '0.65rem 1.25rem' }}
+                    >
+                      {isHindi ? '⌫ मिटाएं' : (isBengali ? '⌫ মুছুন' : '⌫ Backspace')}
+                    </button>
+                    <button
+                      onClick={handleCheck}
+                      disabled={spelledLetters.length === 0}
+                      className="btn btn-primary"
+                      style={{ borderRadius: '9999px', padding: '0.65rem 1.5rem' }}
+                    >
+                      <CheckCircle size={18} />
+                      <span>{isHindi ? 'जाँचें' : (isBengali ? 'যাচাই করুন' : 'Check')}</span>
+                    </button>
+                  </>
+                )}
+
+                {mode === 'checked' && (
+                  <button
+                    onClick={handleNextWord}
+                    className="btn btn-primary"
+                    style={{ borderRadius: '9999px', padding: '0.75rem 1.75rem' }}
+                  >
+                    <span>{isHindi ? 'अगला शब्द 🚀' : (isBengali ? 'পরবর্তী শব্দ 🚀' : 'Next Tricky Word 🚀')}</span>
+                  </button>
+                )}
               </div>
-            </div>
-          )}
-
-          {/* Control Buttons */}
-          {mode === 'look' && (
-            <button
-              onClick={handleCover}
-              className="btn btn-primary"
-              style={{
-                width: '100%',
-                borderRadius: '9999px',
-                padding: '0.9rem',
-                fontSize: '1.15rem',
-                background: 'linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%)',
-                border: 'none',
-                boxShadow: '0 8px 20px rgba(124, 58, 237, 0.35)'
-              }}
-            >
-              <EyeOff size={20} />
-              <span>Cover Word & Spell from Memory!</span>
-            </button>
-          )}
-
-          {mode === 'checked' && (
-            <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', width: '100%' }}>
-              <button
-                onClick={() => {
-                  playPop();
-                  setMode('look');
-                  setSpelledLetters([]);
-                  setFeedback(null);
-                }}
-                className="btn btn-secondary"
-                style={{ borderRadius: '9999px', padding: '0.6rem 1.25rem' }}
-              >
-                <Eye size={16} />
-                <span>Look Again</span>
-              </button>
-
-              <button
-                onClick={handleNextWord}
-                className="btn btn-primary"
-                style={{
-                  borderRadius: '9999px',
-                  padding: '0.6rem 1.75rem',
-                  background: 'linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%)',
-                  border: 'none'
-                }}
-              >
-                <span>Next Tricky Word ➔</span>
-              </button>
             </div>
           )}
         </div>
-      )}
-
-      {/* Mode 2: Dysgraphia 4-Line Handwriting Canvas */}
-      {activeTab === 'dysgraphia_lines' && (
+      ) : (
+        /* Mode 2: Dysgraphia 4-Line Writing Canvas */
         <div
           className="glass-card"
           style={{
-            padding: '1.75rem',
-            borderRadius: '28px',
-            textAlign: 'center',
+            padding: '1.5rem',
+            borderRadius: '26px',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             gap: '1rem',
-            maxWidth: '620px',
-            margin: '0 auto',
-            width: '100%',
             background: 'white'
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-            <span style={{ fontSize: '0.85rem', color: '#065F46', fontWeight: '800' }}>
-              Practice Word {dysgraphiaIdx + 1} of {DYSGRAPHIA_WORDS.length} • 4-Line Handwriting
+            <span className="badge badge-emerald">
+              {isHindi ? '4-रेखा सुलेख मार्गदर्शिका' : (isBengali ? '৪-রেখা রেখাঙ্কন পদ্ধতি' : 'Clinical Dysgraphia 4-Line Guide')}
             </span>
             <button
-              onClick={() => drawLinesAndGhost()}
+              onClick={clearCanvas}
               className="btn-secondary btn-pill"
-              style={{ fontSize: '0.8rem', padding: '0.3rem 0.75rem' }}
+              style={{ fontSize: '0.8rem', padding: '0.3rem 0.65rem' }}
             >
-              <RotateCcw size={14} /> Clear Canvas
+              <RotateCcw size={14} />
+              <span>{isHindi ? 'साफ़ करें' : (isBengali ? 'মুছে ফেলুন' : 'Clear')}</span>
             </button>
           </div>
 
-          {/* Interactive 4-Line Canvas */}
-          <div
+          <div style={{ fontSize: '0.88rem', color: '#64748B', textAlign: 'center', maxWidth: '480px' }}>
+            💡 {currentDysWord.tip}
+          </div>
+
+          <canvas
+            ref={canvasRef}
+            width={580}
+            height={220}
+            onMouseDown={startDraw}
+            onMouseMove={drawMove}
+            onMouseUp={endDraw}
+            onMouseLeave={endDraw}
+            onTouchStart={startDraw}
+            onTouchMove={drawMove}
+            onTouchEnd={endDraw}
             style={{
               width: '100%',
-              borderRadius: '20px',
-              border: '2.5px solid #A7F3D0',
-              overflow: 'hidden',
-              boxShadow: '0 8px 24px rgba(5, 150, 105, 0.1)',
-              background: '#FFFDF7',
-              touchAction: 'none'
+              maxWidth: '580px',
+              height: '220px',
+              borderRadius: '16px',
+              border: '2px solid #E2E8F0',
+              cursor: 'crosshair',
+              touchAction: 'none',
+              boxShadow: 'inset 0 2px 6px rgba(0, 0, 0, 0.04)'
             }}
-          >
-            <canvas
-              ref={canvasRef}
-              width={560}
-              height={260}
-              style={{ width: '100%', height: 'auto', display: 'block', cursor: 'crosshair' }}
-              onMouseDown={startDraw}
-              onMouseMove={doDraw}
-              onMouseUp={endDraw}
-              onMouseLeave={endDraw}
-              onTouchStart={startDraw}
-              onTouchMove={doDraw}
-              onTouchEnd={endDraw}
-            />
-          </div>
+          />
 
-          <p style={{ color: '#065F46', fontSize: '0.9rem', margin: 0, fontWeight: '600' }}>
-            💡 {currentDysWord.tip}
-          </p>
-
-          <div style={{ display: 'flex', gap: '0.6rem', justifyContent: 'center' }}>
-            <button
-              onClick={() => {
-                playPop();
-                setDysgraphiaIdx((prev) => (prev < DYSGRAPHIA_WORDS.length - 1 ? prev + 1 : 0));
-              }}
-              className="btn btn-primary"
-              style={{
-                borderRadius: '9999px',
-                padding: '0.65rem 1.75rem',
-                background: '#059669',
-                border: 'none'
-              }}
-            >
-              <span>Next Practice Word ➔</span>
-            </button>
+          <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+            {DYSGRAPHIA_WORDS.map((w, idx) => (
+              <button
+                key={idx}
+                onClick={() => {
+                  playPop();
+                  setDysgraphiaIdx(idx);
+                }}
+                style={{
+                  padding: '0.45rem 1rem',
+                  borderRadius: '12px',
+                  border: dysgraphiaIdx === idx ? '2px solid #4F46E5' : '1.5px solid #E2E8F0',
+                  background: dysgraphiaIdx === idx ? '#EEF2FF' : '#F8FAFC',
+                  color: dysgraphiaIdx === idx ? '#4338CA' : '#1E293B',
+                  fontWeight: 800,
+                  fontSize: '0.95rem',
+                  cursor: 'pointer'
+                }}
+              >
+                {w.word}
+              </button>
+            ))}
           </div>
         </div>
       )}

@@ -190,6 +190,99 @@ const LEARNING_MODULES_BN = [
   }
 ];
 
+const LEARNING_MODULES_HI = [
+  {
+    id: 'word-snapper',
+    label: 'शब्द निर्माता',
+    icon: '🧩',
+    track: 'both',
+    levelLabel: 'लेवल 1: ध्वनि प्रयोगशाला',
+    categoryBadge: 'बहु-संवेदी ध्वन्यात्मकता',
+    recommendedTag: 'सार्वभौमिक मुख्य',
+    title: 'शब्द निर्माता (Word Snapper)',
+    sampleImage: '🏠',
+    sampleWord: 'घर',
+    instruction: 'प्रत्येक अक्षर को सुनकर जोड़ें, फिर घ · र को मिलाकर घर बनाएं!',
+    tiles: ['घ', 'र'],
+    description: 'अक्षर टाइल्स को सही क्रम में जोड़ें, वास्तविक ध्वनियाँ सुनें और ब/भ, द/ध के भ्रम पर विजय पाएं!'
+  },
+  {
+    id: 'spelling-clinic',
+    label: 'वर्तनी क्लिनिक',
+    icon: '🧠',
+    track: 'track_b',
+    levelLabel: 'लेवल 2: कठिन दृष्टि शब्द',
+    categoryBadge: 'देखो-ढंको-लिखो',
+    recommendedTag: 'ट्रैक B: डिस्लेक्सिया सहायता',
+    title: 'वर्तनी क्लिनिक (Spelling Clinic)',
+    sampleImage: '🤝',
+    sampleWord: 'मित्र',
+    instruction: 'याद रखें: सच्चा मित्र हमेशा साथ निभाता है!',
+    tiles: ['म', 'ि', 'त', '्', 'र'],
+    description: 'स्मृति संकेत, देखो-ढंको-लिखो तकनीक और डिस्ग्राफिया सहायता के लिए 4-लाइन लिखावट कैनवास।'
+  },
+  {
+    id: 'abc-fill-in',
+    label: 'वर्णमाला एक्सप्रेस',
+    icon: '🔤',
+    track: 'both',
+    levelLabel: 'लेवल 3: वर्णमाला ट्रेन',
+    categoryBadge: 'दृश्य वर्णमाला कीबोर्ड',
+    recommendedTag: 'वर्णमाला प्रवाह',
+    title: 'वर्णमाला ट्रेन (Alphabet Train)',
+    sampleImage: '🚂',
+    sampleWord: 'क ख [ग] घ ङ',
+    instruction: 'वर्णमाला ट्रेन के छूटे हुए डिब्बों को सही क्रम में लगाएं!',
+    tiles: ['क', 'ख', '?', 'घ', 'ङ'],
+    description: 'वर्णमाला के सही क्रम को पहचानें और ट्रेन के छूटे डिब्बों को पूरा करें।'
+  },
+  {
+    id: 'spelling-traps',
+    label: 'वर्तनी जाल',
+    icon: '⚡',
+    track: 'track_a',
+    levelLabel: 'लेवल 4: अक्षर विस्थापन पहचान',
+    categoryBadge: 'अक्षर-बदलाव जाल',
+    recommendedTag: 'ट्रैक A: गति और सटीकता',
+    title: 'वर्तनी जाल चुनौती (Spelling Traps)',
+    sampleImage: '💧',
+    sampleWord: 'पानी vs पानि',
+    instruction: 'कहानियों में छिपी गलत वर्तनी और सही मात्राओं को पहचानें!',
+    tiles: ['प', 'ा', 'न', 'ी'],
+    description: 'मात्राओं के सही प्रयोग और सूक्ष्म वर्तनी भ्रम को दूर करने का अभ्यास।'
+  },
+  {
+    id: 'letter-hunter',
+    label: 'अक्षर खोजी',
+    icon: '🎯',
+    track: 'track_b',
+    levelLabel: 'लेवल 5: दृश्य भेदभाव',
+    categoryBadge: 'ऑर्टन-गिलिंघम विज़ुअल',
+    recommendedTag: 'ट्रैक B: दृश्य भेदभाव',
+    title: 'अक्षर खोजी (Letter Hunter)',
+    sampleImage: '🔍',
+    sampleWord: 'ब vs भ',
+    instruction: 'ग्रिड से लक्ष्य अक्षर ब को खोजें और भ/व के भ्रम से बचें!',
+    tiles: ['ब', 'भ', 'द', 'ध'],
+    description: 'ब/भ, द/ध और प/ष जैसे मिलते-जुलते अक्षरों में दृश्य अंतर पहचानने का मजेदार खेल।'
+  },
+  {
+    id: 'letter-tracing',
+    label: 'अक्षर आलेखन',
+    icon: '✍️',
+    track: 'track_b',
+    levelLabel: 'लेवल 6: स्पर्श-आधारित आलेखन',
+    categoryBadge: 'गति और स्पर्श लैब',
+    recommendedTag: 'ट्रैक B: स्पर्श-आधारित गति',
+    title: 'जादुई अक्षर आलेखन',
+    sampleImage: '✨',
+    sampleWord: 'बनाएं: क',
+    instruction: 'चमकते सितारों का अनुसरण करते हुए सुंदर अक्षर बनाएं!',
+    tiles: ['1', '2', '3', '⭐'],
+    description: 'सटीक स्ट्रोक और सही आलेखन दिशा के लिए संवेदी कैनवास।'
+  }
+];
+
 export default function GamesHub({ onSelectGame }) {
   const { activeProfile, setCurrentView, activeLanguage, t } = useProfile();
   const { playPop, playStarTwinkle } = useAudio();
@@ -212,7 +305,8 @@ export default function GamesHub({ onSelectGame }) {
   }, [recommendedActivityId]);
 
   const isBengali = activeLanguage?.id === 'bengali';
-  const LEARNING_MODULES = isBengali ? LEARNING_MODULES_BN : LEARNING_MODULES_EN;
+  const isHindi = activeLanguage?.id === 'hindi';
+  const LEARNING_MODULES = isHindi ? LEARNING_MODULES_HI : (isBengali ? LEARNING_MODULES_BN : LEARNING_MODULES_EN);
   const isAtRisk = activeProfile?.riskLevel && activeProfile.riskLevel !== 'typical';
 
   const filteredModules = LEARNING_MODULES.filter((m) => {
@@ -278,13 +372,13 @@ export default function GamesHub({ onSelectGame }) {
         <div style={{ flex: 1, textAlign: 'left' }}>
           <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#065F46' }}>
             {recommendation.hasPersonalized
-              ? (isBengali ? `⭐ তোমার জন্য নির্দেশিত: ${recommendation.title}` : `⭐ Recommended for You: ${recommendation.title}`)
-              : (isBengali ? `🌟 ${activeProfile?.name || 'অভিযাত্রী'}র শিক্ষণ ল্যাব` : `🌟 ${activeProfile?.name || 'Explorer'}'s Learning Lab`)}
+              ? (isHindi ? `⭐ आपके लिए अनुशंसित: ${recommendation.title}` : (isBengali ? `⭐ তোমার জন্য নির্দেশিত: ${recommendation.title}` : `⭐ Recommended for You: ${recommendation.title}`))
+              : (isHindi ? `🌟 ${activeProfile?.name || 'खोजी'} की सीखने की लैब` : (isBengali ? `🌟 ${activeProfile?.name || 'অভিযাত্রী'}র শিক্ষণ ল্যাব` : `🌟 ${activeProfile?.name || 'Explorer'}'s Learning Lab`))}
           </div>
           <div style={{ fontSize: '0.75rem', color: '#047857', marginTop: '0.15rem' }}>
             {recommendation.hasPersonalized
               ? recommendation.childPrompt
-              : (isBengali ? 'পড়ার গতি, বর্ণাভ্যাস ও শব্দ গঠনের মজার খেলাগুলো উপভোগ করো!' : 'Explore fun games for reading fluency, letter tracing, and word building!')}
+              : (isHindi ? 'पठन गति, अक्षर अभ्यास और शब्द निर्माण के मजेदार खेलों का आनंद लें!' : (isBengali ? 'পড়ার গতি, বর্ণাভ্যাস ও শব্দ গঠনের মজার খেলাগুলো উপভোগ করো!' : 'Explore fun games for reading fluency, letter tracing, and word building!'))}
           </div>
         </div>
       </div>
@@ -448,7 +542,7 @@ export default function GamesHub({ onSelectGame }) {
           }}
         >
           <Play size={20} fill="white" color="white" />
-          <span>{isBengali ? `${selectedModule.title} শুরু করো 🚀` : `Launch ${selectedModule.title} 🚀`}</span>
+          <span>{isHindi ? `${selectedModule.title} शुरू करें 🚀` : (isBengali ? `${selectedModule.title} শুরু করো 🚀` : `Launch ${selectedModule.title} 🚀`)}</span>
         </button>
       </div>
     </div>

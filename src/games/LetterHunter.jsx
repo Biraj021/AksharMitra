@@ -10,7 +10,7 @@ import { useProfile } from '../context/ProfileContext';
 import { useAudio } from '../context/AudioContext';
 
 export default function LetterHunter({ onBack, adaptiveConfig }) {
-  const { activeProfile, addStars, activeLanguage, setCurrentView } = useProfile();
+  const { activeProfile, addStars, recordActivityCompletion, activeLanguage, setCurrentView } = useProfile();
   const { playPop, playChime, playStarTwinkle, speakText } = useAudio();
 
   // Language content setup
@@ -223,6 +223,21 @@ export default function LetterHunter({ onBack, adaptiveConfig }) {
       }));
 
       playStarTwinkle();
+      if (recordActivityCompletion) {
+        const totalAttempts = session.totalFoundCount + session.totalMistakes || 1;
+        const accuracyRate = Math.round((session.totalFoundCount / totalAttempts) * 100);
+        const currentReversal = activeProfile?.screeningMetrics?.reversalIndex || 60;
+        const updatedReversal = Math.max(10, Math.round(currentReversal * 0.85));
+
+        recordActivityCompletion({
+          activityId: 'letter-hunter',
+          starsEarned: session.starsEarned,
+          metricUpdates: {
+            reversalIndex: updatedReversal,
+            lastLetterHunterAccuracy: accuracyRate
+          }
+        });
+      }
       try {
         confetti({
           particleCount: 80,

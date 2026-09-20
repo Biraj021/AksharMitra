@@ -7,8 +7,256 @@ import { useProfile } from '../context/ProfileContext';
 const ALL_LETTERS = 'abcdefghijklmnopqrstuvwxyz'.split('');
 const DYSLEXIA_FOCUS_PAIRS = ['b', 'd', 'p', 'q', 'm', 'w', 's', 'z', 'n', 'u', 'i', 'j', 't', 'x'];
 
+export const MULTILINGUAL_LETTER_SETS = {
+  english: {
+    all: 'abcdefghijklmnopqrstuvwxyz'.split(''),
+    focus: ['b', 'd', 'p', 'q', 'm', 'w', 's', 'z', 'n', 'u', 'i', 'j', 't', 'x'],
+    defaultLetter: 'b'
+  },
+  bengali: {
+    all: ['অ', 'আ', 'ই', 'উ', 'ক', 'খ', 'গ', 'ঘ', 'ঙ', 'চ', 'ছ', 'জ', 'ঝ', 'ঞ', 'ট', 'ঠ', 'ড', 'ড়', 'ত', 'থ', 'দ', 'ধ', 'ন', 'প', 'ফ', 'ব', 'ভ', 'ম', 'য', 'র', 'ল', 'শ', 'ষ', 'স', 'হ'],
+    focus: ['ব', 'র', 'ক', 'ধ', 'ড', 'ড়', 'প', 'ফ', 'দ', 'ধ', 'ভ', 'ত'],
+    defaultLetter: 'ব'
+  },
+  hindi: {
+    all: ['अ', 'आ', 'इ', 'ई', 'उ', 'ऊ', 'ए', 'ऐ', 'ओ', 'औ', 'क', 'ख', 'ग', 'घ', 'ङ', 'च', 'छ', 'ज', 'झ', 'ञ', 'ट', 'ठ', 'ड', 'ढ', 'ण', 'त', 'थ', 'द', 'ध', 'न', 'प', 'फ', 'ब', 'भ', 'म', 'य', 'र', 'ल', 'व', 'श', 'ष', 'स', 'ह'],
+    focus: ['ब', 'भ', 'द', 'ध', 'घ', 'प', 'ष', 'क', 'फ', 'म', 'न', 'र'],
+    defaultLetter: 'ब'
+  }
+};
+
 // Precise Guide Paths for Letters with Multi-Stroke Support (Normalized to 280x280)
 const ACCURATE_LETTER_PATHS = {
+  // Bengali Letter Paths
+  'ব': {
+    instruction: "উপরে সোজা দাগ টানো, তারপর নিচে নামিয়ে ডানপাশে জোড়ো!",
+    audioText: "ব বর্ণটি আঁকো! উপরে দাগ, তারপর নিচে নামিয়ে ডানপাশে জোড়ো!",
+    guideDots: [
+      { id: 1, x: 80, y: 55, label: '1' },
+      { id: 2, x: 190, y: 55 },
+      { id: 3, x: 190, y: 220, label: '2' },
+      { id: 4, x: 135, y: 140 },
+      { id: 5, x: 80, y: 220, label: '3' }
+    ]
+  },
+  'র': {
+    instruction: "'ব' বর্ণটি নিখুঁতভাবে এঁকে নিচে একটি সুন্দর গোল বিন্দু দাও!",
+    audioText: "র বর্ণটি আঁকো! ব এঁকে নিচে একটি ফুটকি বা বিন্দু দাও!",
+    guideDots: [
+      { id: 1, x: 80, y: 55, label: '1' },
+      { id: 2, x: 190, y: 55 },
+      { id: 3, x: 190, y: 200, label: '2' },
+      { id: 4, x: 80, y: 200, label: '3' },
+      { id: 5, x: 135, y: 245, label: '•' }
+    ]
+  },
+  'ক': {
+    instruction: "উপরের মাত্রা টেনে সুন্দর বাঁকা লুপ এঁকে 'ক' পূর্ণ করো!",
+    audioText: "ক বর্ণটি আঁকো!",
+    guideDots: [
+      { id: 1, x: 75, y: 60, label: '1' },
+      { id: 2, x: 195, y: 60 },
+      { id: 3, x: 195, y: 225, label: '2' },
+      { id: 4, x: 120, y: 150 },
+      { id: 5, x: 75, y: 225, label: '3' },
+      { id: 6, x: 140, y: 180, label: '4' }
+    ]
+  },
+  'ধ': {
+    instruction: "বামপাশে ছোট বৃত্তাকার ঘুন্ডি দিয়ে শুরু করো, তারপর উপরে মাত্রা ছাড়া 'ধ' আঁকো!",
+    audioText: "ধ বর্ণটি আঁকো! ছোট ঘুন্ডি দিয়ে শুরু করো!",
+    guideDots: [
+      { id: 1, x: 85, y: 120, label: '1' },
+      { id: 2, x: 125, y: 90 },
+      { id: 3, x: 95, y: 175 },
+      { id: 4, x: 145, y: 225 },
+      { id: 5, x: 185, y: 70, label: '2' },
+      { id: 6, x: 185, y: 225, label: '3' }
+    ]
+  },
+  'ড': {
+    instruction: "উপরে সোজা মাত্রা টানো, তারপর সুন্দর বাঁক দিয়ে 'ড' আঁকো!",
+    audioText: "ড বর্ণটি আঁকো!",
+    guideDots: [
+      { id: 1, x: 80, y: 60, label: '1' },
+      { id: 2, x: 190, y: 60 },
+      { id: 3, x: 140, y: 110, label: '2' },
+      { id: 4, x: 95, y: 150 },
+      { id: 5, x: 165, y: 185 },
+      { id: 6, x: 110, y: 235, label: '3' }
+    ]
+  },
+  'ড়': {
+    instruction: "'ড' বর্ণটি এঁকে নিচে সুন্দর একটি বিন্দু দাও!",
+    audioText: "ড় বর্ণটি আঁকো! নিচে বিন্দু দাও!",
+    guideDots: [
+      { id: 1, x: 80, y: 60, label: '1' },
+      { id: 2, x: 190, y: 60 },
+      { id: 3, x: 140, y: 110, label: '2' },
+      { id: 4, x: 95, y: 150 },
+      { id: 5, x: 165, y: 185 },
+      { id: 6, x: 110, y: 215 },
+      { id: 7, x: 135, y: 250, label: '•' }
+    ]
+  },
+  'অ': {
+    instruction: "ছোট গোল দিয়ে শুরু করে বাঁকাও, তারপর খাড়া রেখা ও মাত্রা দাও!",
+    audioText: "অ বর্ণটি আঁকো!",
+    guideDots: [
+      { id: 1, x: 95, y: 110, label: '1' },
+      { id: 2, x: 130, y: 90 },
+      { id: 3, x: 85, y: 160 },
+      { id: 4, x: 140, y: 225 },
+      { id: 5, x: 185, y: 60, label: '2' },
+      { id: 6, x: 185, y: 225, label: '3' }
+    ]
+  },
+  'আ': {
+    instruction: "'অ' এর পর পাশে একটি সুন্দর আকারের রেখা টানো!",
+    audioText: "আ বর্ণটি আঁকো!",
+    guideDots: [
+      { id: 1, x: 80, y: 110, label: '1' },
+      { id: 2, x: 110, y: 90 },
+      { id: 3, x: 75, y: 160 },
+      { id: 4, x: 120, y: 220 },
+      { id: 5, x: 160, y: 60, label: '2' },
+      { id: 6, x: 160, y: 220, label: '3' },
+      { id: 7, x: 200, y: 60, label: '4' },
+      { id: 8, x: 200, y: 220 }
+    ]
+  },
+
+  // Hindi Devanagari Letter Paths
+  'ब': {
+    instruction: "शिरोरेखा खींचें, खड़ी रेखा बनाएं, गोल पेट बनाकर बीच में तिरछी रेखा काटें!",
+    audioText: "ब अक्षर बनाएं! शिरोरेखा, खड़ी रेखा और पेट में तिरछी रेखा!",
+    guideDots: [
+      { id: 1, x: 70, y: 55, label: '1' },
+      { id: 2, x: 200, y: 55 },
+      { id: 3, x: 180, y: 55, label: '2' },
+      { id: 4, x: 180, y: 225 },
+      { id: 5, x: 125, y: 110, label: '3' },
+      { id: 6, x: 90, y: 155 },
+      { id: 7, x: 145, y: 195 },
+      { id: 8, x: 180, y: 155 },
+      { id: 9, x: 115, y: 130, label: '4' },
+      { id: 10, x: 160, y: 175 }
+    ]
+  },
+  'भ': {
+    instruction: "ऊपर छोटी घुंडी बनाएं, नीचे आकर गाठ देकर खड़ी रेखा और छोटी शिरोरेखा दें!",
+    audioText: "भ अक्षर बनाएं! आगे घुंडी और गाठ बनाएं!",
+    guideDots: [
+      { id: 1, x: 85, y: 95, label: '1' },
+      { id: 2, x: 110, y: 75 },
+      { id: 3, x: 95, y: 185, label: '2' },
+      { id: 4, x: 145, y: 185 },
+      { id: 5, x: 185, y: 55, label: '3' },
+      { id: 6, x: 185, y: 225, label: '4' }
+    ]
+  },
+  'द': {
+    instruction: "शिरोरेखा खींचें, छोटी खड़ी रेखा, मोड़ और नीचे छोटी पूंछ निकालें!",
+    audioText: "द अक्षर बनाएं! छोटी रेखा, मोड़ और नीचे पूंछ!",
+    guideDots: [
+      { id: 1, x: 75, y: 55, label: '1' },
+      { id: 2, x: 195, y: 55 },
+      { id: 3, x: 135, y: 55, label: '2' },
+      { id: 4, x: 135, y: 95 },
+      { id: 5, x: 90, y: 145 },
+      { id: 6, x: 165, y: 185 },
+      { id: 7, x: 140, y: 245, label: '3' }
+    ]
+  },
+  'ध': {
+    instruction: "छोटी घुंडी से शुरू करें, दो घुमावदार मोड़ लें और खड़ी रेखा बनाएं!",
+    audioText: "ध अक्षर बनाएं! घुंडी से शुरू करें!",
+    guideDots: [
+      { id: 1, x: 85, y: 100, label: '1' },
+      { id: 2, x: 115, y: 80 },
+      { id: 3, x: 85, y: 145 },
+      { id: 4, x: 135, y: 165 },
+      { id: 5, x: 90, y: 215 },
+      { id: 6, x: 180, y: 55, label: '2' },
+      { id: 7, x: 180, y: 225, label: '3' }
+    ]
+  },
+  'घ': {
+    instruction: "पूरी शिरोरेखा खींचें, दो सुंदर मोड़ लें और खड़ी रेखा बनाएं!",
+    audioText: "घ अक्षर बनाएं! पूरी शिरोरेखा और दो मोड़!",
+    guideDots: [
+      { id: 1, x: 75, y: 55, label: '1' },
+      { id: 2, x: 195, y: 55 },
+      { id: 3, x: 105, y: 95, label: '2' },
+      { id: 4, x: 135, y: 140 },
+      { id: 5, x: 95, y: 195 },
+      { id: 6, x: 175, y: 55, label: '3' },
+      { id: 7, x: 175, y: 225 }
+    ]
+  },
+  'प': {
+    instruction: "शिरोरेखा खींचें, 'U' आकार का मोड़ बनाएं और खड़ी रेखा से जोड़ें!",
+    audioText: "प अक्षर बनाएं!",
+    guideDots: [
+      { id: 1, x: 75, y: 55, label: '1' },
+      { id: 2, x: 195, y: 55 },
+      { id: 3, x: 105, y: 95, label: '2' },
+      { id: 4, x: 105, y: 165 },
+      { id: 5, x: 175, y: 165 },
+      { id: 6, x: 175, y: 55, label: '3' },
+      { id: 7, x: 175, y: 225 }
+    ]
+  },
+  'ष': {
+    instruction: "'प' बनाकर उसके पेट में एक तिरछी रेखा काटें!",
+    audioText: "ष अक्षर बनाएं! प बनाकर पेट में तिरछी रेखा!",
+    guideDots: [
+      { id: 1, x: 75, y: 55, label: '1' },
+      { id: 2, x: 195, y: 55 },
+      { id: 3, x: 105, y: 95, label: '2' },
+      { id: 4, x: 105, y: 165 },
+      { id: 5, x: 175, y: 165 },
+      { id: 6, x: 175, y: 55, label: '3' },
+      { id: 7, x: 175, y: 225 },
+      { id: 8, x: 110, y: 110, label: '4' },
+      { id: 9, x: 165, y: 165 }
+    ]
+  },
+  'अ': {
+    instruction: "दो घुमावदार मोड़ बनाएं, बीच में छोटी रेखा, खड़ी रेखा और शिरोरेखा दें!",
+    audioText: "अ अक्षर बनाएं!",
+    guideDots: [
+      { id: 1, x: 90, y: 95, label: '1' },
+      { id: 2, x: 135, y: 75 },
+      { id: 3, x: 85, y: 140 },
+      { id: 4, x: 145, y: 155 },
+      { id: 5, x: 90, y: 215 },
+      { id: 6, x: 135, y: 155, label: '2' },
+      { id: 7, x: 185, y: 155 },
+      { id: 8, x: 185, y: 55, label: '3' },
+      { id: 9, x: 185, y: 225 }
+    ]
+  },
+  'आ': {
+    instruction: "'अ' बनाकर उसके आगे एक अतिरिक्त खड़ी आ-की-मात्रा लगाएं!",
+    audioText: "आ अक्षर बनाएं!",
+    guideDots: [
+      { id: 1, x: 75, y: 95, label: '1' },
+      { id: 2, x: 115, y: 75 },
+      { id: 3, x: 75, y: 140 },
+      { id: 4, x: 125, y: 155 },
+      { id: 5, x: 75, y: 215 },
+      { id: 6, x: 120, y: 155, label: '2' },
+      { id: 7, x: 160, y: 155 },
+      { id: 8, x: 160, y: 55, label: '3' },
+      { id: 9, x: 160, y: 225 },
+      { id: 10, x: 200, y: 55, label: '4' },
+      { id: 11, x: 200, y: 225 }
+    ]
+  },
+
+  // English Latin Letters
+
   a: {
     instruction: "Trace 'a'! Circle around to the left, then draw straight down!",
     audioText: "Trace letter a! Circle to the left, then line down!",
@@ -341,10 +589,16 @@ const getLetterConfig = (char) => {
 
 export default function LetterTracingQuest({ onCompleteQuest, onBack, adaptiveConfig }) {
   const { playPop, playChime, playStarTwinkle, speakText } = useAudio();
-  const { addStars } = useProfile();
+  const { addStars, recordActivityCompletion, activeProfile, activeLanguage } = useProfile();
+
+  const langId = activeLanguage?.id || 'english';
+  const isBengali = langId === 'bengali';
+  const isHindi = langId === 'hindi';
+  const speechLang = isHindi ? 'hi-IN' : (isBengali ? 'bn-IN' : 'en-US');
+  const langLetterSet = MULTILINGUAL_LETTER_SETS[langId] || MULTILINGUAL_LETTER_SETS.english;
 
   const canvasRef = useRef(null);
-  const initialLetter = adaptiveConfig?.initialLetter || 'i';
+  const initialLetter = adaptiveConfig?.initialLetter || langLetterSet.defaultLetter || 'b';
   const [selectedLetter, setSelectedLetter] = useState(initialLetter);
   const [viewFilter, setViewFilter] = useState(adaptiveConfig?.focusArea === 'tracing' ? 'focus' : 'all');
   const [isDrawing, setIsDrawing] = useState(false);
@@ -352,12 +606,19 @@ export default function LetterTracingQuest({ onCompleteQuest, onBack, adaptiveCo
   const [tracingStatus, setTracingStatus] = useState('idle'); // 'idle' | 'need_dot' | 'need_cross' | 'success'
   const [isDemonstrating, setIsDemonstrating] = useState(false);
 
+  // Sync letter when language changes
+  useEffect(() => {
+    if (!langLetterSet.all.includes(selectedLetter) && !langLetterSet.focus.includes(selectedLetter)) {
+      setSelectedLetter(langLetterSet.defaultLetter);
+    }
+  }, [langId]);
+
   const currentTarget = getLetterConfig(selectedLetter);
 
   useEffect(() => {
-    speakText(currentTarget.audioText);
+    speakText(currentTarget.audioText, speechLang);
     resetCanvas();
-  }, [selectedLetter]);
+  }, [selectedLetter, langId]);
 
   const getCanvasCoords = (e) => {
     const canvas = canvasRef.current;
@@ -483,7 +744,17 @@ export default function LetterTracingQuest({ onCompleteQuest, onBack, adaptiveCo
     if (tracingStatus === 'success') return;
     setTracingStatus('success');
     playStarTwinkle();
-    addStars(5);
+    if (recordActivityCompletion) {
+      recordActivityCompletion({
+        activityId: 'letter-tracing',
+        starsEarned: 5,
+        metricUpdates: {
+          tracingAccuracy: Math.min(98, (activeProfile?.screeningMetrics?.tracingAccuracy || 70) + 5)
+        }
+      });
+    } else {
+      addStars(5);
+    }
 
     try {
       confetti({
@@ -545,7 +816,7 @@ export default function LetterTracingQuest({ onCompleteQuest, onBack, adaptiveCo
     setTracingStatus('idle');
   };
 
-  const letterList = viewFilter === 'focus' ? DYSLEXIA_FOCUS_PAIRS : ALL_LETTERS;
+  const letterList = viewFilter === 'focus' ? langLetterSet.focus : langLetterSet.all;
 
   return (
     <div
@@ -569,7 +840,7 @@ export default function LetterTracingQuest({ onCompleteQuest, onBack, adaptiveCo
             className="btn btn-secondary btn-pill"
             style={{ fontSize: '0.8rem', padding: '0.35rem 0.85rem' }}
           >
-            ← Back to Games
+            ← {isHindi ? 'खेलों पर वापस' : (isBengali ? 'খেলায় ফিরে যান' : 'Back to Games')}
           </button>
         </div>
       )}
@@ -580,7 +851,7 @@ export default function LetterTracingQuest({ onCompleteQuest, onBack, adaptiveCo
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
             <span style={{ fontSize: '1.4rem' }}>🎨</span>
             <span style={{ fontWeight: '700', fontSize: '1.05rem', color: '#1E293B' }}>
-              Choose Any Letter to Trace
+              {isHindi ? 'अक्षर चुनें और ट्रेस करें' : (isBengali ? 'বর্ণ বেছে নাও এবং আঁকো' : 'Choose Any Letter to Trace')}
             </span>
           </div>
 
@@ -602,7 +873,7 @@ export default function LetterTracingQuest({ onCompleteQuest, onBack, adaptiveCo
                 boxShadow: viewFilter === 'focus' ? '0 1px 4px rgba(0,0,0,0.1)' : 'none'
               }}
             >
-              🌟 Dyslexia Focus
+              {isHindi ? '🌟 मुख्य अभ्यास' : (isBengali ? '🌟 বিশেষ বর্ণসমূহ' : '🌟 Dyslexia Focus')}
             </button>
             <button
               onClick={() => {
@@ -621,7 +892,7 @@ export default function LetterTracingQuest({ onCompleteQuest, onBack, adaptiveCo
                 boxShadow: viewFilter === 'all' ? '0 1px 4px rgba(0,0,0,0.1)' : 'none'
               }}
             >
-              🔤 All A-Z
+              {isHindi ? '🔤 पूरी वर्णमाला' : (isBengali ? '🔤 সম্পূর্ণ বর্ণমালা' : '🔤 All Letters')}
             </button>
           </div>
         </div>

@@ -41,16 +41,20 @@ export default function ScreeningContainer() {
   const handleQuestComplete = (data) => {
     playStarTwinkle();
     const isBengali = activeLanguage?.id === 'bengali';
+    const isHindi = activeLanguage?.id === 'hindi';
+    const speechLang = isHindi ? 'hi-IN' : (isBengali ? 'bn-IN' : 'en-US');
 
     if (data.questId === 'mirror_letters') {
       sessionDataRef.current.mirrorLetters = data.metrics;
       setSessionData({ ...sessionDataRef.current });
       setActiveStep(2); // Advance to Round 2: Rhyme Beats
       speakText(
-        isBengali
+        isHindi
+          ? 'पहला राउंड बहुत अच्छा रहा! अब लय और तुकबंदी का खेल शुरू करते हैं।'
+          : isBengali
           ? 'প্রথম পর্ব খুব ভালো হয়েছে! এবার ছন্দের খেলা শুরু হোক।'
           : 'Great job on mirror letters! Now let us test rhyme beats.',
-        isBengali ? 'bn-IN' : 'en-US'
+        speechLang
       );
     } else if (data.questId === 'rhyme_beats') {
       sessionDataRef.current.rhymeBeats = {
@@ -60,10 +64,12 @@ export default function ScreeningContainer() {
       setSessionData({ ...sessionDataRef.current });
       setActiveStep(3); // Advance to Round 3: Read Aloud
       speakText(
-        isBengali
+        isHindi
+          ? 'शानदार तुकबंदी! अब मित्रा के साथ एक मजेदार कहानी ज़ोर से पढ़ें।'
+          : isBengali
           ? 'চমৎকার ছন্দ! এবার মিত্রার সাথে একটি মজার গল্প জোরে পড়ো।'
           : 'Awesome rhymes! Finally, read a fun story aloud for Mitra.',
-        isBengali ? 'bn-IN' : 'en-US'
+        speechLang
       );
     } else if (data.questId === 'read_aloud') {
       const result = data.result || { accuracy: 25, wpm: 20, hesitationCount: 4 };
@@ -150,10 +156,14 @@ export default function ScreeningContainer() {
   const handleMitraIntroAudio = () => {
     playPop();
     const isBengali = activeLanguage?.id === 'bengali';
-    const text = isBengali
+    const isHindi = activeLanguage?.id === 'hindi';
+    const speechLang = isHindi ? 'hi-IN' : (isBengali ? 'bn-IN' : 'en-US');
+    const text = isHindi
+      ? "अक्षरमित्र में आपका स्वागत है! हम अक्षरों की दिशा, तुकबंदी और कहानी पढ़ने के 3 मजेदार खेल खेलेंगे। क्या आप तैयार हैं?"
+      : isBengali
       ? "অক্ষরমিত্রায় স্বাগতম! আমরা বর্ণের আকার, ছন্দ ও গল্প পড়ার ৩টি মজার খেলা খেলব। শুরু করতে প্রস্তুত?"
       : "Welcome to Akshar Island! We're going to play 3 fun games with letter shapes, rhymes, and reading aloud. Ready to explore?";
-    speakText(text, isBengali ? 'bn-IN' : 'en-US');
+    speakText(text, speechLang);
   };
 
   // Metric helpers
@@ -347,7 +357,9 @@ export default function ScreeningContainer() {
               </div>
 
               <p style={{ fontSize: '0.82rem', color: '#475569', lineHeight: 1.45, margin: '0 0 0.85rem' }}>
-                {activeLanguage?.id === 'bengali'
+                {activeLanguage?.id === 'hindi'
+                  ? 'अक्षरमित्र में आपका स्वागत है! हम अक्षरों की दिशा, तुकबंदी और कहानी पढ़ने के 3 मजेदार खेल खेलेंगे। क्या आप तैयार हैं?'
+                  : activeLanguage?.id === 'bengali'
                   ? 'অক্ষরমিত্রায় স্বাগতম! আমরা বর্ণের আকার, ছন্দ ও গল্প পড়ার ৩টি মজার খেলা খেলব। শুরু করতে প্রস্তুত?'
                   : "Welcome to Akshar Island! We're going to play 3 fun games with letter shapes, rhymes, and reading aloud. Ready to explore?"}
               </p>

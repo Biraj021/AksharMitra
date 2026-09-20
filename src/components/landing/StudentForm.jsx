@@ -34,9 +34,14 @@ export default function StudentForm() {
       languageId: activeLanguage.id
     });
 
-    // Voice welcome in English or Bengali
-    const speechLang = activeLanguage.id === 'bengali' ? 'bn-IN' : 'en-US';
-    speakText(`Welcome ${profile.name}! Let's play and learn together!`, speechLang);
+    // Voice welcome in English, Bengali, or Hindi
+    const speechLang = activeLanguage.id === 'hindi' ? 'hi-IN' : (activeLanguage.id === 'bengali' ? 'bn-IN' : 'en-US');
+    const welcomeMsg = activeLanguage.id === 'hindi'
+      ? `नमस्ते ${profile.name}! आइए साथ मिलकर खेलें और सीखें!`
+      : (activeLanguage.id === 'bengali'
+        ? `স্বাগতম ${profile.name}! চলো একসাথে খেলি আর শিখি!`
+        : `Welcome ${profile.name}! Let's play and learn together!`);
+    speakText(welcomeMsg, speechLang);
   };
 
   return (

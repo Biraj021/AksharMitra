@@ -226,6 +226,105 @@ export const WORD_SNAPPER_DATA = [
       { char: 'ল', isTarget: false }
     ],
     difficulty: 'medium'
+  },
+
+  // ===================== HINDI WORDS =====================
+  {
+    id: 'ws_hi_ghar',
+    language: 'hindi',
+    word: 'घर',
+    targetLetter: 'घ',
+    confusingAlternatives: ['ध', 'ब'],
+    emoji: '🏠',
+    meaning: 'घर (House)',
+    phonemes: ['/ɡʱ/', '/r/'],
+    letters: ['घ', 'र'],
+    letterDetails: [
+      { char: 'घ', isTarget: true, mnemonic: 'घ पर पूरी शिरोरेखा होती है!' },
+      { char: 'र', isTarget: false }
+    ],
+    difficulty: 'easy'
+  },
+  {
+    id: 'ws_hi_fal',
+    language: 'hindi',
+    word: 'फल',
+    targetLetter: 'फ',
+    confusingAlternatives: ['क', 'प'],
+    emoji: '🍎',
+    meaning: 'स्वादिष्ट फल (Fruit)',
+    phonemes: ['/pʰ/', '/l/'],
+    letters: ['फ', 'ल'],
+    letterDetails: [
+      { char: 'फ', isTarget: true, mnemonic: 'फ की दाईं ओर पूंछ नीचे लटकती है!' },
+      { char: 'ल', isTarget: false }
+    ],
+    difficulty: 'easy'
+  },
+  {
+    id: 'ws_hi_jal',
+    language: 'hindi',
+    word: 'जल',
+    targetLetter: 'ज',
+    confusingAlternatives: ['द', 'ग'],
+    emoji: '💧',
+    meaning: 'पीने का जल (Water)',
+    phonemes: ['/dʒ/', '/l/'],
+    letters: ['ज', 'ल'],
+    letterDetails: [
+      { char: 'ज', isTarget: true, mnemonic: 'ज का गोल घुमाव ऊपर उठता है!' },
+      { char: 'ल', isTarget: false }
+    ],
+    difficulty: 'easy'
+  },
+  {
+    id: 'ws_hi_kamal',
+    language: 'hindi',
+    word: 'कमल',
+    targetLetter: 'क',
+    confusingAlternatives: ['ध', 'भ'],
+    emoji: '🪷',
+    meaning: 'कमल का फूल (Lotus)',
+    phonemes: ['/k/', '/m/', '/l/'],
+    letters: ['क', 'म', 'ल'],
+    letterDetails: [
+      { char: 'क', isTarget: true, mnemonic: 'क में पूरा घेरा और लटकी पूंछ होती है!' },
+      { char: 'म', isTarget: false },
+      { char: 'ल', isTarget: false }
+    ],
+    difficulty: 'medium'
+  },
+  {
+    id: 'ws_hi_bas',
+    language: 'hindi',
+    word: 'बस',
+    targetLetter: 'ब',
+    confusingAlternatives: ['भ', 'व'],
+    emoji: '🚌',
+    meaning: 'सवारी बस (Bus)',
+    phonemes: ['/b/', '/s/'],
+    letters: ['ब', 'स'],
+    letterDetails: [
+      { char: 'ब', isTarget: true, mnemonic: 'ब के पेट में तिरछी लकीर होती है, व में खाली!' },
+      { char: 'स', isTarget: false }
+    ],
+    difficulty: 'easy'
+  },
+  {
+    id: 'ws_hi_dhan',
+    language: 'hindi',
+    word: 'धन',
+    targetLetter: 'ध',
+    confusingAlternatives: ['घ', 'म'],
+    emoji: '💰',
+    meaning: 'धन या संपत्ति (Wealth)',
+    phonemes: ['/d̪ʱ/', '/n/'],
+    letters: ['ध', 'न'],
+    letterDetails: [
+      { char: 'ध', isTarget: true, mnemonic: 'ध के शीर्ष पर घुंडी होती है और शिरोरेखा टूटती है!' },
+      { char: 'न', isTarget: false }
+    ],
+    difficulty: 'easy'
   }
 ];
 
@@ -331,5 +430,51 @@ export const LETTER_HUNTER_SETS = [
     targetCount: 5,
     gridSize: 16,
     hint: 'দন্ত্য-ন বর্ণে পুরো মাত্রা থাকে; মূর্ধন্য-ণ তে অর্ধমাত্রা থাকে!'
+  },
+
+  // ===================== HINDI SETS =====================
+  {
+    id: 'set_hindi_ba_bha',
+    language: 'hindi',
+    name: 'ब vs भ (पेट कटी रेखा vs घुंडी)',
+    target: 'ब',
+    distractors: ['भ', 'व', 'क'],
+    description: 'पेट कटी तिरछी लकीर वाला "ब" अक्षर खोजें!',
+    targetCount: 5,
+    gridSize: 16,
+    hint: 'ब के पेट में तिरछी लकीर होती है, भ ऊपर से घुंडीदार होता है!'
+  },
+  {
+    id: 'set_hindi_da_dha',
+    language: 'hindi',
+    name: 'द vs ध (पूंछ vs घुंडी)',
+    target: 'द',
+    distractors: ['ध', 'घ', 'छ'],
+    description: 'नीचे छोटी पूंछ वाला "द" अक्षर पहचानें!',
+    targetCount: 5,
+    gridSize: 16,
+    hint: 'द के नीचे छोटी पूंछ निकलती है, ध पर कटी शिरोरेखा और घुंडी होती है!'
+  },
+  {
+    id: 'set_hindi_gh_dh',
+    language: 'hindi',
+    name: 'घ vs ध (शिरोरेखा भेद)',
+    target: 'घ',
+    distractors: ['ध', 'छ', 'ख'],
+    description: 'पूरी शिरोरेखा वाला "घ" अक्षर खोजें!',
+    targetCount: 5,
+    gridSize: 16,
+    hint: 'घ पर पूरी सीधी शिरोरेखा होती है!'
+  },
+  {
+    id: 'set_hindi_pa_sha',
+    language: 'hindi',
+    name: 'प vs ष (पेट में लकीर)',
+    target: 'प',
+    distractors: ['ष', 'य', 'फ'],
+    description: 'बिना पेट कटी लकीर वाला सादा "प" खोजें!',
+    targetCount: 5,
+    gridSize: 16,
+    hint: 'प का पेट खुला और सादा होता है!'
   }
 ];

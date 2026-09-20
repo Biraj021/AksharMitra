@@ -9,56 +9,70 @@ export const CHILD_ACTIVITY_METADATA = {
     icon: '🧩',
     titleEn: 'Word Builder Adventure',
     titleBn: 'শব্দ তৈরির অভিযান',
+    titleHi: 'शब्द निर्माण अभियान',
     childPromptEn: "Let's build some simple words together!",
     childPromptBn: 'চলো একসাথে সহজ শব্দ গঠন করি!',
+    childPromptHi: 'आइए मिलकर सरल शब्द बनाएं!',
     defaultTrack: 'both'
   },
   'letter-tracing': {
     icon: '✍️',
     titleEn: 'Magic Letter Tracing',
     titleBn: 'ম্যাজিক বর্ণ আঁকা',
+    titleHi: 'जादुई अक्षर अनुरेखण',
     childPromptEn: "Let's practice drawing letters with star dots!",
     childPromptBn: 'চলো তারার পথ ধরে বর্ণ আঁকা শিখি!',
+    childPromptHi: 'आइए तारों के बिंदुओं के साथ अक्षर बनाना सीखें!',
     defaultTrack: 'track_b'
   },
   'spelling-clinic': {
     icon: '🧠',
     titleEn: 'Spelling Hero Quest',
     titleBn: 'বানান বীরের অভিযান',
+    titleHi: 'वर्तनी नायक अभियान',
     childPromptEn: "Let's solve tricky sight-word puzzles!",
     childPromptBn: 'চলো মজার ধাঁধা দিয়ে কঠিন বানান শিখি!',
+    childPromptHi: 'आइए मजेदार पहेलियों से कठिन वर्तनी सीखें!',
     defaultTrack: 'track_b'
   },
   'spelling-traps': {
     icon: '⚡',
     titleEn: 'Spelling Trap Spotter',
     titleBn: 'বানান ফাঁদ শনাক্তকরণ',
+    titleHi: 'वर्तनी जाल पहचानकर्ता',
     childPromptEn: "Let's spot sneaky letter swaps in fun stories!",
     childPromptBn: 'চলো গল্পের ভেতর লুকিয়ে থাকা বর্ণ বিভ্রাট খুঁজে বের করি!',
+    childPromptHi: 'आइए कहानियों में छिपे अक्षर उलट-फेर को पहचानें!',
     defaultTrack: 'track_a'
   },
   'abc-fill-in': {
     icon: '🔤',
     titleEn: 'Alphabet Train Express',
     titleBn: 'বর্ণমালা ট্রেন অভিযান',
+    titleHi: 'वर्णमाला ट्रेन एक्सप्रेस',
     childPromptEn: "Let's fix the missing wagons in the alphabet train!",
     childPromptBn: 'চলো ট্রেনের হারিয়ে যাওয়া বর্ণের বগি খুঁজে বের করি!',
+    childPromptHi: 'आइए वर्णमाला ट्रेन के छूटे हुए डिब्बों को ठीक करें!',
     defaultTrack: 'both'
   },
   'letter-hunter': {
     icon: '🎯',
     titleEn: 'Eagle Eye Letter Detective',
     titleBn: 'দৃষ্টিমান বর্ণ শিকারী',
+    titleHi: 'ईगल आई अक्षर जासूस',
     childPromptEn: "Let's find tricky mirror letters in the eagle grid!",
     childPromptBn: 'চলো গ্রিডের ভেতর থেকে বিভ্রান্তিকর বর্ণগুলো খুঁজে বের করি!',
+    childPromptHi: 'आइए ग्रिड में से दर्पण अक्षरों को खोज निकालें!',
     defaultTrack: 'track_b'
   },
   'screening': {
     icon: '🎯',
     titleEn: 'Screening Island Quest',
     titleBn: 'অভিযান দ্বীপ স্ক্রিনিং',
+    titleHi: 'स्क्रीनिंग द्वीप अभियान',
     childPromptEn: "Let's play 3 quick discovery games on the island!",
     childPromptBn: 'চলো দ্বীপে ৩টি সহজ ও মজার খেলা শুরু করি!',
+    childPromptHi: 'आइए द्वीप पर 3 मजेदार और त्वरित खेल खेलें!',
     defaultTrack: 'both'
   }
 };
@@ -69,6 +83,7 @@ export const CHILD_ACTIVITY_METADATA = {
  */
 export function getChildRecommendation(profile, languageId = 'english') {
   const isBengali = languageId === 'bengali';
+  const isHindi = languageId === 'hindi';
   const learningProfile = profile?.learningProfile;
 
   const hasPersonalized = Boolean(
@@ -85,11 +100,13 @@ export function getChildRecommendation(profile, languageId = 'english') {
       hasPersonalized: false,
       activityId: 'games',
       icon: '🌟',
-      title: isBengali ? 'তোমার অ্যাডভেঞ্চার ল্যাব' : 'Your Learning Lab',
-      childPrompt: isBengali
-        ? 'চলো একসাথে একটি মজার খেলা বেছে নিয়ে শুরু করি!'
-        : "Choose an adventure and let's have fun playing!",
-      buttonText: isBengali ? 'গেমস দেখো' : 'EXPLORE GAMES'
+      title: isHindi ? 'आपकी लर्निंग लैब' : (isBengali ? 'তোমার অ্যাডভেঞ্চার ল্যাব' : 'Your Learning Lab'),
+      childPrompt: isHindi
+        ? 'आइए एक रोमांचक खेल चुनें और आनंद लें!'
+        : (isBengali
+          ? 'চলো একসাথে একটি মজার খেলা বেছে নিয়ে শুরু করি!'
+          : "Choose an adventure and let's have fun playing!"),
+      buttonText: isHindi ? 'गेम्स देखें' : (isBengali ? 'গেমস দেখো' : 'EXPLORE GAMES')
     };
   }
 
@@ -100,9 +117,9 @@ export function getChildRecommendation(profile, languageId = 'english') {
     hasPersonalized: true,
     activityId,
     icon: meta.icon,
-    title: isBengali ? meta.titleBn : meta.titleEn,
-    childPrompt: isBengali ? meta.childPromptBn : meta.childPromptEn,
-    buttonText: isBengali ? 'শুরু করো' : 'START ADVENTURE'
+    title: isHindi ? (meta.titleHi || meta.titleEn) : (isBengali ? meta.titleBn : meta.titleEn),
+    childPrompt: isHindi ? (meta.childPromptHi || meta.childPromptEn) : (isBengali ? meta.childPromptBn : meta.childPromptEn),
+    buttonText: isHindi ? 'शुरू करें' : (isBengali ? 'শুরু করো' : 'START ADVENTURE')
   };
 }
 

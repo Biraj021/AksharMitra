@@ -105,11 +105,64 @@ const RHYME_BEAT_QUESTIONS_BN = [
   }
 ];
 
+const RHYME_BEAT_QUESTIONS_HI = [
+  {
+    id: 'rb_hi_1',
+    type: 'rhyme_match',
+    targetWord: 'जल',
+    emoji: '💧',
+    instruction: '"जल" शब्द से किस शब्द की तुकबंदी मिलती है?',
+    audioPrompt: 'जल शब्द से किस शब्द की तुकबंदी मिलती है? फल, पेड़, या चाँद?',
+    options: [
+      { id: '1', word: 'फल', emoji: '🍎', isCorrect: true },
+      { id: '2', word: 'पेड़', emoji: '🌳', isCorrect: false },
+      { id: '3', word: 'चाँद', emoji: '🌙', isCorrect: false }
+    ]
+  },
+  {
+    id: 'rb_hi_2',
+    type: 'rhyme_match',
+    targetWord: 'रात',
+    emoji: '🌙',
+    instruction: '"रात" शब्द से किस शब्द की तुकबंदी मिलती है?',
+    audioPrompt: 'रात शब्द से किस शब्द की तुकबंदी मिलती है? बात, चिड़िया, या नदी?',
+    options: [
+      { id: '1', word: 'बात', emoji: '🗣️', isCorrect: true },
+      { id: '2', word: 'चिड़िया', emoji: '🦜', isCorrect: false },
+      { id: '3', word: 'नदी', emoji: '🌊', isCorrect: false }
+    ]
+  },
+  {
+    id: 'rb_hi_3',
+    type: 'syllable_beat',
+    word: 'तितली',
+    emoji: '🦋',
+    syllables: 'ति - त - ली',
+    syllableCount: 3,
+    instruction: '"ति-त-ली" शब्द में ताल की कितनी ध्वनियाँ हैं?',
+    audioPrompt: 'तितली शब्द में ताल की कितनी ध्वनियाँ हैं? ति त ली।',
+    options: [1, 2, 3, 4]
+  },
+  {
+    id: 'rb_hi_4',
+    type: 'syllable_beat',
+    word: 'आम',
+    emoji: '🥭',
+    syllables: 'आम',
+    syllableCount: 1,
+    instruction: '"आम" शब्द में ताल की कितनी ध्वनियाँ हैं?',
+    audioPrompt: 'आम शब्द में ताल की कितनी ध्वनियाँ हैं?',
+    options: [1, 2, 3]
+  }
+];
+
 export default function RhymeBeatsQuest({ onCompleteQuest }) {
   const { playPop, playChime, playStarTwinkle, speakText } = useAudio();
   const { activeLanguage } = useProfile();
   const isBengali = activeLanguage?.id === 'bengali';
-  const questions = isBengali ? RHYME_BEAT_QUESTIONS_BN : RHYME_BEAT_QUESTIONS_EN;
+  const isHindi = activeLanguage?.id === 'hindi';
+  const speechLang = isHindi ? 'hi-IN' : (isBengali ? 'bn-IN' : 'en-US');
+  const questions = isHindi ? RHYME_BEAT_QUESTIONS_HI : (isBengali ? RHYME_BEAT_QUESTIONS_BN : RHYME_BEAT_QUESTIONS_EN);
 
   const [currentIdx, setCurrentIdx] = useState(0);
   const [selectedOptId, setSelectedOptId] = useState(null);
@@ -129,10 +182,12 @@ export default function RhymeBeatsQuest({ onCompleteQuest }) {
       playStarTwinkle();
     } else {
       playChime(320);
-      const errMsg = isBengali
+      const errMsg = isHindi
+        ? `"${opt.word}" शब्द "${currentQ.targetWord}" से तुकबंदी नहीं खाता। दोबारा प्रयास करें!`
+        : isBengali
         ? `"${opt.word}" শব্দটি "${currentQ.targetWord}" এর সাথে ছন্দ মেলায় না। আবার চেষ্টা করো!`
         : `${opt.word} does not rhyme with ${currentQ.targetWord}. Try another!`;
-      speakText(errMsg, isBengali ? 'bn-IN' : 'en-US');
+      speakText(errMsg, speechLang);
     }
   };
 
@@ -147,10 +202,12 @@ export default function RhymeBeatsQuest({ onCompleteQuest }) {
       playStarTwinkle();
     } else {
       playChime(320);
-      const errMsg = isBengali
+      const errMsg = isHindi
+        ? `शब्दांश ताल को ध्यान से सुनें: ${currentQ.syllables}। पुनः प्रयास करें!`
+        : isBengali
         ? `শব্দাংশের তালগুলো মনোযোগ দিয়ে শোনো: ${currentQ.syllables}। আবার চেষ্টা করো!`
         : `Listen to the beats: ${currentQ.syllables}. Try again!`;
-      speakText(errMsg, isBengali ? 'bn-IN' : 'en-US');
+      speakText(errMsg, speechLang);
     }
   };
 
@@ -189,10 +246,10 @@ export default function RhymeBeatsQuest({ onCompleteQuest }) {
       {/* Round Header & Audio Prompt */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#0284C7', background: '#E0F2FE', padding: '0.2rem 0.65rem', borderRadius: '9999px' }}>
-          {isBengali ? `পর্ব ২: ছন্দ ও সুরের তাল (${currentIdx + 1}/${questions.length})` : `Round 2: Rhyme & Beats (${currentIdx + 1}/${questions.length})`}
+          {isHindi ? `राउंड 2: तुकबंदी और ताल (${currentIdx + 1}/${questions.length})` : (isBengali ? `পর্ব ২: ছন্দ ও সুরের তাল (${currentIdx + 1}/${questions.length})` : `Round 2: Rhyme & Beats (${currentIdx + 1}/${questions.length})`)}
         </span>
         <button
-          onClick={() => speakText(currentQ.audioPrompt, isBengali ? 'bn-IN' : 'en-US')}
+          onClick={() => speakText(currentQ.audioPrompt, speechLang)}
           style={{
             background: '#F8FAFC',
             border: '1px solid #CBD5E1',
@@ -204,7 +261,7 @@ export default function RhymeBeatsQuest({ onCompleteQuest }) {
             justifyContent: 'center',
             cursor: 'pointer'
           }}
-          title={isBengali ? 'শুনুন' : 'Listen'}
+          title={isHindi ? 'सुनें' : (isBengali ? 'শুনুন' : 'Listen')}
         >
           <Volume2 size={16} color="#0284C7" />
         </button>

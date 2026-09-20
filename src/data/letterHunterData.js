@@ -323,6 +323,40 @@ export const SCRIPT_CHALLENGES = {
         contrastRule: "ध ऊपर से घुंडीदार होता है और शिरोरेखा टूटी होती है",
         visualDemo: "द vs ध"
       }
+    },
+    {
+      id: "hi_gh_dh",
+      name: "घ और ध — शिरोरेखा और घुंडी!",
+      target: "घ",
+      pair: ["घ", "ध"],
+      distractors: ["ध", "छ", "ख"],
+      difficulty: 2,
+      targetCount: 4,
+      gridSize: 16,
+      ageRange: [5, 8],
+      hint: "घ पर पूरी शिरोरेखा होती है, ध पर ऊपर घुंडी और कटी रेखा!",
+      helpDetails: {
+        targetRule: "घ के ऊपर पूरी सीधी शिरोरेखा खींची जाती है",
+        contrastRule: "ध ऊपर से गोल घुंडीदार होता है और उसके ऊपर शिरोरेखा कटी होती है",
+        visualDemo: "घ (पूरी रेखा) vs ध (कटी रेखा)"
+      }
+    },
+    {
+      id: "hi_pa_sha",
+      name: "प और ष — पेट में लकीर पहचानें!",
+      target: "प",
+      pair: ["प", "ष"],
+      distractors: ["ष", "य", "फ"],
+      difficulty: 1,
+      targetCount: 4,
+      gridSize: 16,
+      ageRange: [4, 7],
+      hint: "प का पेट खाली होता है, ष के पेट में तिरछी लकीर होती है!",
+      helpDetails: {
+        targetRule: "प एकदम सादा और खुला रहता है",
+        contrastRule: "ष के पेट के बीच में एक तिरछी रेखा होती है",
+        visualDemo: "प vs ष"
+      }
     }
   ]
 };

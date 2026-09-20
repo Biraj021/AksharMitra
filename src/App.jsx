@@ -18,11 +18,22 @@ import OnboardingModal from './components/auth/OnboardingModal';
 import ProfileSelectorModal from './components/auth/ProfileSelectorModal';
 import ReadingRuler from './components/common/ReadingRuler';
 import DyslexiaSettingsModal from './components/common/DyslexiaSettingsModal';
+import StreakCalendarModal from './components/common/StreakCalendarModal';
+import EditProfileModal from './components/auth/EditProfileModal';
 import { useProfile } from './context/ProfileContext';
 import { getAdaptiveLearningConfig } from './utils/adaptiveLearningStrategy';
 
 export default function App() {
-  const { currentView, setCurrentView, activeLanguage, activeProfile } = useProfile();
+  const {
+    currentView,
+    setCurrentView,
+    activeLanguage,
+    activeProfile,
+    showStreakModal,
+    setShowStreakModal,
+    showEditProfileModal,
+    setShowEditProfileModal
+  } = useProfile();
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showProfileSelector, setShowProfileSelector] = useState(false);
 
@@ -37,8 +48,8 @@ export default function App() {
 
   return (
     <div
-      className={`app-container ${activeLanguage?.id === 'bengali' ? 'lang-bengali' : 'lang-english'}`}
-      lang={activeLanguage?.id === 'bengali' ? 'bn' : 'en'}
+      className={`app-container ${activeLanguage?.id === 'hindi' ? 'lang-hindi' : (activeLanguage?.id === 'bengali' ? 'lang-bengali' : 'lang-english')}`}
+      lang={activeLanguage?.id === 'hindi' ? 'hi' : (activeLanguage?.id === 'bengali' ? 'bn' : 'en')}
       style={{ paddingBottom: '75px', minHeight: '100vh' }}
     >
       {/* Universal Header */}
@@ -84,7 +95,7 @@ export default function App() {
         isOpen={showOnboarding}
         onClose={() => setShowOnboarding(false)}
       />
-      
+
       <ProfileSelectorModal
         isOpen={showProfileSelector}
         onClose={() => setShowProfileSelector(false)}
@@ -98,6 +109,14 @@ export default function App() {
       <ParentPinModal />
       <DyslexiaSettingsModal />
       <ReadingRuler />
+      <StreakCalendarModal
+        isOpen={showStreakModal}
+        onClose={() => setShowStreakModal(false)}
+      />
+      <EditProfileModal
+        isOpen={showEditProfileModal}
+        onClose={() => setShowEditProfileModal(false)}
+      />
 
       {/* Sticky Bottom Navigation Bar */}
       <BottomNav />

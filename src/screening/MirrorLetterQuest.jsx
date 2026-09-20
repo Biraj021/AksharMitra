@@ -166,11 +166,94 @@ const MIRROR_QUESTIONS_BN = [
   }
 ];
 
+const MIRROR_QUESTIONS_HI = [
+  {
+    id: 'mq_hi_1',
+    type: 'pick_target',
+    target: 'ब',
+    instruction: 'सभी "ब" अक्षरों पर टैप करें! "भ" और "क" से सावधान रहें!',
+    audioPrompt: 'सभी ब अक्षरों को स्पर्श करें! भ और क से सावधान रहें!',
+    options: [
+      { id: '1', char: 'ब', isTarget: true },
+      { id: '2', char: 'भ', isTarget: false, errorType: 'horizontal_mirror' },
+      { id: '3', char: 'ब', isTarget: true },
+      { id: '4', char: 'क', isTarget: false, errorType: 'vertical_inversion' },
+      { id: '5', char: 'भ', isTarget: false, errorType: 'horizontal_mirror' },
+      { id: '6', char: 'ब', isTarget: true }
+    ],
+    targetCount: 3
+  },
+  {
+    id: 'mq_hi_2',
+    type: 'pick_target',
+    target: 'द',
+    instruction: 'सही "द" अक्षर पहचानें! ध्यान से देखें।',
+    audioPrompt: 'सही द अक्षर पहचानें! ध्यान से देखें।',
+    options: [
+      { id: '1', char: 'ध', isTarget: false, errorType: 'horizontal_mirror' },
+      { id: '2', char: 'द', isTarget: true },
+      { id: '3', char: 'घ', isTarget: false, errorType: 'rotational_flip' },
+      { id: '4', char: 'द', isTarget: true },
+      { id: '5', char: 'छ', isTarget: false, errorType: 'vertical_inversion' },
+      { id: '6', char: 'द', isTarget: true }
+    ],
+    targetCount: 3
+  },
+  {
+    id: 'mq_hi_3',
+    type: 'word_orientation',
+    instruction: 'चित्र देखें: 💧। कौन सा शब्द "जल" है?',
+    audioPrompt: 'चित्र देखें। कौन सा शब्द जल है?',
+    targetWord: 'जल',
+    options: [
+      { id: 'w1', word: 'लज', isTarget: false, errorType: 'letter_order_reversal' },
+      { id: 'w2', word: 'जल', isTarget: true }
+    ]
+  },
+  {
+    id: 'mq_hi_4',
+    type: 'direction_trace',
+    targetLetter: 'ब',
+    ruleText: 'शिरोरेखा खींचे, खड़ी रेखा बनाएं, फिर पेट में तिरछी लकीर काटें ➡️',
+    instruction: '"ब" अक्षर को उंगली से सही दिशा में बनाएं!',
+    audioPrompt: 'ब अक्षर को बनाएं! बिंदु 1 से शुरू करें!',
+    ghostChar: 'ब',
+    dots: [
+      { id: 1, x: 80, y: 40, label: '1 ⬇️' },
+      { id: 2, x: 80, y: 120, label: '2' },
+      { id: 3, x: 80, y: 200, label: '3 ↷' },
+      { id: 4, x: 135, y: 125, label: '4' },
+      { id: 5, x: 180, y: 162, label: '5' },
+      { id: 6, x: 135, y: 200, label: '6 ↶' },
+      { id: 7, x: 80, y: 200, label: '7' }
+    ]
+  },
+  {
+    id: 'mq_hi_5',
+    type: 'direction_trace',
+    targetLetter: 'द',
+    ruleText: 'शिरोरेखा से नीचे छोटी रेखा, फिर घुमाव और नीचे पूंछ ⬇️',
+    instruction: '"द" अक्षर को उंगली से सही दिशा में बनाएं!',
+    audioPrompt: 'द अक्षर को उंगली से बनाएं!',
+    ghostChar: 'द',
+    dots: [
+      { id: 1, x: 140, y: 125, label: '1 ↶' },
+      { id: 2, x: 85, y: 162, label: '2' },
+      { id: 3, x: 140, y: 200, label: '3 ↷' },
+      { id: 4, x: 165, y: 40, label: '4 ⬇️' },
+      { id: 5, x: 165, y: 120, label: '5' },
+      { id: 6, x: 165, y: 200, label: '6' }
+    ]
+  }
+];
+
 export default function MirrorLetterQuest({ onCompleteQuest }) {
   const { playPop, playChime, playStarTwinkle, speakText } = useAudio();
   const { activeLanguage } = useProfile();
   const isBengali = activeLanguage?.id === 'bengali';
-  const questions = isBengali ? MIRROR_QUESTIONS_BN : MIRROR_QUESTIONS_EN;
+  const isHindi = activeLanguage?.id === 'hindi';
+  const speechLang = isHindi ? 'hi-IN' : (isBengali ? 'bn-IN' : 'en-US');
+  const questions = isHindi ? MIRROR_QUESTIONS_HI : (isBengali ? MIRROR_QUESTIONS_BN : MIRROR_QUESTIONS_EN);
 
   const [currentIdx, setCurrentIdx] = useState(0);
   const [selectedIds, setSelectedIds] = useState(new Set());
@@ -187,7 +270,7 @@ export default function MirrorLetterQuest({ onCompleteQuest }) {
   // Auto-speak instructions on question change
   useEffect(() => {
     if (currentQ?.audioPrompt) {
-      speakText(currentQ.audioPrompt, isBengali ? 'bn-IN' : 'en-US');
+      speakText(currentQ.audioPrompt, speechLang);
     }
     clearCanvas();
   }, [currentIdx, activeLanguage?.id]);
@@ -210,10 +293,12 @@ export default function MirrorLetterQuest({ onCompleteQuest }) {
     } else {
       playChime(320);
       setMistakesCount((prev) => prev + 1);
-      const errVoice = isBengali
+      const errVoice = isHindi
+        ? `यह ${option.char || option.word} है। ध्यान से ${currentQ.target || currentQ.targetWord} खोजें!`
+        : isBengali
         ? `এটি হলো ${option.char || option.word}। সাবধানে ${currentQ.target || currentQ.targetWord} খুঁজে নাও!`
         : `That is ${option.char || option.word}. Look closely for ${currentQ.target || currentQ.targetWord}!`;
-      speakText(errVoice, isBengali ? 'bn-IN' : 'en-US');
+      speakText(errVoice, speechLang);
     }
   };
 
@@ -364,8 +449,8 @@ export default function MirrorLetterQuest({ onCompleteQuest }) {
           setIsDemonstrating(false);
           clearCanvas();
           speakText(
-            isBengali ? "এবার তোমার পালা! একই পথ ধরে আঁকো।" : "Now your turn! Follow the same path.",
-            isBengali ? 'bn-IN' : 'en-US'
+            isHindi ? "अब आपकी बारी! उसी रेखा पर उंगली चलाएं।" : (isBengali ? "এবার তোমার পালা! একই পথ ধরে আঁকো।" : "Now your turn! Follow the same path."),
+            speechLang
           );
         }, 1200);
       }
@@ -426,10 +511,10 @@ export default function MirrorLetterQuest({ onCompleteQuest }) {
       {/* Question Header & Audio Prompt */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#4F46E5', background: '#EEF2FF', padding: '0.25rem 0.75rem', borderRadius: '9999px' }}>
-          {isBengali ? `পর্ব ১: বর্ণ ও দৃষ্টিগত দিক (${currentIdx + 1}/${questions.length})` : `Round 1: Visual Orientation (${currentIdx + 1}/${questions.length})`}
+          {isHindi ? `राउंड 1: अक्षर और दृष्टि दिशा (${currentIdx + 1}/${questions.length})` : (isBengali ? `পর্ব ১: বর্ণ ও দৃষ্টিগত দিক (${currentIdx + 1}/${questions.length})` : `Round 1: Visual Orientation (${currentIdx + 1}/${questions.length})`)}
         </span>
         <button
-          onClick={() => speakText(currentQ.audioPrompt, isBengali ? 'bn-IN' : 'en-US')}
+          onClick={() => speakText(currentQ.audioPrompt, speechLang)}
           style={{
             background: '#F8FAFC',
             border: '1px solid #CBD5E1',

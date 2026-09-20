@@ -16,13 +16,14 @@ export default function OnboardingModal({ isOpen, onClose }) {
   const [selectedGrade, setSelectedGrade] = useState('grade2');
 
   const isBengali = activeLanguage?.id === 'bengali';
+  const isHindi = activeLanguage?.id === 'hindi';
 
   if (!isOpen) return null;
 
   const handleNextStep = () => {
     playPop();
     if (!name.trim()) {
-      setName(isBengali ? 'অভিযাত্রী' : 'Little Explorer');
+      setName(isHindi ? 'खोजी' : (isBengali ? 'অভিযাত্রী' : 'Little Explorer'));
     }
     setStep(2);
   };
@@ -45,7 +46,7 @@ export default function OnboardingModal({ isOpen, onClose }) {
     } catch (err) {}
 
     const profile = createStudentProfile({
-      name: name.trim() || (isBengali ? 'অভিযাত্রী' : 'Young Explorer'),
+      name: name.trim() || (isHindi ? 'खोजी' : (isBengali ? 'অভিযাত্রী' : 'Young Explorer')),
       avatar: selectedAvatar,
       grade: selectedGrade,
       languageId: activeLanguage.id
@@ -54,11 +55,11 @@ export default function OnboardingModal({ isOpen, onClose }) {
     onClose();
     setStep(1);
 
-    const speechLang = activeLanguage.id === 'bengali' ? 'bn-IN' : 'en-US';
-    speakText(
-      isBengali ? `স্বাগতম ${profile.name}! এসো শেখার অভিযান শুরু করি!` : `Welcome ${profile.name}! Let's start the adventure!`,
-      speechLang
-    );
+    const speechLang = isHindi ? 'hi-IN' : (isBengali ? 'bn-IN' : 'en-US');
+    const welcomeMsg = isHindi
+      ? `नमस्ते ${profile.name}! आइए सीखने का अभियान शुरू करें!`
+      : (isBengali ? `স্বাগতম ${profile.name}! এসো শেখার অভিযান শুরু করি!` : `Welcome ${profile.name}! Let's start the adventure!`);
+    speakText(welcomeMsg, speechLang);
   };
 
   return (

@@ -4,7 +4,7 @@ import { useProfile, getAvatarEmoji } from '../../context/ProfileContext';
 import { useAudio } from '../../context/AudioContext';
 
 export default function ProfileSelectorModal({ isOpen, onClose, onAddNew }) {
-  const { activeProfile, profilesList, switchProfile, logoutProfile, setCurrentView, t } = useProfile();
+  const { activeProfile, profilesList, switchProfile, logoutProfile, setCurrentView, setShowEditProfileModal, t } = useProfile();
   const { playPop, playStarTwinkle } = useAudio();
 
   if (!isOpen) return null;
@@ -91,7 +91,35 @@ export default function ProfileSelectorModal({ isOpen, onClose, onAddNew }) {
                     </span>
                   </div>
                 </div>
-                <ArrowRight size={18} color={isCurrent ? '#4F46E5' : '#94A3B8'} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      playPop();
+                      switchProfile(p.id);
+                      if (setShowEditProfileModal) setShowEditProfileModal(true);
+                      onClose();
+                    }}
+                    style={{
+                      background: isCurrent ? '#E0E7FF' : '#F1F5F9',
+                      border: 'none',
+                      borderRadius: '8px',
+                      padding: '0.35rem 0.55rem',
+                      cursor: 'pointer',
+                      fontSize: '0.78rem',
+                      fontWeight: 700,
+                      color: isCurrent ? '#4338CA' : '#64748B',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.2rem'
+                    }}
+                    title={t('edit') || 'Edit Profile'}
+                  >
+                    ✏️
+                  </button>
+                  <ArrowRight size={18} color={isCurrent ? '#4F46E5' : '#94A3B8'} />
+                </div>
               </div>
             );
           })}

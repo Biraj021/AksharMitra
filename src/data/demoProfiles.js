@@ -8,7 +8,20 @@ export const DEMO_PROFILES = [
     gradeLabel: 'Grade 2',
     language: 'english',
     stars: 85,
-    streak: 4,
+    streak: 2,
+    attendanceHistory: (() => {
+      const dates = [];
+      const now = new Date();
+      for (let i = 0; i < 2; i++) {
+        const d = new Date(now);
+        d.setDate(now.getDate() - i);
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        dates.push(`${y}-${m}-${day}`);
+      }
+      return dates.reverse();
+    })(),
     screeningCompleted: true,
     riskLevel: 'elevated', // 'typical' | 'mild' | 'elevated'
     riskScore: 78,
@@ -34,6 +47,19 @@ export const DEMO_PROFILES = [
     language: 'english',
     stars: 160,
     streak: 12,
+    attendanceHistory: (() => {
+      const dates = [];
+      const now = new Date();
+      for (let i = 0; i < 12; i++) {
+        const d = new Date(now);
+        d.setDate(now.getDate() - i);
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        dates.push(`${y}-${m}-${day}`);
+      }
+      return dates.reverse();
+    })(),
     screeningCompleted: true,
     riskLevel: 'typical',
     riskScore: 22,

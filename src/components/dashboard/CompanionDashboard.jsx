@@ -5,9 +5,10 @@ import { useAudio } from '../../context/AudioContext';
 import ParentObservationModal from './ParentObservationModal';
 import { hasParentFeedbackData } from '../../utils/parentFeedbackModel';
 import { getChildRecommendation } from '../../utils/adaptiveLearningStrategy';
+import { getRecentCalendarDays, formatDateKey } from '../../utils/streakUtils';
 
 export default function CompanionDashboard() {
-  const { activeProfile, setCurrentView, activeLanguage, t, updateParentFeedback, calculateLearningProfile } = useProfile();
+  const { activeProfile, setCurrentView, activeLanguage, t, updateParentFeedback, calculateLearningProfile, setShowStreakModal } = useProfile();
   const { playPop, playStarTwinkle, speakText } = useAudio();
   const [viewMode, setViewMode] = useState('educator'); // 'kid' | 'educator'
   const [showObservationModal, setShowObservationModal] = useState(false);
@@ -25,6 +26,8 @@ export default function CompanionDashboard() {
 
   const profile = activeProfile;
   const isBengali = activeLanguage?.id === 'bengali';
+  const isHindi = activeLanguage?.id === 'hindi';
+  const speechLang = isHindi ? 'hi-IN' : (isBengali ? 'bn-IN' : 'en-US');
 
   if (!profile) {
     return (
@@ -68,9 +71,9 @@ export default function CompanionDashboard() {
   const handleMitraCoachAudio = () => {
     playPop();
     const coachText = isElevated
-      ? (isBengali ? t('mitraCoachDescElevated') : t('mitraCoachDescElevated'))
-      : (isBengali ? t('mitraCoachDescTypical') : t('mitraCoachDescTypical'));
-    speakText(coachText, isBengali ? 'bn-IN' : 'en-US');
+      ? t('mitraCoachDescElevated')
+      : t('mitraCoachDescTypical');
+    speakText(coachText, speechLang);
   };
 
 
@@ -229,11 +232,28 @@ export default function CompanionDashboard() {
                 </div>
                 <div style={{ fontSize: '0.7rem', color: '#E0E7FF' }}>{t('starVaultTitle')}</div>
               </div>
-              <div style={{ background: 'rgba(255, 255, 255, 0.15)', padding: '0.6rem 1rem', borderRadius: '18px', textAlign: 'center' }}>
+              <div
+                onClick={() => {
+                  playPop();
+                  if (setShowStreakModal) setShowStreakModal(true);
+                }}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.18)',
+                  padding: '0.6rem 1rem',
+                  borderRadius: '18px',
+                  textAlign: 'center',
+                  cursor: 'pointer',
+                  border: '1.5px solid rgba(255, 255, 255, 0.3)',
+                  transition: 'transform 0.15s ease'
+                }}
+                title={isHindi ? 'दैनिक उपस्थिति कैलेंडर देखें' : (isBengali ? 'উপস্থিতির ক্যালেন্ডার দেখো' : 'View Attendance Calendar')}
+                onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+              >
                 <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#F87171' }}>
-                  {profile.streakDays || 4} 🔥
+                  {profile.streak || profile.streakDays || 2} 🔥
                 </div>
-                <div style={{ fontSize: '0.7rem', color: '#E0E7FF' }}>{isBengali ? 'দিনের ধারা' : 'Streak Days'}</div>
+                <div style={{ fontSize: '0.7rem', color: '#E0E7FF' }}>{isHindi ? 'लगातार दिन 📅' : (isBengali ? 'দিনের ধারা 📅' : 'Streak Days 📅')}</div>
               </div>
             </div>
           </div>
@@ -276,7 +296,7 @@ export default function CompanionDashboard() {
                       {t('powerEagleEye')}
                     </h4>
                     <span style={{ fontSize: '0.7rem', fontWeight: 800, padding: '0.2rem 0.55rem', borderRadius: '9999px', background: (metrics.reversalIndex || 0) <= 30 ? '#DCFCE7' : '#FEF3C7', color: (metrics.reversalIndex || 0) <= 30 ? '#166534' : '#B45309' }}>
-                      {(metrics.reversalIndex || 0) <= 30 ? (isBengali ? 'দক্ষতা অর্জন ✅' : 'Mastered ✅') : (isBengali ? 'অনুশীলন চলছে 🎯' : 'Training 🎯')}
+                      {(metrics.reversalIndex || 0) <= 30 ? (isHindi ? 'महारत हासिल ✅' : (isBengali ? 'দক্ষতা অর্জন ✅' : 'Mastered ✅')) : (isHindi ? 'अभ्यास जारी 🎯' : (isBengali ? 'অনুশীলন চলছে 🎯' : 'Training 🎯'))}
                     </span>
                     <p style={{ fontSize: '0.72rem', color: '#6366F1', marginTop: '0.4rem', margin: 0 }}>
                       {t('powerEagleEyeDesc')}
@@ -290,7 +310,7 @@ export default function CompanionDashboard() {
                       {t('powerRhythmMaster')}
                     </h4>
                     <span style={{ fontSize: '0.7rem', fontWeight: 800, padding: '0.2rem 0.55rem', borderRadius: '9999px', background: (metrics.phonologicalScore || 0) >= 70 ? '#DCFCE7' : '#FEF3C7', color: (metrics.phonologicalScore || 0) >= 70 ? '#166534' : '#B45309' }}>
-                      {metrics.phonologicalScore || 80}% {isBengali ? 'স্কোর' : 'Score'}
+                      {metrics.phonologicalScore || 80}% {isHindi ? 'स्कोर' : (isBengali ? 'স্কোর' : 'Score')}
                     </span>
                     <p style={{ fontSize: '0.72rem', color: '#16A34A', marginTop: '0.4rem', margin: 0 }}>
                       {t('powerRhythmMasterDesc')}
@@ -304,7 +324,7 @@ export default function CompanionDashboard() {
                       {t('powerStorySpeaker')}
                     </h4>
                     <span style={{ fontSize: '0.7rem', fontWeight: 800, padding: '0.2rem 0.55rem', borderRadius: '9999px', background: '#FEF3C7', color: '#92400E' }}>
-                      {metrics.wpm || 30} {isBengali ? 'শব্দ/মি' : 'WPM'}
+                      {metrics.wpm || 30} {isHindi ? 'शब्द/मिनट' : (isBengali ? 'শব্দ/মি' : 'WPM')}
                     </span>
                     <p style={{ fontSize: '0.72rem', color: '#D97706', marginTop: '0.4rem', margin: 0 }}>
                       {t('powerStorySpeakerDesc')}
@@ -318,7 +338,7 @@ export default function CompanionDashboard() {
                       {t('powerMagicPen')}
                     </h4>
                     <span style={{ fontSize: '0.7rem', fontWeight: 800, padding: '0.2rem 0.55rem', borderRadius: '9999px', background: '#FCE7F3', color: '#9D174D' }}>
-                      {metrics.tracingAccuracy || 85}% {isBengali ? 'নির্ভুল' : 'Accurate'}
+                      {metrics.tracingAccuracy || 85}% {isHindi ? 'सटीक' : (isBengali ? 'নির্ভুল' : 'Accurate')}
                     </span>
                     <p style={{ fontSize: '0.72rem', color: '#DB2777', marginTop: '0.4rem', margin: 0 }}>
                       {t('powerMagicPenDesc')}
@@ -326,6 +346,97 @@ export default function CompanionDashboard() {
                   </div>
                 </div>
               </div>
+
+              {/* Weekly Practice & Attendance Tracker Card */}
+              {(() => {
+                const attendedSet = new Set(profile.attendanceHistory || []);
+                const days = getRecentCalendarDays(7, activeLanguage?.id);
+                return (
+                  <div
+                    style={{
+                      background: 'white',
+                      borderRadius: '24px',
+                      padding: '1.25rem',
+                      border: '2px solid #FED7AA',
+                      boxShadow: '0 4px 14px rgba(249, 115, 22, 0.08)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '0.85rem'
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <div style={{ width: '36px', height: '36px', borderRadius: '12px', background: '#FFEDD5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <Flame size={20} fill="#EA580C" color="#EA580C" />
+                        </div>
+                        <div>
+                          <h4 style={{ fontSize: '0.98rem', fontWeight: 900, color: '#1E293B', margin: 0 }}>
+                            {isHindi ? 'दैनिक उपस्थिति व अभ्यास का सिलसिला' : (isBengali ? 'দৈনিক উপস্থিতি ও অনুশীলনের ধারা' : 'Daily Attendance & Practice Streak')}
+                          </h4>
+                          <span style={{ fontSize: '0.75rem', color: '#64748B' }}>
+                            {profile.streak || 2} {isHindi ? 'दिनों का लगातार रिकॉर्ड' : (isBengali ? 'দিনের ধারাবাহিক রেকর্ড' : 'Consecutive Days Active')} 🔥
+                          </span>
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => {
+                          playPop();
+                          if (setShowStreakModal) setShowStreakModal(true);
+                        }}
+                        style={{
+                          background: '#FFF7ED',
+                          border: '1.5px solid #FDBA74',
+                          color: '#C2410C',
+                          padding: '0.35rem 0.85rem',
+                          borderRadius: '9999px',
+                          fontSize: '0.78rem',
+                          fontWeight: 800,
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.35rem'
+                        }}
+                      >
+                        <Calendar size={14} />
+                        <span>{isHindi ? 'पूरा कैलेंडर देखें 📊' : (isBengali ? 'সম্পূর্ণ ক্যালেন্ডার দেখো 📊' : 'View Full Calendar 📊')}</span>
+                      </button>
+                    </div>
+
+                    {/* 7-Day Visual Strip */}
+                    <div style={{ display: 'flex', gap: '0.4rem', justifyContent: 'space-between' }}>
+                      {days.map((d) => {
+                        const isAttended = attendedSet.has(d.dateKey);
+                        return (
+                          <div
+                            key={d.dateKey}
+                            style={{
+                              flex: 1,
+                              display: 'flex',
+                              flexDirection: 'column',
+                              alignItems: 'center',
+                              padding: '0.5rem 0.2rem',
+                              borderRadius: '14px',
+                              background: isAttended ? '#DCFCE7' : (d.isToday ? '#FEF3C7' : '#F8FAFC'),
+                              border: isAttended ? '1.5px solid #86EFAC' : (d.isToday ? '1.5px solid #F59E0B' : '1px solid #E2E8F0')
+                            }}
+                          >
+                            <span style={{ fontSize: '0.68rem', fontWeight: 800, color: isAttended ? '#166534' : '#64748B' }}>
+                              {d.dayLabel}
+                            </span>
+                            <span style={{ fontSize: '0.85rem', fontWeight: 900, color: '#1E293B', margin: '2px 0' }}>
+                              {d.dayNumber}
+                            </span>
+                            <div style={{ fontSize: '0.85rem' }}>
+                              {isAttended ? '🔥' : (d.isToday ? '⏳' : '⚪')}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })()}
 
               {/* Mitra's Audio Coaching Note */}
               <div
@@ -392,7 +503,7 @@ export default function CompanionDashboard() {
                       <span style={{ fontSize: '2rem' }}>{kidRec.icon || '🌟'}</span>
                       <div>
                         <div style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', color: '#A7F3D0', letterSpacing: '0.04em' }}>
-                          {isBengali ? '🌟 আজকের বিশেষ মিশন' : '🌟 YOUR ADVENTURE MISSION'}
+                          {isHindi ? '🌟 आज का विशेष मिशन' : (isBengali ? '🌟 আজকের বিশেষ মিশন' : '🌟 YOUR ADVENTURE MISSION')}
                         </div>
                         <h4 style={{ fontSize: '1.1rem', fontWeight: 900, margin: '0.1rem 0 0.2rem', color: 'white' }}>
                           {kidRec.title}
@@ -467,7 +578,7 @@ export default function CompanionDashboard() {
                   <span className="badge badge-indigo">{profile.gradeLabel || 'Grade 2'}</span>
                 </div>
                 <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', margin: '0.2rem 0 0' }}>
-                  {t('screeningCompletedLabel')} <strong>{isCompleted ? (metrics.dateCompleted || 'Completed') : (isBengali ? 'এখনও সম্পন্ন হয়নি' : 'Pending')}</strong> • {isBengali ? 'ভাষা' : 'Language'}: <strong>{activeLanguage.name}</strong>
+                  {t('screeningCompletedLabel')} <strong>{isCompleted ? (metrics.dateCompleted || 'Completed') : (isHindi ? 'अभी पूरा नहीं हुआ' : (isBengali ? 'এখনও সম্পন্ন হয়নি' : 'Pending'))}</strong> • {isHindi ? 'भाषा' : (isBengali ? 'ভাষা' : 'Language')}: <strong>{activeLanguage.name}</strong>
                 </p>
               </div>
             </div>
@@ -535,7 +646,7 @@ export default function CompanionDashboard() {
                     {t('parentDashboardTitle')}
                   </h3>
                   <p style={{ fontSize: '0.75rem', color: '#64748B', margin: '0.1rem 0 0' }}>
-                    {t('lastUpdatedLabel')} <strong>{parentFeedback?.lastUpdatedAt ? new Date(parentFeedback.lastUpdatedAt).toLocaleDateString(isBengali ? 'bn-IN' : 'en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : (isBengali ? 'এখনও কোনো তথ্য নেই' : 'No observations recorded yet')}</strong>
+                    {t('lastUpdatedLabel')} <strong>{parentFeedback?.lastUpdatedAt ? new Date(parentFeedback.lastUpdatedAt).toLocaleDateString(speechLang, { month: 'short', day: 'numeric', year: 'numeric' }) : (isHindi ? 'अभी तक कोई अवलोकन दर्ज नहीं' : (isBengali ? 'এখনও কোনো তথ্য নেই' : 'No observations recorded yet'))}</strong>
                   </p>
                 </div>
               </div>
@@ -634,7 +745,7 @@ export default function CompanionDashboard() {
                     <span style={{ fontSize: '1.3rem' }}>🤖</span>
                     <div>
                       <div style={{ fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', color: '#A5B4FC', letterSpacing: '0.04em' }}>
-                        {isBengali ? 'অন-ডিভাইস লোকাল এআই বিশ্লেষণ' : 'LOCAL AI ON-DEVICE REASONING'}
+                        {isHindi ? 'ऑन-डिवाइस स्थानीय एआई विश्लेषण' : (isBengali ? 'অন-ডিভাইস লোকাল এআই বিশ্লেষণ' : 'LOCAL AI ON-DEVICE REASONING')}
                       </div>
                       <div style={{ fontSize: '0.85rem', fontWeight: 800, color: 'white' }}>
                         {learningProfile.localAiReasoning.model || 'Edge Transformer (all-MiniLM-L6-v2)'}
@@ -653,7 +764,7 @@ export default function CompanionDashboard() {
                       color: '#E0E7FF'
                     }}
                   >
-                    🔒 {isBengali ? '১০০% প্রাইভেট অন-ডিভাইস' : '100% Edge Offline (Zero Cloud)'}
+                    🔒 {isHindi ? '100% निजी ऑन-डिवाइस' : (isBengali ? '১০০% প্রাইভেট অন-ডিভাইস' : '100% Edge Offline (Zero Cloud)')}
                   </span>
                 </div>
 
@@ -684,7 +795,7 @@ export default function CompanionDashboard() {
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.5rem', background: 'rgba(0, 0, 0, 0.2)', padding: '0.65rem 0.75rem', borderRadius: '12px', marginBottom: '0.75rem' }}>
                     <div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: '#C7D2FE', marginBottom: '0.15rem' }}>
-                        <span>📖 {isBengali ? 'পঠন' : 'Reading'}</span>
+                        <span>📖 {isHindi ? 'पठन' : (isBengali ? 'পঠন' : 'Reading')}</span>
                         <strong style={{ color: 'white' }}>{Math.round((learningProfile.localAiReasoning.affinityScores.reading || 0) * 100)}%</strong>
                       </div>
                       <div style={{ height: '4px', background: 'rgba(255, 255, 255, 0.15)', borderRadius: '9999px', overflow: 'hidden' }}>
@@ -694,7 +805,7 @@ export default function CompanionDashboard() {
 
                     <div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: '#C7D2FE', marginBottom: '0.15rem' }}>
-                        <span>🗣️ {isBengali ? 'ধ্বনি' : 'Phonics'}</span>
+                        <span>🗣️ {isHindi ? 'ध्वनि' : (isBengali ? 'ধ্বনি' : 'Phonics')}</span>
                         <strong style={{ color: 'white' }}>{Math.round((learningProfile.localAiReasoning.affinityScores.speech || 0) * 100)}%</strong>
                       </div>
                       <div style={{ height: '4px', background: 'rgba(255, 255, 255, 0.15)', borderRadius: '9999px', overflow: 'hidden' }}>
@@ -704,7 +815,7 @@ export default function CompanionDashboard() {
 
                     <div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: '#C7D2FE', marginBottom: '0.15rem' }}>
-                        <span>✍️ {isBengali ? 'ট্রেসিং' : 'Tracing'}</span>
+                        <span>✍️ {isHindi ? 'ट्रेसिंग' : (isBengali ? 'ট্রেসিং' : 'Tracing')}</span>
                         <strong style={{ color: 'white' }}>{Math.round((learningProfile.localAiReasoning.affinityScores.tracing || 0) * 100)}%</strong>
                       </div>
                       <div style={{ height: '4px', background: 'rgba(255, 255, 255, 0.15)', borderRadius: '9999px', overflow: 'hidden' }}>
@@ -714,7 +825,7 @@ export default function CompanionDashboard() {
 
                     <div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: '#C7D2FE', marginBottom: '0.15rem' }}>
-                        <span>🧠 {isBengali ? 'প্যাসিং' : 'Pacing'}</span>
+                        <span>🧠 {isHindi ? 'गति' : (isBengali ? 'প্যাসিং' : 'Pacing')}</span>
                         <strong style={{ color: 'white' }}>{Math.round((learningProfile.localAiReasoning.affinityScores.understanding || 0) * 100)}%</strong>
                       </div>
                       <div style={{ height: '4px', background: 'rgba(255, 255, 255, 0.15)', borderRadius: '9999px', overflow: 'hidden' }}>
@@ -725,9 +836,11 @@ export default function CompanionDashboard() {
                 )}
 
                 <p style={{ fontSize: '0.8rem', color: '#E0E7FF', margin: 0, lineHeight: 1.45 }}>
-                  {isBengali
-                    ? (learningProfile.localAiReasoning.aiSummaryBn || learningProfile.localAiReasoning.aiSummary)
-                    : learningProfile.localAiReasoning.aiSummary}
+                  {isHindi
+                    ? (learningProfile.localAiReasoning.aiSummaryHi || learningProfile.localAiReasoning.aiSummary)
+                    : (isBengali
+                      ? (learningProfile.localAiReasoning.aiSummaryBn || learningProfile.localAiReasoning.aiSummary)
+                      : learningProfile.localAiReasoning.aiSummary)}
                 </p>
               </div>
             )}
@@ -740,7 +853,7 @@ export default function CompanionDashboard() {
                   <strong style={{ fontSize: '0.85rem', color: '#3730A3' }}>{t('whatAksharMitraNoticed')}</strong>
                 </div>
                 <p style={{ fontSize: '0.82rem', color: '#4338CA', lineHeight: 1.45, margin: 0 }}>
-                  {learningProfile?.observedPattern || (isBengali ? 'পর্যবেক্ষণের তথ্য প্রক্রিয়া করা হচ্ছে।' : 'Observations are being processed.')}
+                  {learningProfile?.observedPattern || (isHindi ? 'अवलोकन डेटा संसाधित हो रहा है।' : (isBengali ? 'পর্যবেক্ষণের তথ্য প্রক্রিয়া করা হচ্ছে।' : 'Observations are being processed.'))}
                 </p>
               </div>
 
@@ -751,7 +864,7 @@ export default function CompanionDashboard() {
                     <strong style={{ fontSize: '0.85rem', color: '#065F46' }}>{t('whatWeRecommendNext')}</strong>
                   </div>
                   <p style={{ fontSize: '0.82rem', color: '#047857', lineHeight: 1.45, margin: '0 0 0.6rem' }}>
-                    {learningProfile?.recommendedPractice || (isBengali ? 'ব্যক্তিগত পাঠপরিকল্পনা তৈরি হচ্ছে।' : 'Preparing personalized practice plan.')}
+                    {learningProfile?.recommendedPractice || (isHindi ? 'व्यक्तिगत अभ्यास योजना तैयार हो रही है।' : (isBengali ? 'ব্যক্তিগত পাঠপরিকল্পনা তৈরি হচ্ছে।' : 'Preparing personalized practice plan.'))}
                   </p>
                 </div>
 
@@ -952,7 +1065,7 @@ export default function CompanionDashboard() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <span style={{ fontSize: '1.3rem' }}>{isElevated ? '🧠' : '🚀'}</span>
                     <h4 style={{ fontSize: '1rem', color: isElevated ? '#92400E' : '#14532D', margin: 0, fontWeight: 800 }}>
-                      {isElevated ? (isBengali ? 'ট্র্যাক খ: নির্দেশিত মাল্টি-সেন্সরি অর্থন-গিলিংহাম শিক্ষণ পথ' : 'Track B: Targeted Multisensory Orton-Gillingham Plan') : (isBengali ? 'ট্র্যাক ক: দ্রুত পঠন দক্ষতা ও শব্দচর্চা পথ' : 'Track A: Foundational Literacy & Speed Mastery')}
+                      {isElevated ? (isHindi ? 'ट्रैक ख: लक्षित बहु-संवेदी ऑर्टन-गिलिंगहैम योजना' : (isBengali ? 'ট্র্যাক খ: নির্দেশিত মাল্টি-সেন্সরি অর্থন-গিলিংহাম শিক্ষণ পথ' : 'Track B: Targeted Multisensory Orton-Gillingham Plan')) : (isHindi ? 'ट्रैक क: बुनियादी साक्षरता और प्रवाह प्रवीणता' : (isBengali ? 'ট্র্যাক ক: দ্রুত পঠন দক্ষতা ও শব্দচর্চা পথ' : 'Track A: Foundational Literacy & Speed Mastery'))}
                     </h4>
                   </div>
                   <span style={{ fontSize: '0.72rem', fontWeight: 800, padding: '0.2rem 0.6rem', borderRadius: '9999px', background: isElevated ? '#FEF3C7' : '#DCFCE7', color: isElevated ? '#B45309' : '#166534' }}>
@@ -962,29 +1075,33 @@ export default function CompanionDashboard() {
 
                 <p style={{ fontSize: '0.85rem', color: isElevated ? '#78350F' : '#15803D', lineHeight: 1.5, margin: '0 0 0.75rem' }}>
                   {profile.recommendation || (isElevated
-                    ? (isBengali
-                        ? 'নির্দিষ্ট স্পর্শভিত্তিক বর্ণাভ্যাস, উচ্চ-বৈসাদৃশ্য ডিসলেক্সিয়া-বান্ধব ফন্ট ব্যবহারের মাধ্যমে কাছাকাছি বর্ণের স্থানিক বৈষম্য দূর করার পরামর্শ দেওয়া হচ্ছে।'
-                        : 'Targeted tactile letter tracing, high-contrast visual tint, and Lexend dyslexia-friendly font recommended to strengthen spatial letter discrimination.')
-                    : (isBengali
-                        ? 'ধ্বনিগত ও দৃষ্টিগত অবস্থান চেনার ক্ষেত্রে দৃঢ় দক্ষতা পরিলক্ষিত হয়েছে। দ্রুত পঠন চ্যালেঞ্জ ও উন্নত গল্প পড়ার জন্য প্রস্তুত।'
-                        : 'Demonstrates solid phonological and visual orientation mastery. Ready for speed reading challenges and advanced story reading.'))}
+                    ? (isHindi
+                        ? 'अक्षरों के स्थानिक भ्रम को दूर करने के लिए लक्षित स्पर्श-आधारित अक्षर अनुरेखण, उच्च-कंट्रास्ट दृश्य रंग और डिस्लेक्सिया-अनुकूल फ़ॉन्ट की सिफारिश की जाती है।'
+                        : (isBengali
+                            ? 'নির্দিষ্ট স্পর্শভিত্তিক বর্ণাভ্যাস, উচ্চ-বৈসাদৃশ্য ডিসলেক্সিয়া-বান্ধব ফন্ট ব্যবহারের মাধ্যমে কাছাকাছি বর্ণের স্থানিক বৈষম্য দূর করার পরামর্শ দেওয়া হচ্ছে।'
+                            : 'Targeted tactile letter tracing, high-contrast visual tint, and Lexend dyslexia-friendly font recommended to strengthen spatial letter discrimination.'))
+                    : (isHindi
+                        ? 'ध्वन्यात्मक और दृश्य अभिविन्यास में मजबूत दक्षता प्रदर्शित करता है। गति पठन चुनौतियों और उन्नत कहानी पढ़ने के लिए तैयार।'
+                        : (isBengali
+                            ? 'ধ্বনিগত ও দৃষ্টিগত অবস্থান চেনার ক্ষেত্রে দৃঢ় দক্ষতা পরিলক্ষিত হয়েছে। দ্রুত পঠন চ্যালেঞ্জ ও উন্নত গল্প পড়ার জন্য প্রস্তুত।'
+                            : 'Demonstrates solid phonological and visual orientation mastery. Ready for speed reading challenges and advanced story reading.')))}
                 </p>
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.6rem', fontSize: '0.78rem' }}>
                   <div style={{ background: 'white', padding: '0.6rem 0.8rem', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
-                    <strong style={{ color: '#1E293B' }}>{isBengali ? 'শ্রেণীকক্ষের কৌশল:' : 'Classroom Strategy:'}</strong>
+                    <strong style={{ color: '#1E293B' }}>{isHindi ? 'कक्षा रणनीति:' : (isBengali ? 'শ্রেণীকক্ষের কৌশল:' : 'Classroom Strategy:')}</strong>
                     <div style={{ color: '#64748B', marginTop: '0.2rem' }}>
                       {isElevated
-                        ? (isBengali ? 'মাল্টি-সেন্সরি স্যান্ড ট্রে ও রঙের সহায়তায় বর্ণ পার্থক্য অভ্যাস করান।' : 'Use multi-sensory sand tray & color-coded visual anchors.')
-                        : (isBengali ? 'স্বতন্ত্র গল্প পাঠ ও সাবলীল শব্দ পঠন উৎসাহিত করুন।' : 'Encourage independent story reading and timed sight-word fluency.')}
+                        ? (isHindi ? 'बहु-संवेदी सैंड ट्रे और रंग-कोडित दृश्य संकेतों का प्रयोग करें।' : (isBengali ? 'মাল্টি-সেন্সরি স্যান্ড ট্রে ও রঙের সহায়তায় বর্ণ পার্থক্য অভ্যাস করান।' : 'Use multi-sensory sand tray & color-coded visual anchors.'))
+                        : (isHindi ? 'स्वतंत्र कहानी पठन और दृष्टि-शब्द प्रवाह को प्रोत्साहित करें।' : (isBengali ? 'স্বতন্ত্র গল্প পাঠ ও সাবলীল শব্দ পঠন উৎসাহিত করুন।' : 'Encourage independent story reading and timed sight-word fluency.'))}
                     </div>
                   </div>
                   <div style={{ background: 'white', padding: '0.6rem 0.8rem', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
-                    <strong style={{ color: '#1E293B' }}>{isBengali ? 'বাড়ির কার্যক্রম:' : 'Home Activity:'}</strong>
+                    <strong style={{ color: '#1E293B' }}>{isHindi ? 'गृह गतिविधि:' : (isBengali ? 'বাড়ির কার্যক্রম:' : 'Home Activity:')}</strong>
                     <div style={{ color: '#64748B', marginTop: '0.2rem' }}>
                       {isElevated
-                        ? (isBengali ? 'প্রতিদিন ১০ মিনিট ম্যাজিক বর্ণ ট্রেসিং ও ছন্দের খেলা খেলুন।' : '10 mins daily with Magic Letter Tracing & Rhyme Beats.')
-                        : (isBengali ? 'প্রতিদিন ১৫ মিনিট ওয়ার্ড স্ন্যাপার স্পিড চ্যালেঞ্জ খেলুন।' : '15 mins daily with Word Snapper speed challenges.')}
+                        ? (isHindi ? 'प्रतिदिन 10 मिनट जादुई अक्षर अनुरेखण और तुकबंदी की धुन खेलें।' : (isBengali ? 'প্রতিদিন ১০ মিনিট ম্যাজিক বর্ণ ট্রেসিং ও ছন্দের খেলা খেলুন।' : '10 mins daily with Magic Letter Tracing & Rhyme Beats.'))
+                        : (isHindi ? 'प्रतिदिन 15 मिनट वर्ड स्नैपर गति चुनौती खेलें।' : (isBengali ? 'প্রতিদিন ১৫ মিনিট ওয়ার্ড স্ন্যাপার স্পিড চ্যালেঞ্জ খেলুন।' : '15 mins daily with Word Snapper speed challenges.'))}
                     </div>
                   </div>
                 </div>
@@ -996,7 +1113,7 @@ export default function CompanionDashboard() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', padding: '0.75rem', background: '#F8FAFC', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
             <Shield size={16} color="#64748B" />
             <p style={{ fontSize: '0.75rem', color: '#64748B', margin: 0 }}>
-              <strong>{isBengali ? 'শিক্ষক ও অভিভাবকদের জন্য তথ্য:' : 'Note for Educators & Parents:'}</strong> {isBengali ? 'এই স্ক্রীনিং টুলটি NEP ২০২০ / নিপুণ ভারত নির্দেশিকা অনুযায়ী প্রাথমিক পর্যবেক্ষণ প্রদান করে। এটি কোনো ক্লিনিক্যাল ডায়াগনোসিস নয়, বরং সময়োপযোগী দিকনির্দেশনা প্রদানকারী সহায়ক প্ল্যাটফর্ম।' : 'This screening tool is designed for early risk identification under NEP 2020 / NIPUN Bharat. It is non-clinical and provides low-barrier triage to empower educators and families with timely insights.'}
+              <strong>{isHindi ? 'शिक्षक और अभिभावकों के लिए सूचना:' : (isBengali ? 'শিক্ষক ও অভিভাবকদের জন্য তথ্য:' : 'Note for Educators & Parents:')}</strong> {isHindi ? 'यह स्क्रीनिंग टूल एनईपी 2020 / निपुण भारत दिशानिर्देशों के तहत प्रारंभिक जोखिम पहचान प्रदान करता है। यह कोई नैदानिक निदान नहीं है, बल्कि समय पर मार्गदर्शन प्रदान करने वाला सहायक प्लेटफॉर्म है।' : (isBengali ? 'এই স্ক্রীনিং টুলটি NEP ২০২০ / নিপুণ ভারত নির্দেশিকা অনুযায়ী প্রাথমিক পর্যবেক্ষণ প্রদান করে। এটি কোনো ক্লিনিক্যাল ডায়াগনোসিস নয়, বরং সময়োপযোগী দিকনির্দেশনা প্রদানকারী সহায়ক প্ল্যাটফর্ম।' : 'This screening tool is designed for early risk identification under NEP 2020 / NIPUN Bharat. It is non-clinical and provides low-barrier triage to empower educators and families with timely insights.')}
             </p>
           </div>
         </div>

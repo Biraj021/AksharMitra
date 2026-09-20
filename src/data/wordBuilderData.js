@@ -356,6 +356,151 @@ export const WORD_BUILDER_CONTENT = {
     speechLangFallback: null,   // No safe English fallback for Bengali — show text instead
     // ── Word pool ──────────────────────────────────────────────────────────
     words: BN_WORDS
+  },
+
+  // ===================== HINDI =====================
+  hindi: {
+    // ── Localised UI strings ───────────────────────────────────────────────
+    ui: {
+      backBtn:          'गेम्स हब',
+      wordOf:           (curr, total) => `शब्द ${curr} / ${total}`,
+      starsLabel:       'सितारे',
+      buildPrompt:      (word) => `क्या आप "${word}" शब्द बना सकते हैं? सही अक्षर सजाएं!`,
+      hearSoundBtn:     'उच्चारण सुनें',
+      hideHintBtn:      'संकेत छिपाएं',
+      showHintBtn:      'संकेत देखें',
+      tilesInstruction: '🧩 नीचे से अक्षरों को ऊपर के खानों में सजाएं:',
+      hintLabel:        'अक्षर पहचान मार्गदर्शिका:',
+      hintFallback:     'अक्षर की रेखा और घुमाव की दिशा पर ध्यान दें!',
+      slotTitle:        (i) => `खाना ${i + 1}: हटाने के लिए टैप करें`,
+      slotEmpty:        (i) => `#${i + 1}`,
+      nextWordBtn:      'अगला शब्द 🚀',
+      // Success / failure feedback
+      successMsg:       (word) => `शानदार! आपने "${word}" शब्द सही तरीके से बना लिया! ⭐`,
+      successSpeak:     (word) => `${word}! बहुत बढ़िया!`,
+      retryMsg:         'बहुत करीब! अक्षरों की बनावट को ध्यान से देखें और सही क्रम में रखें!',
+      retrySpeak:       'अक्षरों के आकार को ध्यान से देखें!',
+      initMsg:          (word) => `क्या आप "${word}" शब्द बना सकते हैं? सही अक्षर सजाएं!`,
+      // Help modal
+      helpBtn:          'मदद चाहिए',
+      helpTitle:        'आइए ध्यान से देखें!',
+      helpHearBtn:      'उच्चारण सुनें',
+      helpCloseBtn:     'समझ गया! पुनः प्रयास करें',
+      helpHintFallback: 'अक्षरों की रेखा और घुमाव की दिशा पर ध्यान दें!',
+      // Completion screen
+      completionTitle:   '🎉 शानदार!',
+      completionSub:     'आपने आज का शब्द निर्माण सत्र पूरा कर लिया!',
+      starsEarnedLabel:  'अर्जित सितारे',
+      wordsBuiltLabel:   'बनाए गए शब्द',
+      practicedTitle:    'आपने आज अभ्यास किया:',
+      practiceItems: [
+        '✓ अक्षरों की सही बनावट की पहचान',
+        '✓ मिलते-जुलते अक्षरों में भेद (ब / भ / द / ध / घ)',
+        '✓ शब्द निर्माण और ध्वन्यात्मक समझ'
+      ],
+      btnPracticeAgain:     '🌟 पुनः अभ्यास करें',
+      btnContinueLearning:  '📚 सीखना जारी रखें',
+      btnBackHome:          '🏠 मुख्य पृष्ठ पर लौटें',
+      // Audio unavailable
+      audioUnavailable:     '🔇 ऑडियो अभी उपलब्ध नहीं है'
+    },
+    // ── Audio locale ───────────────────────────────────────────────────────
+    speechLang: 'hi-IN',
+    speechLangFallback: null,
+    words: [
+      {
+        id: 'hi_ghar',
+        word: 'घर',
+        letters: ['घ', 'र'],
+        confusingAlternatives: ['ध', 'ब'],
+        emoji: '🏠',
+        meaning: 'हमारा प्यारा घर (House)',
+        difficulty: 'easy',
+        letterDetails: [
+          { char: 'घ', isTarget: true, mnemonic: 'घ पर पूरी शिरोरेखा होती है, ध पर घुंडी होती है!' },
+          { char: 'र', isTarget: false }
+        ]
+      },
+      {
+        id: 'hi_fal',
+        word: 'फल',
+        letters: ['फ', 'ल'],
+        confusingAlternatives: ['क', 'प'],
+        emoji: '🍎',
+        meaning: 'मीठा फल (Fruit)',
+        difficulty: 'easy',
+        letterDetails: [
+          { char: 'फ', isTarget: true, mnemonic: 'फ की दाईं ओर नीचे लटकती पूंछ होती है!' },
+          { char: 'ल', isTarget: false }
+        ]
+      },
+      {
+        id: 'hi_jal',
+        word: 'जल',
+        letters: ['ज', 'ल'],
+        confusingAlternatives: ['द', 'ग'],
+        emoji: '💧',
+        meaning: 'पीने का जल (Water)',
+        difficulty: 'easy',
+        letterDetails: [
+          { char: 'ज', isTarget: true, mnemonic: 'ज का गोल घुमाव बाईं तरफ से ऊपर उठता है!' },
+          { char: 'ल', isTarget: false }
+        ]
+      },
+      {
+        id: 'hi_kamal',
+        word: 'कमल',
+        letters: ['क', 'म', 'ल'],
+        confusingAlternatives: ['ध', 'भ'],
+        emoji: '🪷',
+        meaning: 'सुंदर कमल का फूल (Lotus)',
+        difficulty: 'medium',
+        letterDetails: [
+          { char: 'क', isTarget: true, mnemonic: 'क में पूरा गोल घेरा और लटकी हुई पूंछ होती है!' },
+          { char: 'म', isTarget: true, mnemonic: 'म पर पूरी शिरोरेखा होती है, भ पर घुंडी!' },
+          { char: 'ल', isTarget: false }
+        ]
+      },
+      {
+        id: 'hi_bas',
+        word: 'बस',
+        letters: ['ब', 'स'],
+        confusingAlternatives: ['भ', 'व'],
+        emoji: '🚌',
+        meaning: 'सवारी बस (Bus)',
+        difficulty: 'easy',
+        letterDetails: [
+          { char: 'ब', isTarget: true, mnemonic: 'ब के पेट में तिरछी लकीर होती है, व में खाली!' },
+          { char: 'स', isTarget: false }
+        ]
+      },
+      {
+        id: 'hi_dhan',
+        word: 'धन',
+        letters: ['ध', 'न'],
+        confusingAlternatives: ['घ', 'म'],
+        emoji: '💰',
+        meaning: 'धन या संपत्ति (Wealth)',
+        difficulty: 'easy',
+        letterDetails: [
+          { char: 'ध', isTarget: true, mnemonic: 'ध के शीर्ष पर घुंडी होती है और शिरोरेखा टूटती है!' },
+          { char: 'न', isTarget: false }
+        ]
+      },
+      {
+        id: 'hi_jag',
+        word: 'जग',
+        letters: ['ज', 'ग'],
+        confusingAlternatives: ['द', 'भ'],
+        emoji: '🏺',
+        meaning: 'पानी का जग (Jug)',
+        difficulty: 'easy',
+        letterDetails: [
+          { char: 'ज', isTarget: true, mnemonic: 'ज में मुड़ाव ऊपर की ओर होता है!' },
+          { char: 'ग', isTarget: false }
+        ]
+      }
+    ]
   }
 };
 

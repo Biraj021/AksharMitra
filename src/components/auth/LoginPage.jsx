@@ -20,22 +20,24 @@ export default function LoginPage() {
   const [showAddModal, setShowAddModal] = useState(false);
 
   const isBengali = activeLanguage?.id === 'bengali';
+  const isHindi = activeLanguage?.id === 'hindi';
+  const speechLang = isHindi ? 'hi-IN' : (isBengali ? 'bn-IN' : 'en-US');
 
   const handleSelectStudent = (profileId, name) => {
     playStarTwinkle();
-    speakText(
-      isBengali ? `স্বাগতম ${name}! এসো আমাদের পড়ার অভিযান শুরু করি!` : `Welcome back, ${name}! Let's start our adventure!`,
-      isBengali ? 'bn-IN' : 'en-US'
-    );
+    const welcomeMsg = isHindi
+      ? `वापसी पर स्वागत है, ${name}! आइए अपना अभियान शुरू करें!`
+      : (isBengali ? `স্বাগতম ${name}! এসো আমাদের পড়ার অভিযান শুরু করি!` : `Welcome back, ${name}! Let's start our adventure!`);
+    speakText(welcomeMsg, speechLang);
     switchProfile(profileId);
   };
 
   const handleQuickDemo = (demoId, demoName) => {
     playStarTwinkle();
-    speakText(
-      isBengali ? `${demoName}-এর ডায়াগনস্টিক রিপোর্ট লোড করা হচ্ছে!` : `Loading ${demoName}'s diagnostic evaluation dashboard!`,
-      isBengali ? 'bn-IN' : 'en-US'
-    );
+    const demoMsg = isHindi
+      ? `${demoName} का डायग्नोस्टिक मूल्यांकन डैशबोर्ड लोड हो रहा है!`
+      : (isBengali ? `${demoName}-এর ডায়াগনস্টিক রিপোর্ট লোড করা হচ্ছে!` : `Loading ${demoName}'s diagnostic evaluation dashboard!`);
+    speakText(demoMsg, speechLang);
     loadDemoProfile(demoId);
   };
 
@@ -256,16 +258,16 @@ export default function LoginPage() {
                     {isCompleted ? (
                       <span style={{ color: '#059669', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                         <CheckCircle size={14} />
-                        <span>{isAtRisk ? (isBengali ? 'ট্র্যাক খ (নিরাময়)' : 'Track B (Remediation)') : (isBengali ? 'ট্র্যাক ক (সাবলীলতা)' : 'Track A (Fluency)')}</span>
+                        <span>{isAtRisk ? (isHindi ? 'ट्रैक ख (उपचार)' : (isBengali ? 'ট্র্যাক খ (নিরাময়)' : 'Track B (Remediation)')) : (isHindi ? 'ट्रैक क (प्रवाह)' : (isBengali ? 'ট্র্যাক ক (সাবলীলতা)' : 'Track A (Fluency)'))}</span>
                       </span>
                     ) : (
                       <span style={{ color: '#4F46E5', fontWeight: 700 }}>
-                        🧭 {isBengali ? 'স্ক্রীনিং প্রস্তুত (৫ মিনিট)' : 'Screening Ready (5 Min)'}
+                        🧭 {isHindi ? 'स्क्रीनिंग तैयार (5 मिनट)' : (isBengali ? 'স্ক্রীনিং প্রস্তুত (৫ মিনিট)' : 'Screening Ready (5 Min)')}
                       </span>
                     )}
                   </div>
                   <div style={{ color: '#4F46E5', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
-                    <span>{isBengali ? 'শুরু' : 'Play'}</span>
+                    <span>{isHindi ? 'शुरू करें' : (isBengali ? 'শুরু' : 'Play')}</span>
                     <ArrowRight size={14} />
                   </div>
                 </div>
@@ -311,10 +313,10 @@ export default function LoginPage() {
           >
             <div>
               <div style={{ fontWeight: 800, fontSize: '0.88rem', color: '#92400E' }}>
-                🦁 {isBengali ? 'আরভ শর্মা (ঝুঁকিপূর্ণ ডেমো)' : 'Aarav Sharma (At-Risk Demo)'}
+                🦁 {isHindi ? 'आरव शर्मा (जोखिम डेमो)' : (isBengali ? 'আরভ শর্মা (ঝুঁকিপূর্ণ ডেমো)' : 'Aarav Sharma (At-Risk Demo)')}
               </div>
               <div style={{ fontSize: '0.72rem', color: '#B45309' }}>
-                {isBengali ? 'বর্ণ বিভ্রান্তি চিহ্নিত • ট্র্যাক খ নিরাময়' : 'Letter reversal flagged • Track B Remediation'}
+                {isHindi ? 'अक्षर उलट-फेर चिह्नित • ट्रैक ख उपचार' : (isBengali ? 'বর্ণ বিভ্রান্তি চিহ্নিত • ট্র্যাক খ নিরাময়' : 'Letter reversal flagged • Track B Remediation')}
               </div>
             </div>
             <ArrowRight size={16} color="#B45309" />
@@ -336,10 +338,10 @@ export default function LoginPage() {
           >
             <div>
               <div style={{ fontWeight: 800, fontSize: '0.88rem', color: '#065F46' }}>
-                🦚 {isBengali ? 'প্রিয়া প্যাটেল (স্বাভাবিক ডেমো)' : 'Priya Patel (Typical Reader Demo)'}
+                🦚 {isHindi ? 'प्रिया पटेल (सामान्य पाठक डेमो)' : (isBengali ? 'প্রিয়া প্যাটেল (স্বাভাবিক ডেমো)' : 'Priya Patel (Typical Reader Demo)')}
               </div>
               <div style={{ fontSize: '0.72rem', color: '#047857' }}>
-                {isBengali ? 'দক্ষতা স্বাভাবিক • ট্র্যাক ক দ্রুত পঠন' : 'Milestones typical • Track A Accelerated'}
+                {isHindi ? 'माइलस्टोन सामान्य • ट्रैक क त्वरित पठन' : (isBengali ? 'দক্ষতা স্বাভাবিক • ট্র্যাক ক দ্রুত পঠন' : 'Milestones typical • Track A Accelerated')}
               </div>
             </div>
             <ArrowRight size={16} color="#047857" />

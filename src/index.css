@@ -103,6 +103,14 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+.lang-bengali {
+  font-family: var(--font-bengali);
+}
+
+.lang-hindi {
+  font-family: var(--font-devanagari);
+}
+
 /* No italics — italics increase reading difficulty for dyslexic children */
 em, i { font-style: normal; font-weight: 600; }
 
