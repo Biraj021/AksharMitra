@@ -406,29 +406,74 @@ export default function WordSnapper({ onBack, adaptiveConfig }) {
         >
           <MascotMitra
             state="celebrating"
-            speechText={ui.completionSub}
+            speechText={
+              langId === 'bengali'
+                ? `দারুণ কাজ, ${activeProfile?.name || 'বন্ধু'}! তুমি চমৎকার সব শব্দ তৈরি করেছ!`
+                : (langId === 'hindi'
+                  ? `शाबाश, ${activeProfile?.name || 'दोस्त'}! आपने कमाल के शब्द बनाए हैं!`
+                  : `Awesome job, ${activeProfile?.name || 'Explorer'}! You snapped all the words together!`)
+            }
             size="md"
             showBubble={true}
           />
 
           <div>
-            <h2 style={{ fontSize: '2.2rem', color: '#4F46E5', margin: '0 0 0.4rem' }}>
+            <h2 style={{ fontSize: '2.2rem', color: '#4F46E5', margin: '0 0 0.4rem', fontWeight: 900 }}>
               {ui.completionTitle}
             </h2>
-            <p style={{ fontSize: '1.05rem', color: '#64748B', margin: 0 }}>
+            <p style={{ fontSize: '1.05rem', color: '#64748B', margin: 0, fontWeight: 600 }}>
               {ui.completionSub}
             </p>
           </div>
 
-          {/* Stats */}
+          {/* Stats - Unified 3-Tier Grid for Equivalent Layout & Alignment */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', width: '100%', maxWidth: '380px' }}>
-            <div style={{ background: '#FEF3C7', padding: '1rem', borderRadius: '18px', border: '1.5px solid #FDE68A' }}>
-              <div style={{ fontSize: '1.75rem', fontWeight: '800', color: '#B45309' }}>⭐ +{sessionStars}</div>
-              <div style={{ fontSize: '0.75rem', fontWeight: '700', color: '#92400E' }}>{ui.starsEarnedLabel}</div>
+            <div
+              style={{
+                background: '#FEF3C7',
+                padding: '0.9rem 0.5rem',
+                borderRadius: '20px',
+                border: '1.5px solid #FDE68A',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                textAlign: 'center',
+                minHeight: '105px',
+                boxShadow: '0 4px 12px rgba(217, 119, 6, 0.08)'
+              }}
+            >
+              <div style={{ fontSize: '1.6rem', lineHeight: 1 }}>⭐</div>
+              <div style={{ fontSize: '1.45rem', fontWeight: 900, color: '#B45309', margin: '0.35rem 0 0.2rem', whiteSpace: 'nowrap' }}>
+                +{sessionStars}
+              </div>
+              <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#92400E', lineHeight: 1.2 }}>
+                {ui.starsEarnedLabel}
+              </div>
             </div>
-            <div style={{ background: '#EEF2FF', padding: '1rem', borderRadius: '18px', border: '1.5px solid #C7D2FE' }}>
-              <div style={{ fontSize: '1.75rem', fontWeight: '800', color: '#4338CA' }}>🧩 {wordsBuiltCount}</div>
-              <div style={{ fontSize: '0.75rem', fontWeight: '700', color: '#3730A3' }}>{ui.wordsBuiltLabel}</div>
+
+            <div
+              style={{
+                background: '#EEF2FF',
+                padding: '0.9rem 0.5rem',
+                borderRadius: '20px',
+                border: '1.5px solid #C7D2FE',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                textAlign: 'center',
+                minHeight: '105px',
+                boxShadow: '0 4px 12px rgba(79, 70, 229, 0.08)'
+              }}
+            >
+              <div style={{ fontSize: '1.6rem', lineHeight: 1 }}>🧩</div>
+              <div style={{ fontSize: '1.45rem', fontWeight: 900, color: '#4338CA', margin: '0.35rem 0 0.2rem', whiteSpace: 'nowrap' }}>
+                {wordsBuiltCount}
+              </div>
+              <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#3730A3', lineHeight: 1.2 }}>
+                {ui.wordsBuiltLabel}
+              </div>
             </div>
           </div>
 

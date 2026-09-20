@@ -17,7 +17,8 @@ export default function LetterHunter({ onBack, adaptiveConfig }) {
   const langKey = activeLanguage?.id || 'english';
   const content = LETTER_HUNTER_CONTENT[langKey] || LETTER_HUNTER_CONTENT.english;
   const isBengali = langKey === 'bengali';
-  const speechLang = isBengali ? 'bn-IN' : (langKey === 'hindi' ? 'hi-IN' : 'en-US');
+  const isHindi = langKey === 'hindi';
+  const speechLang = isBengali ? 'bn-IN' : (isHindi ? 'hi-IN' : 'en-US');
 
   // Finite Session State
   const [session, setSession] = useState(() => ({
@@ -299,28 +300,30 @@ export default function LetterHunter({ onBack, adaptiveConfig }) {
             boxShadow: '0 16px 40px rgba(99, 102, 241, 0.15)'
           }}
         >
-          {/* Celebrating Mascot */}
+          {/* Celebrating Mascot with Distinct Natural Praise */}
           <MascotMitra
             state="celebrating"
             speechText={
               isBengali
-                ? `অভিনন্দন ${activeProfile?.name || 'বন্ধু'}! আজকের বর্ণ শিকার মিশন সম্পূর্ণ হয়েছে!`
-                : `Superstar ${activeProfile?.name || 'Explorer'}! Today's Letter Hunt is complete!`
+                ? `অসাধারণ দৃষ্টি, ${activeProfile?.name || 'বন্ধু'}! তুমি গ্রিডের সবকটি বর্ণ নিখুঁতভাবে খুঁজে পেয়েছ!`
+                : (isHindi
+                  ? `शानदार नज़र, ${activeProfile?.name || 'दोस्त'}! आपने ग्रिड के सभी छुपे हुए अक्षर ढूंढ लिए!`
+                  : `Eagle eyes, ${activeProfile?.name || 'Explorer'}! You spotted all the target letters!`)
             }
             size="md"
             showBubble={true}
           />
 
           <div>
-            <h2 style={{ fontSize: '2.2rem', color: '#4F46E5', margin: '0 0 0.4rem' }}>
+            <h2 style={{ fontSize: '2.2rem', color: '#4F46E5', margin: '0 0 0.4rem', fontWeight: 900 }}>
               {content.completion.title}
             </h2>
-            <p style={{ fontSize: '1.05rem', color: '#64748B', margin: 0 }}>
+            <p style={{ fontSize: '1.05rem', color: '#64748B', margin: 0, fontWeight: 600 }}>
               {content.completion.subtitle}
             </p>
           </div>
 
-          {/* Key Stat Badges */}
+          {/* Key Stat Badges - Unified 3-Tier Grid for Equivalent Layout & Alignment */}
           <div
             style={{
               display: 'grid',
@@ -330,29 +333,122 @@ export default function LetterHunter({ onBack, adaptiveConfig }) {
               maxWidth: '460px'
             }}
           >
-            <div style={{ background: '#FEF3C7', padding: '1rem 0.5rem', borderRadius: '18px', border: '1.5px solid #FDE68A' }}>
-              <div style={{ fontSize: '1.75rem', fontWeight: '800', color: '#B45309' }}>
-                ⭐ +{session.starsEarned}
+            {/* Card 1: Stars */}
+            <div
+              style={{
+                background: '#FEF3C7',
+                padding: '0.9rem 0.5rem',
+                borderRadius: '20px',
+                border: '1.5px solid #FDE68A',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                textAlign: 'center',
+                minHeight: '105px',
+                boxShadow: '0 4px 12px rgba(217, 119, 6, 0.08)'
+              }}
+            >
+              <div style={{ fontSize: '1.6rem', lineHeight: 1 }}>⭐</div>
+              <div
+                style={{
+                  fontSize: '1.45rem',
+                  fontWeight: 900,
+                  color: '#B45309',
+                  margin: '0.35rem 0 0.2rem',
+                  whiteSpace: 'nowrap'
+                }}
+              >
+                +{session.starsEarned}
               </div>
-              <div style={{ fontSize: '0.75rem', fontWeight: '700', color: '#92400E' }}>
+              <div
+                style={{
+                  fontSize: '0.75rem',
+                  fontWeight: 800,
+                  color: '#92400E',
+                  lineHeight: 1.2
+                }}
+              >
                 {content.completion.starsEarned}
               </div>
             </div>
 
-            <div style={{ background: '#EEF2FF', padding: '1rem 0.5rem', borderRadius: '18px', border: '1.5px solid #C7D2FE' }}>
-              <div style={{ fontSize: '1.75rem', fontWeight: '800', color: '#4338CA' }}>
-                🎯 {session.totalFoundCount}
+            {/* Card 2: Letters Found */}
+            <div
+              style={{
+                background: '#EEF2FF',
+                padding: '0.9rem 0.5rem',
+                borderRadius: '20px',
+                border: '1.5px solid #C7D2FE',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                textAlign: 'center',
+                minHeight: '105px',
+                boxShadow: '0 4px 12px rgba(79, 70, 229, 0.08)'
+              }}
+            >
+              <div style={{ fontSize: '1.6rem', lineHeight: 1 }}>🎯</div>
+              <div
+                style={{
+                  fontSize: '1.45rem',
+                  fontWeight: 900,
+                  color: '#4338CA',
+                  margin: '0.35rem 0 0.2rem',
+                  whiteSpace: 'nowrap'
+                }}
+              >
+                {session.totalFoundCount}
               </div>
-              <div style={{ fontSize: '0.75rem', fontWeight: '700', color: '#3730A3' }}>
+              <div
+                style={{
+                  fontSize: '0.75rem',
+                  fontWeight: 800,
+                  color: '#3730A3',
+                  lineHeight: 1.2
+                }}
+              >
                 {content.completion.lettersFound}
               </div>
             </div>
 
-            <div style={{ background: '#D1FAE5', padding: '1rem 0.5rem', borderRadius: '18px', border: '1.5px solid #A7F3D0' }}>
-              <div style={{ fontSize: '1.75rem', fontWeight: '800', color: '#065F46' }}>
-                ✨ {accuracyPercent}%
+            {/* Card 3: Accuracy */}
+            <div
+              style={{
+                background: '#D1FAE5',
+                padding: '0.9rem 0.5rem',
+                borderRadius: '20px',
+                border: '1.5px solid #A7F3D0',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                textAlign: 'center',
+                minHeight: '105px',
+                boxShadow: '0 4px 12px rgba(5, 150, 105, 0.08)'
+              }}
+            >
+              <div style={{ fontSize: '1.6rem', lineHeight: 1 }}>✨</div>
+              <div
+                style={{
+                  fontSize: '1.45rem',
+                  fontWeight: 900,
+                  color: '#065F46',
+                  margin: '0.35rem 0 0.2rem',
+                  whiteSpace: 'nowrap'
+                }}
+              >
+                {accuracyPercent}%
               </div>
-              <div style={{ fontSize: '0.75rem', fontWeight: '700', color: '#047857' }}>
+              <div
+                style={{
+                  fontSize: '0.75rem',
+                  fontWeight: 800,
+                  color: '#047857',
+                  lineHeight: 1.2
+                }}
+              >
                 {content.completion.accuracy}
               </div>
             </div>
@@ -363,19 +459,32 @@ export default function LetterHunter({ onBack, adaptiveConfig }) {
             style={{
               background: '#F8FAFC',
               border: '1.5px solid #E2E8F0',
-              borderRadius: '18px',
-              padding: '1.25rem 1.5rem',
+              borderRadius: '20px',
+              padding: '1.2rem 1.5rem',
               width: '100%',
               maxWidth: '460px',
               textAlign: 'left'
             }}
           >
-            <div style={{ fontWeight: '700', fontSize: '0.95rem', color: '#1E293B', marginBottom: '0.5rem' }}>
+            <div style={{ fontWeight: 800, fontSize: '0.95rem', color: '#1E293B', marginBottom: '0.65rem' }}>
               {content.completion.practicedTitle}
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', fontSize: '0.85rem', color: '#64748B' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
               {content.completion.practiceItems.map((item, idx) => (
-                <div key={idx}>{item}</div>
+                <div
+                  key={idx}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.55rem',
+                    fontSize: '0.86rem',
+                    color: '#475569',
+                    fontWeight: 600
+                  }}
+                >
+                  <span style={{ color: '#10B981', fontWeight: 900, fontSize: '1rem' }}>✓</span>
+                  <span>{item.replace(/^✓\s*/, '')}</span>
+                </div>
               ))}
             </div>
           </div>
