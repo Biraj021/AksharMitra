@@ -255,7 +255,316 @@ const ACCURATE_LETTER_PATHS = {
     ]
   },
 
-  // English Latin Letters
+  // English Uppercase (Capital) Letters
+  A: {
+    instruction: "Trace capital 'A'! 1) Slant up to top, 2) slant down right, 3) bridge across!",
+    audioText: "Trace capital letter A! Slant up, slant down, and bridge across!",
+    multiStroke: true,
+    requiredDots: [2, 3, 5],
+    guideDots: [
+      { id: 1, x: 70, y: 225, label: '1' },
+      { id: 2, x: 140, y: 55, label: '2' },
+      { id: 3, x: 210, y: 225, label: '3' },
+      { id: 4, x: 100, y: 155, label: '4' },
+      { id: 5, x: 180, y: 155, label: 'Cross' }
+    ]
+  },
+  B: {
+    instruction: "Trace capital 'B'! 1) Line down, 2) top loop to middle, 3) bottom loop to floor!",
+    audioText: "Trace capital letter B! Line down, top loop, and bottom loop!",
+    guideDots: [
+      { id: 1, x: 80, y: 55, label: '1' },
+      { id: 2, x: 80, y: 225, label: '2' },
+      { id: 3, x: 145, y: 55 },
+      { id: 4, x: 175, y: 95 },
+      { id: 5, x: 140, y: 135, label: '3' },
+      { id: 6, x: 180, y: 175 },
+      { id: 7, x: 140, y: 225 },
+      { id: 8, x: 80, y: 225 }
+    ]
+  },
+  C: {
+    instruction: "Trace capital 'C'! Start at top right, curve round like a giant crescent moon!",
+    audioText: "Trace capital letter C! Big curve around like a moon!",
+    guideDots: [
+      { id: 1, x: 195, y: 75, label: '1' },
+      { id: 2, x: 140, y: 55 },
+      { id: 3, x: 80, y: 140 },
+      { id: 4, x: 140, y: 225 },
+      { id: 5, x: 195, y: 205, label: '2' }
+    ]
+  },
+  D: {
+    instruction: "Trace capital 'D'! 1) Line straight down, 2) giant round belly from top to bottom!",
+    audioText: "Trace capital letter D! Line down, then giant belly on the right!",
+    guideDots: [
+      { id: 1, x: 80, y: 55, label: '1' },
+      { id: 2, x: 80, y: 225, label: '2' },
+      { id: 3, x: 140, y: 55 },
+      { id: 4, x: 185, y: 140 },
+      { id: 5, x: 140, y: 225 },
+      { id: 6, x: 80, y: 225 }
+    ]
+  },
+  E: {
+    instruction: "Trace capital 'E'! 1) Line down, 2) top bar, 3) middle bar, 4) bottom bar!",
+    audioText: "Trace capital letter E! Line down, top, middle, and bottom bar!",
+    multiStroke: true,
+    requiredDots: [2, 3, 4, 5],
+    guideDots: [
+      { id: 1, x: 80, y: 55, label: '1' },
+      { id: 2, x: 80, y: 225, label: '2' },
+      { id: 3, x: 180, y: 55, label: 'Top' },
+      { id: 4, x: 160, y: 140, label: 'Mid' },
+      { id: 5, x: 180, y: 225, label: 'Bot' }
+    ]
+  },
+  F: {
+    instruction: "Trace capital 'F'! 1) Line straight down, 2) top roof bar, 3) middle shelf bar!",
+    audioText: "Trace capital letter F! Line down, top bar, and middle bar!",
+    multiStroke: true,
+    requiredDots: [2, 3, 4],
+    guideDots: [
+      { id: 1, x: 80, y: 55, label: '1' },
+      { id: 2, x: 80, y: 225, label: '2' },
+      { id: 3, x: 180, y: 55, label: 'Top' },
+      { id: 4, x: 160, y: 140, label: 'Mid' }
+    ]
+  },
+  G: {
+    instruction: "Trace capital 'G'! Curve all the way around like C, then step inside!",
+    audioText: "Trace capital letter G! Curve around, then step inside!",
+    guideDots: [
+      { id: 1, x: 195, y: 75, label: '1' },
+      { id: 2, x: 140, y: 55 },
+      { id: 3, x: 80, y: 140 },
+      { id: 4, x: 140, y: 225 },
+      { id: 5, x: 195, y: 160, label: '2' },
+      { id: 6, x: 155, y: 160 }
+    ]
+  },
+  H: {
+    instruction: "Trace capital 'H'! 1) Left line down, 2) right line down, 3) connect the bridge!",
+    audioText: "Trace capital letter H! Two lines down, then connect the middle bridge!",
+    multiStroke: true,
+    requiredDots: [2, 4, 5],
+    guideDots: [
+      { id: 1, x: 80, y: 55, label: '1' },
+      { id: 2, x: 80, y: 225, label: '2' },
+      { id: 3, x: 200, y: 55, label: '3' },
+      { id: 4, x: 200, y: 225, label: '4' },
+      { id: 5, x: 140, y: 140, label: 'Bridge' }
+    ]
+  },
+  I: {
+    instruction: "Trace capital 'I'! Line straight down the center with top and bottom hats!",
+    audioText: "Trace capital letter I! Line straight down with top and bottom hats!",
+    guideDots: [
+      { id: 1, x: 90, y: 55, label: '1' },
+      { id: 2, x: 190, y: 55 },
+      { id: 3, x: 140, y: 55, label: '2' },
+      { id: 4, x: 140, y: 225, label: '3' },
+      { id: 5, x: 90, y: 225, label: '4' },
+      { id: 6, x: 190, y: 225 }
+    ]
+  },
+  J: {
+    instruction: "Trace capital 'J'! Top roof bar, then line down that curves up like a hook!",
+    audioText: "Trace capital letter J! Roof bar, then curve up like a hook!",
+    guideDots: [
+      { id: 1, x: 90, y: 55, label: '1' },
+      { id: 2, x: 200, y: 55 },
+      { id: 3, x: 165, y: 55, label: '2' },
+      { id: 4, x: 165, y: 180 },
+      { id: 5, x: 110, y: 225, label: '3' },
+      { id: 6, x: 75, y: 175 }
+    ]
+  },
+  K: {
+    instruction: "Trace capital 'K'! 1) Tall line down, 2) slant into the middle, 3) kick out!",
+    audioText: "Trace capital letter K! Line down, slant in, slant kick out!",
+    multiStroke: true,
+    requiredDots: [2, 3, 4],
+    guideDots: [
+      { id: 1, x: 80, y: 55, label: '1' },
+      { id: 2, x: 80, y: 225, label: '2' },
+      { id: 3, x: 190, y: 55, label: '3' },
+      { id: 4, x: 95, y: 140 },
+      { id: 5, x: 190, y: 225, label: '4' }
+    ]
+  },
+  L: {
+    instruction: "Trace capital 'L'! Go straight down, then take a sharp right turn on the floor!",
+    audioText: "Trace capital letter L! Straight down, then turn right!",
+    guideDots: [
+      { id: 1, x: 85, y: 55, label: '1' },
+      { id: 2, x: 85, y: 225, label: '2' },
+      { id: 3, x: 195, y: 225, label: '3' }
+    ]
+  },
+  M: {
+    instruction: "Trace capital 'M'! 1) Up, 2) slide down to middle, 3) climb up, 4) straight down!",
+    audioText: "Trace capital letter M! Up, slide down, climb up, straight down!",
+    guideDots: [
+      { id: 1, x: 70, y: 225, label: '1' },
+      { id: 2, x: 70, y: 55, label: '2' },
+      { id: 3, x: 140, y: 155, label: '3' },
+      { id: 4, x: 210, y: 55, label: '4' },
+      { id: 5, x: 210, y: 225, label: '5' }
+    ]
+  },
+  N: {
+    instruction: "Trace capital 'N'! 1) Straight up, 2) slide down to bottom right, 3) straight up!",
+    audioText: "Trace capital letter N! Straight up, slide down, and straight up!",
+    guideDots: [
+      { id: 1, x: 75, y: 225, label: '1' },
+      { id: 2, x: 75, y: 55, label: '2' },
+      { id: 3, x: 205, y: 225, label: '3' },
+      { id: 4, x: 205, y: 55, label: '4' }
+    ]
+  },
+  O: {
+    instruction: "Trace capital 'O'! Start at the top and loop all the way round like a giant bubble!",
+    audioText: "Trace capital letter O! Giant round circle from the top!",
+    guideDots: [
+      { id: 1, x: 140, y: 55, label: '1' },
+      { id: 2, x: 75, y: 140 },
+      { id: 3, x: 140, y: 225, label: '2' },
+      { id: 4, x: 205, y: 140 },
+      { id: 5, x: 140, y: 55 }
+    ]
+  },
+  P: {
+    instruction: "Trace capital 'P'! 1) Tall line down, 2) round balloon loop at the top right!",
+    audioText: "Trace capital letter P! Line down, then loop at the top right!",
+    guideDots: [
+      { id: 1, x: 80, y: 55, label: '1' },
+      { id: 2, x: 80, y: 225, label: '2' },
+      { id: 3, x: 145, y: 55 },
+      { id: 4, x: 185, y: 95 },
+      { id: 5, x: 145, y: 140 },
+      { id: 6, x: 80, y: 140 }
+    ]
+  },
+  Q: {
+    instruction: "Trace capital 'Q'! Draw a giant 'O', then add a little walking stick tail at bottom!",
+    audioText: "Trace capital letter Q! Giant circle with a little kick tail!",
+    multiStroke: true,
+    requiredDots: [3, 5],
+    guideDots: [
+      { id: 1, x: 140, y: 55, label: '1' },
+      { id: 2, x: 75, y: 140 },
+      { id: 3, x: 140, y: 225 },
+      { id: 4, x: 205, y: 140 },
+      { id: 5, x: 155, y: 185, label: 'Tail' },
+      { id: 6, x: 215, y: 235 }
+    ]
+  },
+  R: {
+    instruction: "Trace capital 'R'! 1) Line down, 2) top balloon loop, 3) slant kick leg down!",
+    audioText: "Trace capital letter R! Line down, top loop, and kick leg down!",
+    guideDots: [
+      { id: 1, x: 80, y: 55, label: '1' },
+      { id: 2, x: 80, y: 225, label: '2' },
+      { id: 3, x: 145, y: 55 },
+      { id: 4, x: 180, y: 95 },
+      { id: 5, x: 135, y: 135 },
+      { id: 6, x: 80, y: 135 },
+      { id: 7, x: 185, y: 225, label: '3' }
+    ]
+  },
+  S: {
+    instruction: "Trace capital 'S'! Curve left like a snake, turn right, and curve left again!",
+    audioText: "Trace capital letter S! Curve left, turn right, and curve left!",
+    guideDots: [
+      { id: 1, x: 185, y: 80, label: '1' },
+      { id: 2, x: 140, y: 55 },
+      { id: 3, x: 85, y: 95 },
+      { id: 4, x: 140, y: 140 },
+      { id: 5, x: 195, y: 185 },
+      { id: 6, x: 140, y: 225 },
+      { id: 7, x: 85, y: 200, label: '2' }
+    ]
+  },
+  T: {
+    instruction: "Trace capital 'T'! 1) Top roof bar all the way across, 2) line straight down the middle!",
+    audioText: "Trace capital letter T! Roof bar, then straight line down!",
+    multiStroke: true,
+    requiredDots: [2, 4],
+    guideDots: [
+      { id: 1, x: 70, y: 55, label: '1' },
+      { id: 2, x: 210, y: 55, label: 'Roof' },
+      { id: 3, x: 140, y: 55, label: '2' },
+      { id: 4, x: 140, y: 225, label: 'Stem' }
+    ]
+  },
+  U: {
+    instruction: "Trace capital 'U'! Start at top, go down, round the bottom, and climb back up!",
+    audioText: "Trace capital letter U! Down, curve the bottom, and climb back up!",
+    guideDots: [
+      { id: 1, x: 85, y: 55, label: '1' },
+      { id: 2, x: 85, y: 165 },
+      { id: 3, x: 140, y: 225 },
+      { id: 4, x: 195, y: 165 },
+      { id: 5, x: 195, y: 55, label: '2' }
+    ]
+  },
+  V: {
+    instruction: "Trace capital 'V'! Slant down to a sharp point, then slant right back up!",
+    audioText: "Trace capital letter V! Slant down to a point, then slant up!",
+    guideDots: [
+      { id: 1, x: 75, y: 55, label: '1' },
+      { id: 2, x: 140, y: 225, label: 'Point' },
+      { id: 3, x: 205, y: 55, label: '2' }
+    ]
+  },
+  W: {
+    instruction: "Trace capital 'W'! Slant down, up, down, and up to make two giant V's!",
+    audioText: "Trace capital letter W! Down, up, down, and up!",
+    guideDots: [
+      { id: 1, x: 65, y: 55, label: '1' },
+      { id: 2, x: 105, y: 225, label: '2' },
+      { id: 3, x: 140, y: 120, label: '3' },
+      { id: 4, x: 175, y: 225, label: '4' },
+      { id: 5, x: 215, y: 55, label: '5' }
+    ]
+  },
+  X: {
+    instruction: "Trace capital 'X'! 1) Slant from top-left to bottom-right, 2) cross the other way!",
+    audioText: "Trace capital letter X! Slant down, then cross the other way!",
+    multiStroke: true,
+    requiredDots: [2, 4],
+    guideDots: [
+      { id: 1, x: 75, y: 55, label: '1' },
+      { id: 2, x: 205, y: 225, label: '2' },
+      { id: 3, x: 205, y: 55, label: '3' },
+      { id: 4, x: 75, y: 225, label: 'Cross' }
+    ]
+  },
+  Y: {
+    instruction: "Trace capital 'Y'! Slant down to middle from left, from right, then stem straight down!",
+    audioText: "Trace capital letter Y! Little V at top, then straight stem down!",
+    multiStroke: true,
+    requiredDots: [2, 4],
+    guideDots: [
+      { id: 1, x: 75, y: 55, label: '1' },
+      { id: 2, x: 140, y: 135, label: '2' },
+      { id: 3, x: 205, y: 55, label: '3' },
+      { id: 4, x: 140, y: 225, label: 'Stem' }
+    ]
+  },
+  Z: {
+    instruction: "Trace capital 'Z'! Across the top, diagonal slide down left, across the bottom!",
+    audioText: "Trace capital letter Z! Across, slide down left, across the bottom!",
+    guideDots: [
+      { id: 1, x: 75, y: 55, label: '1' },
+      { id: 2, x: 205, y: 55, label: '2' },
+      { id: 3, x: 75, y: 225, label: '3' },
+      { id: 4, x: 205, y: 225, label: '4' }
+    ]
+  },
+
+  // English Lowercase Letters
 
   a: {
     instruction: "Trace 'a'! Circle around to the left, then draw straight down!",
@@ -600,6 +909,7 @@ export default function LetterTracingQuest({ onCompleteQuest, onBack, adaptiveCo
   const canvasRef = useRef(null);
   const initialLetter = adaptiveConfig?.initialLetter || langLetterSet.defaultLetter || 'b';
   const [selectedLetter, setSelectedLetter] = useState(initialLetter);
+  const [letterCase, setLetterCase] = useState('lower'); // 'lower' | 'upper' (English)
   const [viewFilter, setViewFilter] = useState(adaptiveConfig?.focusArea === 'tracing' ? 'focus' : 'all');
   const [isDrawing, setIsDrawing] = useState(false);
   const [collectedDotIds, setCollectedDotIds] = useState(new Set());
@@ -608,7 +918,9 @@ export default function LetterTracingQuest({ onCompleteQuest, onBack, adaptiveCo
 
   // Sync letter when language changes
   useEffect(() => {
-    if (!langLetterSet.all.includes(selectedLetter) && !langLetterSet.focus.includes(selectedLetter)) {
+    const validLetters = langLetterSet.all.concat(langLetterSet.focus);
+    const validUpper = validLetters.map(l => l.toUpperCase());
+    if (!validLetters.includes(selectedLetter) && !validUpper.includes(selectedLetter)) {
       setSelectedLetter(langLetterSet.defaultLetter);
     }
   }, [langId]);
@@ -816,7 +1128,10 @@ export default function LetterTracingQuest({ onCompleteQuest, onBack, adaptiveCo
     setTracingStatus('idle');
   };
 
-  const letterList = viewFilter === 'focus' ? langLetterSet.focus : langLetterSet.all;
+  const rawList = viewFilter === 'focus' ? langLetterSet.focus : langLetterSet.all;
+  const letterList = (langId === 'english' && letterCase === 'upper')
+    ? rawList.map(ch => ch.toUpperCase())
+    : rawList;
 
   return (
     <div
@@ -855,45 +1170,100 @@ export default function LetterTracingQuest({ onCompleteQuest, onBack, adaptiveCo
             </span>
           </div>
 
-          <div style={{ display: 'flex', gap: '0.3rem', background: '#F1F5F9', padding: '0.2rem', borderRadius: '9999px' }}>
-            <button
-              onClick={() => {
-                playPop();
-                setViewFilter('focus');
-              }}
-              style={{
-                border: 'none',
-                background: viewFilter === 'focus' ? 'white' : 'transparent',
-                color: viewFilter === 'focus' ? '#4F46E5' : '#64748B',
-                fontWeight: '700',
-                fontSize: '0.75rem',
-                padding: '0.3rem 0.65rem',
-                borderRadius: '9999px',
-                cursor: 'pointer',
-                boxShadow: viewFilter === 'focus' ? '0 1px 4px rgba(0,0,0,0.1)' : 'none'
-              }}
-            >
-              {isHindi ? '🌟 मुख्य अभ्यास' : (isBengali ? '🌟 বিশেষ বর্ণসমূহ' : '🌟 Dyslexia Focus')}
-            </button>
-            <button
-              onClick={() => {
-                playPop();
-                setViewFilter('all');
-              }}
-              style={{
-                border: 'none',
-                background: viewFilter === 'all' ? 'white' : 'transparent',
-                color: viewFilter === 'all' ? '#4F46E5' : '#64748B',
-                fontWeight: '700',
-                fontSize: '0.75rem',
-                padding: '0.3rem 0.65rem',
-                borderRadius: '9999px',
-                cursor: 'pointer',
-                boxShadow: viewFilter === 'all' ? '0 1px 4px rgba(0,0,0,0.1)' : 'none'
-              }}
-            >
-              {isHindi ? '🔤 पूरी वर्णमाला' : (isBengali ? '🔤 সম্পূর্ণ বর্ণমালা' : '🔤 All Letters')}
-            </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+            {/* Case Switcher for English: [ a-z Small ] | [ A-Z Capital ] */}
+            {langId === 'english' && (
+              <div style={{ display: 'flex', gap: '0.25rem', background: '#FEF3C7', padding: '0.2rem', borderRadius: '9999px', border: '1px solid #FDE68A' }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    playPop();
+                    setLetterCase('lower');
+                    if (selectedLetter && selectedLetter === selectedLetter.toUpperCase()) {
+                      setSelectedLetter(selectedLetter.toLowerCase());
+                    }
+                  }}
+                  style={{
+                    border: 'none',
+                    background: letterCase === 'lower' ? '#F59E0B' : 'transparent',
+                    color: letterCase === 'lower' ? 'white' : '#92400E',
+                    fontWeight: '800',
+                    fontSize: '0.74rem',
+                    padding: '0.25rem 0.6rem',
+                    borderRadius: '9999px',
+                    cursor: 'pointer',
+                    boxShadow: letterCase === 'lower' ? '0 1px 4px rgba(245, 158, 11, 0.3)' : 'none'
+                  }}
+                >
+                  a-z Small
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    playPop();
+                    setLetterCase('upper');
+                    if (selectedLetter && selectedLetter === selectedLetter.toLowerCase()) {
+                      setSelectedLetter(selectedLetter.toUpperCase());
+                    }
+                  }}
+                  style={{
+                    border: 'none',
+                    background: letterCase === 'upper' ? '#F59E0B' : 'transparent',
+                    color: letterCase === 'upper' ? 'white' : '#92400E',
+                    fontWeight: '800',
+                    fontSize: '0.74rem',
+                    padding: '0.25rem 0.6rem',
+                    borderRadius: '9999px',
+                    cursor: 'pointer',
+                    boxShadow: letterCase === 'upper' ? '0 1px 4px rgba(245, 158, 11, 0.3)' : 'none'
+                  }}
+                >
+                  A-Z Capital
+                </button>
+              </div>
+            )}
+
+            {/* Focus vs All Selector */}
+            <div style={{ display: 'flex', gap: '0.3rem', background: '#F1F5F9', padding: '0.2rem', borderRadius: '9999px' }}>
+              <button
+                onClick={() => {
+                  playPop();
+                  setViewFilter('focus');
+                }}
+                style={{
+                  border: 'none',
+                  background: viewFilter === 'focus' ? 'white' : 'transparent',
+                  color: viewFilter === 'focus' ? '#4F46E5' : '#64748B',
+                  fontWeight: '700',
+                  fontSize: '0.75rem',
+                  padding: '0.3rem 0.65rem',
+                  borderRadius: '9999px',
+                  cursor: 'pointer',
+                  boxShadow: viewFilter === 'focus' ? '0 1px 4px rgba(0,0,0,0.1)' : 'none'
+                }}
+              >
+                {isHindi ? '🌟 मुख्य अभ्यास' : (isBengali ? '🌟 বিশেষ বর্ণসমূহ' : '🌟 Dyslexia Focus')}
+              </button>
+              <button
+                onClick={() => {
+                  playPop();
+                  setViewFilter('all');
+                }}
+                style={{
+                  border: 'none',
+                  background: viewFilter === 'all' ? 'white' : 'transparent',
+                  color: viewFilter === 'all' ? '#4F46E5' : '#64748B',
+                  fontWeight: '700',
+                  fontSize: '0.75rem',
+                  padding: '0.3rem 0.65rem',
+                  borderRadius: '9999px',
+                  cursor: 'pointer',
+                  boxShadow: viewFilter === 'all' ? '0 1px 4px rgba(0,0,0,0.1)' : 'none'
+                }}
+              >
+                {isHindi ? '🔤 पूरी वर्णमाला' : (isBengali ? '🔤 সম্পূর্ণ বর্ণমালা' : '🔤 All Letters')}
+              </button>
+            </div>
           </div>
         </div>
 

@@ -172,7 +172,13 @@ export default function AbcFillIn({ onBack, adaptiveConfig }) {
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [feedback, setFeedback] = useState(null); // 'correct' | 'try_again' | null
   const [isCompleted, setIsCompleted] = useState(false);
-  const [showCaseToggle, setShowCaseToggle] = useState('upper'); // 'upper' | 'both'
+  const [showCaseToggle, setShowCaseToggle] = useState('upper'); // 'upper' | 'lower' | 'both'
+
+  const formatChar = (c) => {
+    if (!c || isBengali || isHindi) return c;
+    if (showCaseToggle === 'lower') return c.toLowerCase();
+    return c.toUpperCase();
+  };
 
   const currentLevel = TRAIN_LEVELS[currentLevelIdx] || TRAIN_LEVELS[0];
   const currentWagon = currentLevel?.wagons[currentWagonIdx] || currentLevel?.wagons[0];
@@ -208,11 +214,11 @@ export default function AbcFillIn({ onBack, adaptiveConfig }) {
     let isCorrect = false;
 
     if (isSingle) {
-      if (selectedSlot === currentWagon.missingIndex && letter === currentWagon.answer) {
+      if (selectedSlot === currentWagon.missingIndex && letter.toUpperCase() === currentWagon.answer.toUpperCase()) {
         isCorrect = true;
       }
     } else {
-      if (currentWagon.answers[selectedSlot] === letter) {
+      if (currentWagon.answers[selectedSlot]?.toUpperCase() === letter.toUpperCase()) {
         isCorrect = true;
       }
     }
@@ -311,14 +317,59 @@ export default function AbcFillIn({ onBack, adaptiveConfig }) {
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
           {!isBengali && !isHindi && (
-            <button
-              onClick={() => setShowCaseToggle(prev => (prev === 'upper' ? 'both' : 'upper'))}
-              className="btn-secondary btn-pill"
-              style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem' }}
-              title="Toggle letter casing preview"
-            >
-              {showCaseToggle === 'upper' ? 'Aa (Show Lowercase)' : 'A (Uppercase Only)'}
-            </button>
+            <div style={{ display: 'flex', gap: '0.2rem', background: '#FEF3C7', padding: '0.2rem', borderRadius: '9999px', border: '1px solid #FDE68A' }}>
+              <button
+                type="button"
+                onClick={() => { playPop(); setShowCaseToggle('upper'); }}
+                style={{
+                  border: 'none',
+                  background: showCaseToggle === 'upper' ? '#F59E0B' : 'transparent',
+                  color: showCaseToggle === 'upper' ? 'white' : '#92400E',
+                  fontWeight: '800',
+                  fontSize: '0.74rem',
+                  padding: '0.25rem 0.6rem',
+                  borderRadius: '9999px',
+                  cursor: 'pointer'
+                }}
+                title="Capital Letters Only"
+              >
+                A-Z
+              </button>
+              <button
+                type="button"
+                onClick={() => { playPop(); setShowCaseToggle('lower'); }}
+                style={{
+                  border: 'none',
+                  background: showCaseToggle === 'lower' ? '#F59E0B' : 'transparent',
+                  color: showCaseToggle === 'lower' ? 'white' : '#92400E',
+                  fontWeight: '800',
+                  fontSize: '0.74rem',
+                  padding: '0.25rem 0.6rem',
+                  borderRadius: '9999px',
+                  cursor: 'pointer'
+                }}
+                title="Small Letters Only"
+              >
+                a-z
+              </button>
+              <button
+                type="button"
+                onClick={() => { playPop(); setShowCaseToggle('both'); }}
+                style={{
+                  border: 'none',
+                  background: showCaseToggle === 'both' ? '#F59E0B' : 'transparent',
+                  color: showCaseToggle === 'both' ? 'white' : '#92400E',
+                  fontWeight: '800',
+                  fontSize: '0.74rem',
+                  padding: '0.25rem 0.6rem',
+                  borderRadius: '9999px',
+                  cursor: 'pointer'
+                }}
+                title="Show Both Capital & Small"
+              >
+                Aa
+              </button>
+            </div>
           )}
           <div className="game-stat-pill" style={{ color: '#047857', background: '#D1FAE5', borderColor: '#A7F3D0' }}>
             <Train size={16} />
@@ -454,7 +505,7 @@ export default function AbcFillIn({ onBack, adaptiveConfig }) {
                               fontFamily: isHindi ? 'var(--font-devanagari)' : (isBengali ? 'var(--font-bengali)' : 'Lexend, sans-serif')
                             }}
                           >
-                            {char}
+                            {formatChar(char)}
                           </span>
                           {!isBengali && !isHindi && showCaseToggle === 'both' && (
                             <span style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: 600 }}>
@@ -554,7 +605,7 @@ export default function AbcFillIn({ onBack, adaptiveConfig }) {
                           boxShadow: '0 3px 6px rgba(0, 0, 0, 0.06)'
                         }}
                       >
-                        <span>{char}</span>
+                        <span>{formatChar(char)}</span>
                         {!isBengali && !isHindi && showCaseToggle === 'both' && (
                           <span style={{ fontSize: '0.65rem', opacity: 0.75 }}>{char.toLowerCase()}</span>
                         )}

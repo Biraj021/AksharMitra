@@ -213,6 +213,57 @@ export const SCRIPT_CHALLENGES = {
         contrastRule: "u opens up at the top like a smiling cup",
         visualDemo: "n ☂️ vs 🥛 u"
       }
+    },
+    {
+      id: "en_cap_E_F",
+      name: "Capital E vs F — Count the Shelves!",
+      target: "E",
+      pair: ["E", "F"],
+      distractors: ["F", "L", "T", "H"],
+      difficulty: 1,
+      targetCount: 4,
+      gridSize: 16,
+      ageRange: [4, 7],
+      hint: "Capital E has THREE shelves (top, middle, bottom)! F only has TWO!",
+      helpDetails: {
+        targetRule: "Capital E has 3 horizontal bars (top, middle, and bottom floor)",
+        contrastRule: "Capital F only has 2 horizontal bars (missing the bottom floor)",
+        visualDemo: "E (3 bars) vs F (2 bars)"
+      }
+    },
+    {
+      id: "en_cap_M_W",
+      name: "Capital M vs W — Peaks vs Waves!",
+      target: "M",
+      pair: ["M", "W"],
+      distractors: ["W", "N", "V", "A"],
+      difficulty: 2,
+      targetCount: 4,
+      gridSize: 16,
+      ageRange: [5, 7],
+      hint: "Capital M points UP like two mountain peaks! W points DOWN into water waves!",
+      helpDetails: {
+        targetRule: "Capital M has pointy peaks facing UP towards the sky ⬆️",
+        contrastRule: "Capital W has valleys pointing DOWN into the water ⬇️",
+        visualDemo: "M ⛰️ vs 🌊 W"
+      }
+    },
+    {
+      id: "en_cap_match_B_b",
+      name: "Capital B & Small b — Team Up!",
+      target: "b",
+      pair: ["B", "b"],
+      distractors: ["d", "D", "p", "P"],
+      difficulty: 1,
+      targetCount: 4,
+      gridSize: 16,
+      ageRange: [4, 7],
+      hint: "Capital B has two bellies, small b has one belly on the right! ➡️",
+      helpDetails: {
+        targetRule: "Match small 'b' and Capital 'B'!",
+        contrastRule: "Don't tap 'd' or 'D' — they face the other direction!",
+        visualDemo: "B & b ➡️ vs ⬅️ D & d"
+      }
     }
   ],
 
