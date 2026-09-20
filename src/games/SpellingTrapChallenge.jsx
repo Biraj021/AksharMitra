@@ -205,6 +205,12 @@ export default function SpellingTrapChallenge({ onBack, adaptiveConfig }) {
     }
   };
 
+  const handleRetry = () => {
+    playPop();
+    setSelectedOption(null);
+    setFeedback(null);
+  };
+
   const handleNext = () => {
     playPop();
     if (currentIdx < TRAP_CHALLENGES.length - 1) {
@@ -375,24 +381,47 @@ export default function SpellingTrapChallenge({ onBack, adaptiveConfig }) {
           </div>
         )}
 
-        {/* Next Challenge Button */}
+        {/* Action Buttons: Next and/or Try Again */}
         {selectedOption && (
-          <button
-            onClick={handleNext}
-            className="btn btn-primary"
-            style={{
-              borderRadius: '9999px',
-              padding: '0.85rem 2rem',
-              fontSize: '1.05rem',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              boxShadow: '0 4px 14px rgba(79, 70, 229, 0.3)'
-            }}
-          >
-            <span>{isHindi ? 'अगली चुनौती 🚀' : (isBengali ? 'পরবর্তী চ্যালেঞ্জ 🚀' : 'Next Trap Challenge 🚀')}</span>
-            <ArrowRight size={18} />
-          </button>
+          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+            {feedback?.type === 'retry' && (
+              <button
+                onClick={handleRetry}
+                className="btn btn-secondary"
+                style={{
+                  borderRadius: '9999px',
+                  padding: '0.85rem 1.75rem',
+                  fontSize: '1.05rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  border: '2px solid #E2E8F0',
+                  cursor: 'pointer'
+                }}
+              >
+                <RotateCcw size={18} />
+                <span>{isHindi ? 'पुनः प्रयास करें 🔄' : (isBengali ? 'আবার চেষ্টা করো 🔄' : 'Try Again 🔄')}</span>
+              </button>
+            )}
+
+            <button
+              onClick={handleNext}
+              className="btn btn-primary"
+              style={{
+                borderRadius: '9999px',
+                padding: '0.85rem 2rem',
+                fontSize: '1.05rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                boxShadow: '0 4px 14px rgba(79, 70, 229, 0.3)',
+                cursor: 'pointer'
+              }}
+            >
+              <span>{isHindi ? 'अगली चुनौती 🚀' : (isBengali ? 'পরবর্তী চ্যালেঞ্জ 🚀' : 'Next Trap Challenge 🚀')}</span>
+              <ArrowRight size={18} />
+            </button>
+          </div>
         )}
       </div>
     </div>

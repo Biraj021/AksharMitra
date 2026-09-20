@@ -268,6 +268,20 @@ export default function SpellingClinic({ onBack, adaptiveConfig }) {
     }
   };
 
+  const handleRetrySpelling = () => {
+    playPop();
+    setMode('cover');
+    setSpelledLetters([]);
+    setFeedback(null);
+  };
+
+  const handlePeekLook = () => {
+    playPop();
+    setMode('look');
+    setSpelledLetters([]);
+    setFeedback(null);
+  };
+
   const handleNextWord = () => {
     playPop();
     if (wordIdx < TRICKY_WORDS.length - 1) {
@@ -614,13 +628,59 @@ export default function SpellingClinic({ onBack, adaptiveConfig }) {
                 )}
 
                 {mode === 'checked' && (
-                  <button
-                    onClick={handleNextWord}
-                    className="btn btn-primary"
-                    style={{ borderRadius: '9999px', padding: '0.75rem 1.75rem' }}
-                  >
-                    <span>{isHindi ? 'अगला शब्द 🚀' : (isBengali ? 'পরবর্তী শব্দ 🚀' : 'Next Tricky Word 🚀')}</span>
-                  </button>
+                  <div style={{ display: 'flex', gap: '0.65rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+                    {feedback?.type === 'retry' && (
+                      <>
+                        <button
+                          onClick={handleRetrySpelling}
+                          className="btn btn-secondary"
+                          style={{
+                            borderRadius: '9999px',
+                            padding: '0.75rem 1.4rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.4rem',
+                            border: '2px solid #E2E8F0',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          <RotateCcw size={16} />
+                          <span>{isHindi ? 'पुनः प्रयास करें 🔄' : (isBengali ? 'আবার চেষ্টা করো 🔄' : 'Try Again 🔄')}</span>
+                        </button>
+                        <button
+                          onClick={handlePeekLook}
+                          className="btn btn-secondary"
+                          style={{
+                            borderRadius: '9999px',
+                            padding: '0.75rem 1.4rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.4rem',
+                            border: '2px solid #FDE68A',
+                            background: '#FEF3C7',
+                            color: '#92400E',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          <Eye size={16} />
+                          <span>{isHindi ? 'शब्द देखें 👀' : (isBengali ? 'শব্দটি দেখো 👀' : 'Peek Word 👀')}</span>
+                        </button>
+                      </>
+                    )}
+
+                    <button
+                      onClick={handleNextWord}
+                      className="btn btn-primary"
+                      style={{
+                        borderRadius: '9999px',
+                        padding: '0.75rem 1.75rem',
+                        cursor: 'pointer',
+                        boxShadow: '0 4px 14px rgba(79, 70, 229, 0.3)'
+                      }}
+                    >
+                      <span>{isHindi ? 'अगला शब्द 🚀' : (isBengali ? 'পরবর্তী শব্দ 🚀' : 'Next Tricky Word 🚀')}</span>
+                    </button>
+                  </div>
                 )}
               </div>
             </div>
