@@ -180,8 +180,49 @@ export default function AbcFillIn({ onBack, adaptiveConfig }) {
     return c.toUpperCase();
   };
 
+  // Normalize letter string comparison for EN / BN / HI
+  const normalizeChar = (c) => (c ? String(c).trim().normalize('NFC').toUpperCase() : '');
+
   const currentLevel = TRAIN_LEVELS[currentLevelIdx] || TRAIN_LEVELS[0];
   const currentWagon = currentLevel?.wagons[currentWagonIdx] || currentLevel?.wagons[0];
+
+  // Physical Keyboard Listener
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (isCompleted || feedback === 'correct') return;
+
+      const key = e.key;
+      if (!key) return;
+
+      // Ignore modifier keys
+      if (e.ctrlKey || e.altKey || e.metaKey) return;
+
+      // Handle letter keys A-Z / a-z
+      if (/^[a-zA-Z]$/.test(key)) {
+        e.preventDefault();
+        handleKeyPress(key.toUpperCase());
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedSlot, wagonState, currentWagon, feedback, isCompleted]);
+
+  // Handle adaptive letter jump if adaptiveConfig specifies initialLetter
+  useEffect(() => {
+    if (!adaptiveConfig?.initialLetter) return;
+    const target = normalizeChar(adaptiveConfig.initialLetter);
+    const targetLvlIdx = TRAIN_LEVELS.findIndex(lvl =>
+      lvl.wagons.some(w =>
+        w.answer && normalizeChar(w.answer) === target ||
+        (w.answers && Object.values(w.answers).some(a => normalizeChar(a) === target))
+      )
+    );
+    if (targetLvlIdx !== -1) {
+      setCurrentLevelIdx(targetLvlIdx);
+      setCurrentWagonIdx(0);
+    }
+  }, [adaptiveConfig, langId]);
 
   // Initialize wagon slots
   useEffect(() => {
@@ -204,21 +245,21 @@ export default function AbcFillIn({ onBack, adaptiveConfig }) {
     speakText(letter, speechLang);
   };
 
-  // Select letter from visual dyslexia keyboard
+  // Select letter from visual dyslexia keyboard or physical keypress
   const handleKeyPress = (letter) => {
     playPop();
     if (selectedSlot === null || feedback === 'correct') return;
 
-    // Check if selected slot is indeed a missing slot
+    const inputNorm = normalizeChar(letter);
     const isSingle = currentWagon.missingIndex !== undefined;
     let isCorrect = false;
 
     if (isSingle) {
-      if (selectedSlot === currentWagon.missingIndex && letter.toUpperCase() === currentWagon.answer.toUpperCase()) {
+      if (selectedSlot === currentWagon.missingIndex && inputNorm === normalizeChar(currentWagon.answer)) {
         isCorrect = true;
       }
     } else {
-      if (currentWagon.answers[selectedSlot]?.toUpperCase() === letter.toUpperCase()) {
+      if (normalizeChar(currentWagon.answers[selectedSlot]) === inputNorm) {
         isCorrect = true;
       }
     }
@@ -254,7 +295,7 @@ export default function AbcFillIn({ onBack, adaptiveConfig }) {
 
         setTimeout(() => {
           advanceToNextWagon();
-        }, 1500);
+        }, 1300);
       } else {
         // Find next empty slot
         const nextEmpty = currentWagon.missingIndices.find(idx => updated[idx] === null);
