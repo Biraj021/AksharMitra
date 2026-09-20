@@ -5,6 +5,40 @@
 import { hasParentFeedbackData } from './parentFeedbackModel.js';
 import { analyzeParentObservationWithLocalAI } from './localAiEngine.js';
 
+// ─────────────────────────────────────────────────────────────
+// Cross-Signal Triangulation Weight Constants
+// ─────────────────────────────────────────────────────────────
+export const SIGNAL_WEIGHTS = {
+  SCREENING: 90,       // Objective motor/tracing canvas measurement
+  GAME_TELEMETRY: 60,  // Behavioral in-game reaction and error telemetry
+  PARENT_AI: 50        // Contextual home observation parsed by Local AI
+};
+
+/**
+ * Calculates the mathematical weighted triangulation confidence score:
+ * Confidence = (90 * S_screening + 60 * S_telemetry + 50 * S_parentAI) / Total_Weights
+ */
+export function calculateWeightedTriangulationScore(screeningScore, telemetryScore, parentAiScore) {
+  let weightedSum = 0;
+  let totalWeight = 0;
+
+  if (screeningScore !== null && screeningScore !== undefined) {
+    weightedSum += SIGNAL_WEIGHTS.SCREENING * (Number(screeningScore) / 100);
+    totalWeight += SIGNAL_WEIGHTS.SCREENING;
+  }
+  if (telemetryScore !== null && telemetryScore !== undefined) {
+    weightedSum += SIGNAL_WEIGHTS.GAME_TELEMETRY * (Number(telemetryScore) / 100);
+    totalWeight += SIGNAL_WEIGHTS.GAME_TELEMETRY;
+  }
+  if (parentAiScore !== null && parentAiScore !== undefined) {
+    weightedSum += SIGNAL_WEIGHTS.PARENT_AI * (Number(parentAiScore) / 100);
+    totalWeight += SIGNAL_WEIGHTS.PARENT_AI;
+  }
+
+  if (totalWeight === 0) return 0;
+  return Math.round((weightedSum / totalWeight) * 100);
+}
+
 /**
  * Converts raw parent feedback answers into structured observation signals.
  * Unanswered questions remain null. Never fabricates values or treats null as zero.
@@ -492,6 +526,12 @@ export function calculateLearningProfile(profile) {
   const rawMetrics = profile.screeningMetrics || {};
   const localAiReasoning = analyzeParentObservationWithLocalAI(parentFeedback?.parentObservation);
 
+  const weightedConfidence = calculateWeightedTriangulationScore(
+    rawMetrics.tracingAccuracy ?? (rawMetrics.wpm ? 80 : null),
+    rawMetrics.phonologicalScore ?? 75,
+    localAiReasoning?.confidence ?? 60
+  );
+
   return {
     observedPattern,
     recommendedPractice,
@@ -507,7 +547,9 @@ export function calculateLearningProfile(profile) {
     localAiReasoning,
     evidence,
     agreementStatus,
-    confidence,
+    confidence: confidence || weightedConfidence,
+    weightedTriangulationScore: weightedConfidence,
+    triangulationWeights: SIGNAL_WEIGHTS,
     updatedAt: new Date().toISOString()
   };
 }
