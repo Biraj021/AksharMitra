@@ -153,7 +153,7 @@ npm install
 ```bash
 npm run dev
 ```
-Open [http://localhost:3000/](http://localhost:3000/) in Google Chrome or Microsoft Edge.
+Open [https://akshar-mitra-17wqhq5jn-biraj021s-projects.vercel.app/]([http://localhost:3000/](https://akshar-mitra-17wqhq5jn-biraj021s-projects.vercel.app/)) in Google Chrome or Microsoft Edge.
 
 ### 5. Run Verification Test Suites
 ```bash
