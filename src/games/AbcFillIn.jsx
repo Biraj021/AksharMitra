@@ -186,16 +186,36 @@ export default function AbcFillIn({ onBack, adaptiveConfig }) {
   const currentLevel = TRAIN_LEVELS[currentLevelIdx] || TRAIN_LEVELS[0];
   const currentWagon = currentLevel?.wagons[currentWagonIdx] || currentLevel?.wagons[0];
 
+  // Check if current wagon is fully completed
+  const isWagonComplete = React.useMemo(() => {
+    if (!currentWagon) return false;
+    if (currentWagon.missingIndex !== undefined) {
+      return wagonState[currentWagon.missingIndex] !== null && wagonState[currentWagon.missingIndex] !== undefined;
+    }
+    if (currentWagon.missingIndices?.length) {
+      return currentWagon.missingIndices.every(idx => wagonState[idx] !== null && wagonState[idx] !== undefined);
+    }
+    return false;
+  }, [currentWagon, wagonState]);
+
   // Physical Keyboard Listener
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (isCompleted || feedback === 'correct') return;
+      if (isCompleted) return;
 
       const key = e.key;
       if (!key) return;
 
-      // Ignore modifier keys
       if (e.ctrlKey || e.altKey || e.metaKey) return;
+
+      // Enter or Space key advances when wagon is complete
+      if ((key === 'Enter' || key === ' ') && isWagonComplete) {
+        e.preventDefault();
+        advanceToNextWagon();
+        return;
+      }
+
+      if (feedback === 'correct') return;
 
       // Handle letter keys A-Z / a-z
       if (/^[a-zA-Z]$/.test(key)) {
@@ -206,7 +226,7 @@ export default function AbcFillIn({ onBack, adaptiveConfig }) {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedSlot, wagonState, currentWagon, feedback, isCompleted]);
+  }, [selectedSlot, wagonState, currentWagon, feedback, isCompleted, isWagonComplete]);
 
   // Handle adaptive letter jump if adaptiveConfig specifies initialLetter
   useEffect(() => {
@@ -576,6 +596,32 @@ export default function AbcFillIn({ onBack, adaptiveConfig }) {
                   );
                 })}
               </div>
+
+              {/* Next Wagon Manual Trigger Banner */}
+              {isWagonComplete && (
+                <button
+                  onClick={() => {
+                    playPop();
+                    advanceToNextWagon();
+                  }}
+                  className="btn btn-emerald"
+                  style={{
+                    marginTop: '0.5rem',
+                    padding: '0.65rem 1.75rem',
+                    borderRadius: '9999px',
+                    fontSize: '1rem',
+                    fontWeight: 800,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    boxShadow: '0 4px 14px rgba(16, 185, 129, 0.4)',
+                    cursor: 'pointer',
+                    animation: 'pulse 1.8s infinite'
+                  }}
+                >
+                  <span>{isHindi ? 'अगला डिब्बा ➡️' : (isBengali ? 'পরবর্তী বগি ➡️' : 'Next Wagon ➡️')}</span>
+                </button>
+              )}
             </div>
 
             {/* Visual Dyslexia-Optimized Keyboard */}
