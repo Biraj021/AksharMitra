@@ -156,7 +156,7 @@ npm run dev
 Open [https://akshar-mitra-17wqhq5jn-biraj021s-projects.vercel.app/]([http://localhost:3000/](https://akshar-mitra-17wqhq5jn-biraj021s-projects.vercel.app/)) in Google Chrome or Microsoft Edge.
 
 
-### 6. Production Build
+### 5. Production Build
 ```bash
 npm run build
 ```
