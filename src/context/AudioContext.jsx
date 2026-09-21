@@ -90,6 +90,33 @@ export function AudioProvider({ children }) {
     } catch (e) {}
   };
 
+  // Play success fanfare (trumpet-like progression)
+  const playSuccessFanfare = () => {
+    if (!soundEnabled) return;
+    try {
+      const ctx = getAudioContext();
+      if (!ctx) return;
+      const notes = [
+        { freq: 440.00, time: 0, dur: 0.15 }, // A4
+        { freq: 554.37, time: 0.15, dur: 0.15 }, // C#5
+        { freq: 659.25, time: 0.30, dur: 0.15 }, // E5
+        { freq: 880.00, time: 0.45, dur: 0.4 }  // A5
+      ];
+      notes.forEach(({ freq, time, dur }) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(freq, ctx.currentTime + time);
+        gain.gain.setValueAtTime(0.12, ctx.currentTime + time);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + time + dur - 0.02);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(ctx.currentTime + time);
+        osc.stop(ctx.currentTime + time + dur);
+      });
+    } catch (e) {}
+  };
+
   // Speech Synthesis wrapper (TTS)
   const speakText = (text, lang = 'en-US') => {
     if (!voiceEnabled || !('speechSynthesis' in window)) return;
@@ -115,6 +142,7 @@ export function AudioProvider({ children }) {
         playChime,
         playPop,
         playStarTwinkle,
+        playSuccessFanfare,
         speakText,
         getAudioContext
       }}

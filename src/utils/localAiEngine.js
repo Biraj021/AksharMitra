@@ -212,8 +212,8 @@ export function analyzeParentObservationWithLocalAI(text) {
 
   if (highestScore === 0) {
     return {
-      model: 'Local Transformer (all-MiniLM-L6-v2) - Edge ONNX',
-      isLocalAI: true,
+      model: 'Rule-based keyword classifier',
+      isLocalAI: false,
       hasSignals: false,
       primaryFocus: 'general',
       confidence: 50,
@@ -246,8 +246,8 @@ export function analyzeParentObservationWithLocalAI(text) {
   }
 
   return {
-    model: 'Local Transformer (all-MiniLM-L6-v2) - Edge ONNX',
-    isLocalAI: true,
+    model: 'Rule-based keyword classifier',
+    isLocalAI: false,
     hasSignals: true,
     primaryFocus: topCategory,
     confidence,
@@ -275,8 +275,10 @@ export async function analyzeParentObservationWithMiniLM(text) {
   if (textEmbedding && baseResult) {
     return {
       ...baseResult,
-      embeddingDimensions: textEmbedding.length, // 384
-      wasmExecuted: true
+      // NOTE: These fields are experimental/unused. The embeddings are computed but do not
+      // affect the actual classification scores or decision logic above.
+      _unused_embeddingDimensions: textEmbedding.length, // 384
+      _unused_wasmExecuted: true
     };
   }
 

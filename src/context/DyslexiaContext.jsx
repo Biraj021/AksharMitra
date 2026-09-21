@@ -13,8 +13,6 @@ const DEFAULT_SETTINGS = {
   letterSpacing: 'wide', // 'normal' | 'wide' | 'extra_wide'
   lineHeight: 'relaxed', // 'normal' | 'relaxed'
   fontSizeScale: 1.0, // 0.95, 1.0, 1.1, 1.2
-  reversalHighlighting: true, // Color highlights b, d, p, q
-  bionicReading: false,
   soundEffects: true
 };
 

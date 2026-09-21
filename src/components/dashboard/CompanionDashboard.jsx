@@ -727,7 +727,7 @@ export default function CompanionDashboard() {
               </div>
             </div>
 
-            {/* Local AI On-Device Semantic Reasoning Panel */}
+            {/* Rule-based Semantic Reasoning Panel */}
             {learningProfile?.localAiReasoning && (
               <div
                 style={{
@@ -748,7 +748,7 @@ export default function CompanionDashboard() {
                         {isHindi ? 'ऑन-डिवाइस स्थानीय एआई विश्लेषण' : (isBengali ? 'অন-ডিভাইস লোকাল এআই বিশ্লেষণ' : 'LOCAL AI ON-DEVICE REASONING')}
                       </div>
                       <div style={{ fontSize: '0.85rem', fontWeight: 800, color: 'white' }}>
-                        {learningProfile.localAiReasoning.model || 'Edge Transformer (all-MiniLM-L6-v2)'}
+                        {learningProfile.localAiReasoning.model || 'Rule-based keyword classifier'}
                       </div>
                     </div>
                   </div>

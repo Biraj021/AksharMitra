@@ -11,7 +11,7 @@ import { analyzeParentObservationWithLocalAI } from './localAiEngine.js';
 export const SIGNAL_WEIGHTS = {
   SCREENING: 90,       // Objective motor/tracing canvas measurement
   GAME_TELEMETRY: 60,  // Behavioral in-game reaction and error telemetry
-  PARENT_AI: 50        // Contextual home observation parsed by Local AI
+  PARENT_AI: 50        // Contextual home observation parsed by rule-based classifier
 };
 
 /**
@@ -354,7 +354,7 @@ export function calculateLearningProfile(profile) {
       evidence.parentObservation.push(`Parent note: "${pf.parentObservation.trim()}"`);
       const localAi = analyzeParentObservationWithLocalAI(pf.parentObservation);
       if (localAi && localAi.hasSignals) {
-        evidence.parentObservation.push(`🤖 Local AI Insight: ${localAi.aiSummary}`);
+        evidence.parentObservation.push(`🤖 Classifier Insight: ${localAi.aiSummary}`);
       }
     }
   }

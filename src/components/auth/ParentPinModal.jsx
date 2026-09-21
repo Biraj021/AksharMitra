@@ -78,10 +78,13 @@ export default function ParentPinModal() {
         </div>
 
         <h3 style={{ fontSize: '1.25rem', marginBottom: '0.25rem' }}>अभिभावक / शिक्षक पोर्टल</h3>
-        <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1.25rem' }}>
+        <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
           Enter Parent PIN to view developmental analytics <br />
           <span style={{ fontSize: '0.75rem', color: '#6366F1' }}>(Demo PIN: <strong>1234</strong>)</span>
         </p>
+        <div style={{ background: '#FFFBEB', padding: '0.5rem', borderRadius: '8px', border: '1px solid #FDE68A', marginBottom: '1.25rem', fontSize: '0.75rem', color: '#92400E' }}>
+          <strong>Note:</strong> This is a placeholder gate for demonstration purposes, not a real security feature. Any 4-digit PIN will unlock the dashboard.
+        </div>
 
         {/* PIN Dot Indicators */}
         <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>

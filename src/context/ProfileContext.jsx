@@ -217,8 +217,16 @@ export function ProfileProvider({ children }) {
 
     initDatabaseSync();
 
+    const handleOnlineSync = () => {
+      if (!isSyncing) {
+        initDatabaseSync();
+      }
+    };
+    window.addEventListener('aksharmitra:online_sync', handleOnlineSync);
+
     return () => {
       isMounted = false;
+      window.removeEventListener('aksharmitra:online_sync', handleOnlineSync);
     };
   }, []);
 

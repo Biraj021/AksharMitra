@@ -186,7 +186,6 @@ export const TRANSLATIONS = {
     lineHeight: "Line Height",
     bgTint: "Background Tint",
     readingRulerLabel: "Reading Focus Ruler",
-    bionicLabel: "Syllable Bionic Emphasis",
     resetDefaults: "Reset to Defaults",
     doneBtn: "Done",
 
@@ -461,7 +460,6 @@ export const TRANSLATIONS = {
     lineHeight: "লাইনের ব্যবধান",
     bgTint: "পটভূমির রঙ",
     readingRulerLabel: "রিডিং ফোকাস রুলার",
-    bionicLabel: "শব্দাংশ বায়োনিক জোর",
     resetDefaults: "ডিফল্ট সেটিংসে ফিরুন",
     doneBtn: "সম্পন্ন",
 
@@ -735,7 +733,6 @@ export const TRANSLATIONS = {
     lineHeight: "पंक्ति की ऊंचाई",
     bgTint: "पृष्ठभूमि का रंग",
     readingRulerLabel: "रीडिंग फोकस रूलर",
-    bionicLabel: "बायोनिक शब्दांश ज़ोर",
     resetDefaults: "डिफ़ॉल्ट पर रीसेट करें",
     doneBtn: "पूर्ण",
 

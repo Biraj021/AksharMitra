@@ -84,7 +84,7 @@ The database records store the learner's ISO language preference code (`en`, `bn
 > - Collects only the minimal information needed for personalized learning (first name/nickname, grade level, avatar, and language preference).
 > - Parent observations remain categorical (`needs_support`, `developing`, `comfortable`, `null`).
 > - Microphone unavailability is treated as `null` and **never fabricated as a 0% score**.
-> - All cross-signal NLP reasoning runs on-device without sending sensitive text to external cloud APIs.
+> - Cross-signal reasoning uses a deterministic rule-based keyword classifier. (The @xenova/transformers package is imported experimentally but its output is not used in scoring).
 
 ---
 
@@ -155,20 +155,6 @@ npm run dev
 ```
 Open [https://akshar-mitra-17wqhq5jn-biraj021s-projects.vercel.app/]([http://localhost:3000/](https://akshar-mitra-17wqhq5jn-biraj021s-projects.vercel.app/)) in Google Chrome or Microsoft Edge.
 
-### 5. Run Verification Test Suites
-```bash
-# Verify database integration (Tests A through T)
-node test_database_integration.js
-
-# Verify child recommendation & scaffolding engine
-node test_child_experience.js
-
-# Verify parent observation model
-node test_parent_feedback.js
-
-# Verify on-device local AI engine
-node test_local_ai.js
-```
 
 ### 6. Production Build
 ```bash

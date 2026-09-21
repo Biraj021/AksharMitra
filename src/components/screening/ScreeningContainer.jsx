@@ -72,7 +72,7 @@ export default function ScreeningContainer() {
         speechLang
       );
     } else if (data.questId === 'read_aloud') {
-      const result = data.result || { accuracy: 25, wpm: 20, hesitationCount: 4 };
+      const result = data.result || null;
       sessionDataRef.current.readAloud = result;
       setSessionData({ ...sessionDataRef.current });
       finalizeScreening(sessionDataRef.current);
@@ -91,10 +91,12 @@ export default function ScreeningContainer() {
       });
     } catch (e) {}
 
-    const visualAcc = finalData.mirrorLetters?.accuracy ?? 50;
-    const phonoScore = finalData.rhymeBeats?.score ?? 50;
-    const readWpm = finalData.readAloud?.wpm ?? 20;
-    const readAcc = finalData.readAloud?.accuracy ?? 50;
+    const hasIncompleteData = !finalData.mirrorLetters || !finalData.rhymeBeats || !finalData.readAloud;
+
+    const visualAcc = finalData.mirrorLetters?.accuracy ?? 0;
+    const phonoScore = finalData.rhymeBeats?.score ?? 0;
+    const readWpm = finalData.readAloud?.wpm ?? 0;
+    const readAcc = finalData.readAloud?.accuracy ?? 0;
 
     let computedRisk = 'typical';
     let confusions = ['None significant'];
@@ -102,7 +104,13 @@ export default function ScreeningContainer() {
     let pathwayTitle = 'Track A: Foundational Fluency & Word Mastery';
     let pathwayDesc = 'All core phonological and visual orientation milestones are on target! Recommended for speed reading, vocabulary building, and advanced matra puzzles.';
 
-    if (visualAcc <= 70 && ((finalData.mirrorLetters?.reversalErrors || 0) > 2 || (finalData.mirrorLetters?.visualReversalScore || 0) > 25)) {
+    if (hasIncompleteData) {
+      computedRisk = 'incomplete';
+      confusions = ['Screening incomplete - cannot assess'];
+      pathway = 'incomplete';
+      pathwayTitle = 'Screening Incomplete';
+      pathwayDesc = 'Some quests were skipped or incomplete. Please restart the screening to get an accurate recommendation.';
+    } else if (visualAcc <= 70 && ((finalData.mirrorLetters?.reversalErrors || 0) > 2 || (finalData.mirrorLetters?.visualReversalScore || 0) > 25)) {
       computedRisk = 'mild_visual';
       confusions = ['b / d letter mirror reversal', 'was / saw word directionality'];
       pathway = 'multisensory_remediation';
@@ -146,7 +154,9 @@ export default function ScreeningContainer() {
     }
 
     speakText(
-      pathway === 'accelerated_fluency'
+      pathway === 'incomplete'
+        ? 'Screening incomplete. Please restart to get your full recommendation.'
+        : pathway === 'accelerated_fluency'
         ? 'Great job! You are ready for advanced fluency and word building adventures!'
         : 'Awesome effort! Mitra has prepared personalized multisensory games just for you!',
       'en-US'
@@ -172,6 +182,7 @@ export default function ScreeningContainer() {
   const readingWpm = sessionData.readAloud?.wpm ?? 0;
 
   const isTypical = visualAccuracy >= 75 && phonologicalScore >= 75;
+  const isIncomplete = !sessionData.mirrorLetters || !sessionData.rhymeBeats || !sessionData.readAloud;
 
   return (
     <div
@@ -548,8 +559,8 @@ export default function ScreeningContainer() {
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', paddingBottom: '0.5rem', borderBottom: '1px solid #E2E8F0' }}>
               <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#1E293B' }}>{t('diagnosticSnapshotTitle')}</span>
-              <span style={{ fontSize: '0.72rem', padding: '0.2rem 0.6rem', borderRadius: '9999px', background: isTypical ? '#D1FAE5' : '#FEF3C7', color: isTypical ? '#065F46' : '#92400E', fontWeight: 700 }}>
-                {isTypical ? t('typicalDevBadge') : t('targetedSupportBadge')}
+              <span style={{ fontSize: '0.72rem', padding: '0.2rem 0.6rem', borderRadius: '9999px', background: isIncomplete ? '#F1F5F9' : isTypical ? '#D1FAE5' : '#FEF3C7', color: isIncomplete ? '#475569' : isTypical ? '#065F46' : '#92400E', fontWeight: 700 }}>
+                {isIncomplete ? 'Incomplete' : isTypical ? t('typicalDevBadge') : t('targetedSupportBadge')}
               </span>
             </div>
 
@@ -558,34 +569,36 @@ export default function ScreeningContainer() {
                 <span style={{ color: '#64748B', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
                   <span>🪞</span> {t('letterAccuracyLabel')}
                 </span>
-                <span style={{ fontWeight: 800, color: visualAccuracy >= 75 ? '#10B981' : '#F59E0B' }}>
-                  {visualAccuracy}% {t('accuracyUnit')}
+                <span style={{ fontWeight: 800, color: sessionData.mirrorLetters ? (visualAccuracy >= 75 ? '#10B981' : '#F59E0B') : '#94A3B8' }}>
+                  {sessionData.mirrorLetters ? `${visualAccuracy}% ${t('accuracyUnit')}` : 'Incomplete'}
                 </span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ color: '#64748B', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
                   <span>🥁</span> {t('phonoScoreLabel')}
                 </span>
-                <span style={{ fontWeight: 800, color: phonologicalScore >= 75 ? '#0284C7' : '#F59E0B' }}>
-                  {phonologicalScore}% {t('scoreUnit')}
+                <span style={{ fontWeight: 800, color: sessionData.rhymeBeats ? (phonologicalScore >= 75 ? '#0284C7' : '#F59E0B') : '#94A3B8' }}>
+                  {sessionData.rhymeBeats ? `${phonologicalScore}% ${t('scoreUnit')}` : 'Incomplete'}
                 </span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ color: '#64748B', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
                   <span>🎙️</span> {t('readingFluencyLabel')}
                 </span>
-                <span style={{ fontWeight: 800, color: '#4F46E5' }}>
-                  {readingWpm} {t('wpmUnit')}
+                <span style={{ fontWeight: 800, color: sessionData.readAloud ? '#4F46E5' : '#94A3B8' }}>
+                  {sessionData.readAloud ? `${readingWpm} ${t('wpmUnit')}` : 'Incomplete'}
                 </span>
               </div>
             </div>
 
-            <div style={{ marginTop: '0.85rem', background: isTypical ? '#ECFDF5' : '#EEF2FF', padding: '0.85rem', borderRadius: '14px', border: isTypical ? '1.5px solid #A7F3D0' : '1.5px solid #C7D2FE' }}>
-              <div style={{ fontSize: '0.78rem', fontWeight: 800, color: isTypical ? '#065F46' : '#4338CA', marginBottom: '0.25rem' }}>
-                {isTypical ? t('trackATitle') : t('trackBTitle')}
+            <div style={{ marginTop: '0.85rem', background: isIncomplete ? '#F8FAFC' : isTypical ? '#ECFDF5' : '#EEF2FF', padding: '0.85rem', borderRadius: '14px', border: isIncomplete ? '1.5px solid #E2E8F0' : isTypical ? '1.5px solid #A7F3D0' : '1.5px solid #C7D2FE' }}>
+              <div style={{ fontSize: '0.78rem', fontWeight: 800, color: isIncomplete ? '#475569' : isTypical ? '#065F46' : '#4338CA', marginBottom: '0.25rem' }}>
+                {isIncomplete ? 'Screening Incomplete' : isTypical ? t('trackATitle') : t('trackBTitle')}
               </div>
-              <div style={{ fontSize: '0.75rem', color: isTypical ? '#047857' : '#3730A3', lineHeight: 1.45 }}>
-                {isTypical ? (
+              <div style={{ fontSize: '0.75rem', color: isIncomplete ? '#64748B' : isTypical ? '#047857' : '#3730A3', lineHeight: 1.45 }}>
+                {isIncomplete ? (
+                  'Please restart the screening to get your full recommendation.'
+                ) : isTypical ? (
                   isBengali ? (
                     <>
                       → শব্দ সংগ্রাহকে দ্রুত শব্দ তৈরির অনুশীলন <strong>(Word Snapper)</strong><br />
