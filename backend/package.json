@@ -1,0 +1,17 @@
+{
+  "name": "@aksharmitra/backend",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./data/languages": "./src/data/languages.js",
+    "./data/translations": "./src/data/translations.js",
+    "./data/letterHunter": "./src/data/letterHunterData.js",
+    "./data/wordBuilder": "./src/data/wordBuilderData.js",
+    "./data/remediation": "./src/data/remediationData.js",
+    "./data/demoProfiles": "./src/data/demoProfiles.js",
+    "./streakUtils": "./src/streakUtils.js"
+  }
+}

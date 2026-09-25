@@ -5,6 +5,60 @@
 
 ---
 
+## 🗂️ Monorepo Structure
+
+This project is organized as an **npm workspace monorepo** with four separate packages:
+
+```
+AksharMitra/
+├── frontend/          ← React + Vite PWA (UI components, games, screening, context)
+│   ├── src/
+│   │   ├── components/   (auth, common, dashboard, landing, screening)
+│   │   ├── context/      (AudioContext, DyslexiaContext, ProfileContext)
+│   │   ├── games/        (GamesHub, WordSnapper, LetterHunter, SpellingClinic …)
+│   │   └── screening/    (LetterTracingQuest, MirrorLetterQuest, ReadAloudQuest …)
+│   ├── vite.config.js
+│   └── package.json
+│
+├── ai/                ← AI & adaptive learning logic
+│   ├── src/
+│   │   ├── adaptiveLearningStrategy.js
+│   │   ├── crossSignalIntelligence.js
+│   │   ├── localAiEngine.js
+│   │   ├── parentFeedbackModel.js
+│   │   └── tracingValidation.js
+│   └── package.json
+│
+├── database/          ← Supabase client + all data services
+│   ├── src/
+│   │   ├── lib/supabaseClient.js
+│   │   └── services/  (activity, learner, profile, offline, parent, progress)
+│   ├── migrations/    (SQL migration files)
+│   └── package.json
+│
+├── backend/           ← Shared data, content & utility modules
+│   ├── src/
+│   │   ├── data/      (languages, translations, game data, demo profiles)
+│   │   └── streakUtils.js
+│   └── package.json
+│
+└── package.json       ← Root workspace (npm workspaces)
+```
+
+### Quick Start
+```bash
+# Install all workspace dependencies
+npm install
+
+# Run the frontend dev server
+npm run dev
+
+# Or from the frontend folder directly
+cd frontend && npm run dev
+```
+
+---
+
 ## 🌟 Overview
 
 **AksharMitra** is an offline-first, student-centric Progressive Web App (PWA) designed to provide early, playful, and non-stigmatizing literacy screening alongside targeted phonics and graphomotor remediation across **English**, **Bengali (বাংলা)**, and **Hindi (हिन्दी)**.

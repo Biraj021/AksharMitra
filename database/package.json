@@ -1,0 +1,20 @@
+{
+  "name": "@aksharmitra/database",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./client": "./src/lib/supabaseClient.js",
+    "./services/activity": "./src/services/activityService.js",
+    "./services/learner": "./src/services/learnerService.js",
+    "./services/profile": "./src/services/learningProfileService.js",
+    "./services/offline": "./src/services/offlineSyncService.js",
+    "./services/parent": "./src/services/parentObservationService.js",
+    "./services/progress": "./src/services/progressService.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.48.1"
+  }
+}
