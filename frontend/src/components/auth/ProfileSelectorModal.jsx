@@ -87,7 +87,9 @@ export default function ProfileSelectorModal({ isOpen, onClose, onAddNew }) {
                       )}
                     </div>
                     <span style={{ fontSize: '0.78rem', color: '#64748B' }}>
-                      {p.gradeLabel || 'Grade 2'} • {p.stars || 15} ⭐ • {p.screeningCompleted ? t('screened') : t('ready')}
+                      {p.ageBand === '2-4'
+                        ? '🐣 Little Explorer (2–4)'
+                        : `${p.gradeLabel || 'Grade 2'} • ${p.stars || 15} ⭐ • ${p.screeningCompleted ? t('screened') : t('ready')}`}
                     </span>
                   </div>
                 </div>

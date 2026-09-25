@@ -34,7 +34,7 @@ export default function Header({ onOpenProfileSelector }) {
         <div
           onClick={() => {
             playPop();
-            setCurrentView(activeProfile && !activeProfile.screeningCompleted ? 'screening' : 'landing');
+            setCurrentView(activeProfile && activeProfile.ageBand !== '2-4' && !activeProfile.screeningCompleted ? 'screening' : 'landing');
           }}
           style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}
         >
@@ -145,20 +145,28 @@ export default function Header({ onOpenProfileSelector }) {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.45rem',
-                background: '#FEF3C7',
-                border: '1.5px solid #FDE68A',
+                background: activeProfile.ageBand === '2-4' ? '#ECFDF5' : '#FEF3C7',
+                border: activeProfile.ageBand === '2-4' ? '1.5px solid #A7F3D0' : '1.5px solid #FDE68A',
                 padding: '0.35rem 0.85rem',
                 borderRadius: '9999px',
                 cursor: 'pointer',
-                boxShadow: '0 2px 6px rgba(245, 158, 11, 0.12)'
+                boxShadow: activeProfile.ageBand === '2-4' ? '0 2px 6px rgba(16, 185, 129, 0.12)' : '0 2px 6px rgba(245, 158, 11, 0.12)'
               }}
               title={t('chooseProfile')}
             >
               <span style={{ fontSize: '1.15rem' }}>{getAvatarEmoji(activeProfile.avatarEmoji || activeProfile.avatar)}</span>
-              <Star size={16} fill="#F59E0B" color="#F59E0B" />
-              <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#B45309' }}>
-                {activeProfile.stars || 15}
-              </span>
+              {activeProfile.ageBand === '2-4' ? (
+                <span style={{ fontWeight: 800, fontSize: '0.85rem', color: '#047857' }}>
+                  {activeProfile.name || 'Explorer'}
+                </span>
+              ) : (
+                <>
+                  <Star size={16} fill="#F59E0B" color="#F59E0B" />
+                  <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#B45309' }}>
+                    {activeProfile.stars || 15}
+                  </span>
+                </>
+              )}
             </div>
           ) : (
             <button

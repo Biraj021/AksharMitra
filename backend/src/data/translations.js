@@ -271,7 +271,30 @@ export const TRANSLATIONS = {
     evidenceTitle: "Evidence & Context",
     sourceAppActivity: "Based on app activity",
     sourceParentObs: "Based on your observation",
-    playRecommendedPractice: "Start Recommended Practice"
+    playRecommendedPractice: "Start Recommended Practice",
+
+    // Little Explorer Mode (Ages 2-4)
+    ageBandTitle: "Select Age Band",
+    ageBandSubtitle: "Choose the right experience for the child",
+    ageBandExplorer: "2–4 (Little Explorer)",
+    ageBandExplorerDesc: "Gentle pre-literacy play, sound matching & pictures",
+    ageBandReader: "5–7 (Reader)",
+    ageBandReaderDesc: "Phonics, letter discrimination & reading adventures",
+    explorerHomeGreeting: "Hello friend! Tap a picture to play!",
+    explorerSoundMatchTitle: "Sound Match",
+    explorerSoundMatchDesc: "Listen & find the matching picture",
+    explorerRhymePartyTitle: "Rhyme Party",
+    explorerRhymePartyDesc: "Do these two words rhyme?",
+    explorerNamePictureTitle: "Name That Picture",
+    explorerNamePictureDesc: "Tap pictures to hear words aloud",
+    explorerBackHome: "Home",
+    explorerListenAgain: "Listen again!",
+    explorerSuperJob: "Yay! Wonderful!",
+    explorerTryAgainGentle: "Almost! Tap again!",
+    explorerDoTheyRhyme: "Do these rhyme?",
+    explorerYes: "Yes!",
+    explorerNo: "No",
+    explorerTapToHear: "Tap to hear!"
   },
 
 
@@ -545,7 +568,30 @@ export const TRANSLATIONS = {
     evidenceTitle: "তথ্যপ্রমাণ ও প্রেক্ষাপট",
     sourceAppActivity: "অ্যাপের কার্যক্রমের ভিত্তিতে",
     sourceParentObs: "আপনার পর্যবেক্ষণের ভিত্তিতে",
-    playRecommendedPractice: "সুপারিশকৃত অনুশীলন শুরু করুন"
+    playRecommendedPractice: "সুপারিশকৃত অনুশীলন শুরু করুন",
+
+    // Little Explorer Mode (Ages 2-4)
+    ageBandTitle: "বয়সের স্তর নির্বাচন করুন",
+    ageBandSubtitle: "শিশুর জন্য সঠিক খেলার মাধ্যমটি বেছে নিন",
+    ageBandExplorer: "২–৪ (ছোট্ট অভিযাত্রী)",
+    ageBandExplorerDesc: "সহজ খেলা, ধ্বনি মেলানো ও ছবি দেখা",
+    ageBandReader: "৫–৭ (পাঠক)",
+    ageBandReaderDesc: "বর্ণ চেনা, ধ্বনিবিজ্ঞান ও পঠন অভিযান",
+    explorerHomeGreeting: "হ্যালো বন্ধু! খেলতে যেকোনো ছবিতে ট্যাপ করো!",
+    explorerSoundMatchTitle: "শব্দ মেলানো",
+    explorerSoundMatchDesc: "শব্দ শুনে সঠিক ছবি বেছে নাও",
+    explorerRhymePartyTitle: "ছন্দের আসর",
+    explorerRhymePartyDesc: "এই দুটি শব্দ কি ছন্দে মেলে?",
+    explorerNamePictureTitle: "ছবি দেখে নাম",
+    explorerNamePictureDesc: "ছবিতে ট্যাপ করে নাম শোনো",
+    explorerBackHome: "হোম",
+    explorerListenAgain: "আবার শোনো!",
+    explorerSuperJob: "দারুণ! অসাধারণ!",
+    explorerTryAgainGentle: "কাছাকাছি! আবার চেষ্টা করো!",
+    explorerDoTheyRhyme: "এরা কি ছন্দে মেলে?",
+    explorerYes: "হ্যাঁ!",
+    explorerNo: "না",
+    explorerTapToHear: "নাম শুনতে ট্যাপ করো!"
   },
 
   hindi: {
@@ -818,7 +864,30 @@ export const TRANSLATIONS = {
     evidenceTitle: "साक्ष्य और संदर्भ",
     sourceAppActivity: "ऐप गतिविधि के आधार पर",
     sourceParentObs: "आपके अवलोकन के आधार पर",
-    playRecommendedPractice: "अनुशंसित अभ्यास शुरू करें"
+    playRecommendedPractice: "अनुशंसित अभ्यास शुरू करें",
+
+    // Little Explorer Mode (Ages 2-4)
+    ageBandTitle: "आयु वर्ग चुनें",
+    ageBandSubtitle: "बच्चे के लिए सही अनुभव चुनें",
+    ageBandExplorer: "२–४ (नन्हा खोजी)",
+    ageBandExplorerDesc: "सरल खेल, ध्वनियाँ और चित्र पहचान",
+    ageBandReader: "५–७ (पाठक)",
+    ageBandReaderDesc: "ध्वनि पहचान, अक्षर भेद और पठन रोमांच",
+    explorerHomeGreeting: "नमस्ते दोस्त! खेलने के लिए किसी भी चित्र पर टैप करें!",
+    explorerSoundMatchTitle: "ध्वनि पहचान",
+    explorerSoundMatchDesc: "आवाज़ सुनकर सही चित्र चुनें",
+    explorerRhymePartyTitle: "तुकांत शब्द",
+    explorerRhymePartyDesc: "क्या इनकी आवाज़ मिलती-जुलती है?",
+    explorerNamePictureTitle: "चित्र पहचानो",
+    explorerNamePictureDesc: "चित्र पर टैप करें और नाम सुनें",
+    explorerBackHome: "होम",
+    explorerListenAgain: "फिर से सुनो!",
+    explorerSuperJob: "शाबाश! बहुत बढ़िया!",
+    explorerTryAgainGentle: "बहुत करीब! फिर से कोशिश करो!",
+    explorerDoTheyRhyme: "क्या इनकी तुक मिलती है?",
+    explorerYes: "हाँ!",
+    explorerNo: "नहीं",
+    explorerTapToHear: "नाम सुनने के लिए टैप करें!"
   }
 
 };

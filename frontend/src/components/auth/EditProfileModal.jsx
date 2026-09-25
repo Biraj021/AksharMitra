@@ -21,6 +21,7 @@ export default function EditProfileModal({ isOpen, onClose }) {
   const [avatar, setAvatar] = useState('sheru');
   const [grade, setGrade] = useState('grade2');
   const [languageId, setLanguageId] = useState('english');
+  const [ageBand, setAgeBand] = useState('5-7');
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
@@ -31,6 +32,7 @@ export default function EditProfileModal({ isOpen, onClose }) {
       setAvatar(activeProfile.avatar || 'sheru');
       setGrade(activeProfile.grade || 'grade2');
       setLanguageId(activeProfile.language || activeLanguage?.id || 'english');
+      setAgeBand(activeProfile.ageBand || '5-7');
       setSaveSuccess(false);
     }
   }, [activeProfile, isOpen, activeLanguage]);
@@ -50,7 +52,8 @@ export default function EditProfileModal({ isOpen, onClose }) {
         name: name.trim() || activeProfile.name,
         avatar,
         grade,
-        languageId
+        languageId,
+        ageBand
       });
 
       setSaveSuccess(true);
@@ -276,12 +279,73 @@ export default function EditProfileModal({ isOpen, onClose }) {
             <AvatarPicker selectedAvatar={avatar} onSelectAvatar={(avId) => setAvatar(avId)} />
           </div>
 
-          {/* 3. Class / Grade Selection */}
+          {/* 3. Age Band Selection */}
           <div>
             <label style={{ display: 'block', fontWeight: 700, fontSize: '0.88rem', color: '#334155', marginBottom: '0.4rem' }}>
-              {isHindi ? 'कक्षा / ग्रेड' : (isBengali ? 'শ্রেণি / গ্রেড' : 'Class / Grade Level')}
+              {t('ageBandTitle')}
             </label>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.5rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.65rem' }}>
+              <button
+                type="button"
+                onClick={() => {
+                  playPop();
+                  setAgeBand('2-4');
+                }}
+                style={{
+                  padding: '0.75rem 0.6rem',
+                  borderRadius: '12px',
+                  border: ageBand === '2-4' ? '2px solid #10B981' : '1.5px solid #E2E8F0',
+                  background: ageBand === '2-4' ? '#ECFDF5' : '#FFFFFF',
+                  color: ageBand === '2-4' ? '#047857' : '#334155',
+                  fontWeight: ageBand === '2-4' ? 800 : 500,
+                  fontSize: '0.85rem',
+                  cursor: 'pointer',
+                  textAlign: 'center',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '0.2rem'
+                }}
+              >
+                <span style={{ fontSize: '1.4rem' }}>🐣</span>
+                <div>{t('ageBandExplorer')}</div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  playPop();
+                  setAgeBand('5-7');
+                }}
+                style={{
+                  padding: '0.75rem 0.6rem',
+                  borderRadius: '12px',
+                  border: ageBand === '5-7' ? '2px solid #4F46E5' : '1.5px solid #E2E8F0',
+                  background: ageBand === '5-7' ? '#EEF2FF' : '#FFFFFF',
+                  color: ageBand === '5-7' ? '#4338CA' : '#334155',
+                  fontWeight: ageBand === '5-7' ? 800 : 500,
+                  fontSize: '0.85rem',
+                  cursor: 'pointer',
+                  textAlign: 'center',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '0.2rem'
+                }}
+              >
+                <span style={{ fontSize: '1.4rem' }}>🎒</span>
+                <div>{t('ageBandReader')}</div>
+              </button>
+            </div>
+          </div>
+
+          {/* 4. Class / Grade Selection (Only for 5-7 Readers) */}
+          {ageBand === '5-7' && (
+            <div>
+              <label style={{ display: 'block', fontWeight: 700, fontSize: '0.88rem', color: '#334155', marginBottom: '0.4rem' }}>
+                {isHindi ? 'कक्षा / ग्रेड' : (isBengali ? 'শ্রেণি / গ্রেড' : 'Class / Grade Level')}
+              </label>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.5rem' }}>
               {GRADES.map((g) => {
                 const isSelected = grade === g.id;
                 return (
@@ -312,8 +376,9 @@ export default function EditProfileModal({ isOpen, onClose }) {
               })}
             </div>
           </div>
+          )}
 
-          {/* 4. Preferred Learning Language */}
+          {/* 5. Preferred Learning Language */}
           <div>
             <label style={{ display: 'block', fontWeight: 700, fontSize: '0.88rem', color: '#334155', marginBottom: '0.4rem' }}>
               {isHindi ? 'सीखने की प्राथमिक भाषा' : (isBengali ? 'শেখার প্রধান ভাষা' : 'Primary Learning Language')}

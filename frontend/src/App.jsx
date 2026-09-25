@@ -20,6 +20,10 @@ import ReadingRuler from './components/common/ReadingRuler';
 import DyslexiaSettingsModal from './components/common/DyslexiaSettingsModal';
 import StreakCalendarModal from './components/common/StreakCalendarModal';
 import EditProfileModal from './components/auth/EditProfileModal';
+import ExplorerHome from './littleExplorer/ExplorerHome';
+import SoundMatchPlay from './littleExplorer/SoundMatchPlay';
+import RhymeParty from './littleExplorer/RhymeParty';
+import NameThatPicture from './littleExplorer/NameThatPicture';
 import { useProfile } from './context/ProfileContext';
 import { getAdaptiveLearningConfig } from '@ai/adaptiveLearningStrategy';
 
@@ -37,11 +41,14 @@ export default function App() {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showProfileSelector, setShowProfileSelector] = useState(false);
 
+  // Little Explorer mode check (ages 2-4)
+  const isLittleExplorer = activeProfile?.ageBand === '2-4';
+
   // Stable key: changing language resets game session cleanly
   const langKey = activeLanguage?.id || 'english';
 
-  // Mandatory gating: new or unscreened profiles must complete screening quest first
-  const isScreeningGated = activeProfile && !activeProfile.screeningCompleted && currentView !== 'login';
+  // Mandatory gating: 5-7 readers must complete screening quest first (never for Little Explorers)
+  const isScreeningGated = !isLittleExplorer && activeProfile && !activeProfile.screeningCompleted && currentView !== 'login';
 
   // Compute deterministic adaptive learning parameters from active profile
   const adaptiveConfig = getAdaptiveLearningConfig(activeProfile);
@@ -50,7 +57,7 @@ export default function App() {
     <div
       className={`app-container ${activeLanguage?.id === 'hindi' ? 'lang-hindi' : (activeLanguage?.id === 'bengali' ? 'lang-bengali' : 'lang-english')}`}
       lang={activeLanguage?.id === 'hindi' ? 'hi' : (activeLanguage?.id === 'bengali' ? 'bn' : 'en')}
-      style={{ paddingBottom: '75px', minHeight: '100vh' }}
+      style={{ paddingBottom: isLittleExplorer ? '20px' : '75px', minHeight: '100vh' }}
     >
       {/* Universal Header */}
       <Header onOpenProfileSelector={() => setShowProfileSelector(true)} />
@@ -59,33 +66,49 @@ export default function App() {
       <main className="main-content">
         {(currentView === 'login' || !activeProfile) && <LoginPage />}
         {isScreeningGated && <ScreeningContainer key={`screening-${langKey}`} />}
-        {!isScreeningGated && activeProfile && currentView === 'landing' && (
+
+        {/* ── Little Explorer Mode (Ages 2-4) ── */}
+        {isLittleExplorer && activeProfile && (currentView === 'landing' || currentView === 'games' || currentView === 'dashboard' || currentView === 'screening') && (
+          <ExplorerHome onSelectActivity={(actId) => setCurrentView(actId)} />
+        )}
+        {isLittleExplorer && activeProfile && currentView === 'sound-match' && (
+          <SoundMatchPlay onBack={() => setCurrentView('landing')} />
+        )}
+        {isLittleExplorer && activeProfile && currentView === 'rhyme-party' && (
+          <RhymeParty onBack={() => setCurrentView('landing')} />
+        )}
+        {isLittleExplorer && activeProfile && currentView === 'name-picture' && (
+          <NameThatPicture onBack={() => setCurrentView('landing')} />
+        )}
+
+        {/* ── 5-7 Reader Flow ── */}
+        {!isLittleExplorer && !isScreeningGated && activeProfile && currentView === 'landing' && (
           <LandingHero
             onStartOnboarding={() => setShowOnboarding(true)}
             onOpenProfileSelector={() => setShowProfileSelector(true)}
           />
         )}
-        {!isScreeningGated && activeProfile && currentView === 'screening' && (
+        {!isLittleExplorer && !isScreeningGated && activeProfile && currentView === 'screening' && (
           <ScreeningContainer key={`screening-${langKey}`} />
         )}
-        {!isScreeningGated && activeProfile && currentView === 'dashboard' && <CompanionDashboard />}
-        {!isScreeningGated && activeProfile && currentView === 'games' && <GamesHub onSelectGame={(gameId) => setCurrentView(gameId)} />}
-        {!isScreeningGated && activeProfile && currentView === 'word-snapper' && (
+        {!isLittleExplorer && !isScreeningGated && activeProfile && currentView === 'dashboard' && <CompanionDashboard />}
+        {!isLittleExplorer && !isScreeningGated && activeProfile && currentView === 'games' && <GamesHub onSelectGame={(gameId) => setCurrentView(gameId)} />}
+        {!isLittleExplorer && !isScreeningGated && activeProfile && currentView === 'word-snapper' && (
           <WordSnapper key={`ws-${langKey}`} onBack={() => setCurrentView('games')} adaptiveConfig={adaptiveConfig} />
         )}
-        {!isScreeningGated && activeProfile && currentView === 'letter-hunter' && (
+        {!isLittleExplorer && !isScreeningGated && activeProfile && currentView === 'letter-hunter' && (
           <LetterHunter key={`lh-${langKey}`} onBack={() => setCurrentView('games')} adaptiveConfig={adaptiveConfig} />
         )}
-        {!isScreeningGated && activeProfile && currentView === 'spelling-clinic' && (
+        {!isLittleExplorer && !isScreeningGated && activeProfile && currentView === 'spelling-clinic' && (
           <SpellingClinic key={`sc-${langKey}`} onBack={() => setCurrentView('games')} adaptiveConfig={adaptiveConfig} />
         )}
-        {!isScreeningGated && activeProfile && currentView === 'spelling-traps' && (
+        {!isLittleExplorer && !isScreeningGated && activeProfile && currentView === 'spelling-traps' && (
           <SpellingTrapChallenge key={`st-${langKey}`} onBack={() => setCurrentView('games')} adaptiveConfig={adaptiveConfig} />
         )}
-        {!isScreeningGated && activeProfile && currentView === 'abc-fill-in' && (
+        {!isLittleExplorer && !isScreeningGated && activeProfile && currentView === 'abc-fill-in' && (
           <AbcFillIn key={`af-${langKey}`} onBack={() => setCurrentView('games')} adaptiveConfig={adaptiveConfig} />
         )}
-        {!isScreeningGated && activeProfile && currentView === 'letter-tracing' && (
+        {!isLittleExplorer && !isScreeningGated && activeProfile && currentView === 'letter-tracing' && (
           <LetterTracingQuest key={`lt-${langKey}`} onBack={() => setCurrentView('games')} adaptiveConfig={adaptiveConfig} />
         )}
       </main>
@@ -118,8 +141,8 @@ export default function App() {
         onClose={() => setShowEditProfileModal(false)}
       />
 
-      {/* Sticky Bottom Navigation Bar */}
-      <BottomNav />
+      {/* Sticky Bottom Navigation Bar (5-7 Readers Only) */}
+      {!isLittleExplorer && <BottomNav />}
     </div>
   );
 }

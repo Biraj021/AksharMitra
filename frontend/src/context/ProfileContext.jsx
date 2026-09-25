@@ -63,6 +63,7 @@ const normalizeProfile = (p) => {
 
   const normalized = {
     ...p,
+    ageBand: p.ageBand || '5-7',
     avatarEmoji: getAvatarEmoji(p.avatarEmoji || p.avatar),
     parentFeedback: p.parentFeedback || null,
     attendanceHistory: history,
@@ -271,7 +272,7 @@ export function ProfileProvider({ children }) {
       const normalized = normalizeProfile(found);
       setActiveProfile({ ...normalized });
       setLanguageById(normalized.language || 'english');
-      setCurrentView(normalized.screeningCompleted ? 'landing' : 'screening');
+      setCurrentView(normalized.ageBand === '2-4' || normalized.screeningCompleted ? 'landing' : 'screening');
 
       // Fetch fresh parent feedback from DB if real learner
       if (!isDemoProfile(profileId) && isSupabaseConfigured()) {
@@ -293,9 +294,11 @@ export function ProfileProvider({ children }) {
   };
 
   // Create or Update Student Profile
-  const createStudentProfile = async ({ name, avatar, grade, languageId }) => {
+  const createStudentProfile = async ({ name, avatar, grade, languageId, ageBand = '5-7' }) => {
     const avatarEmoji = getAvatarEmoji(avatar);
+    const isExplorer = ageBand === '2-4';
     const gradeLabels = {
+      preschool: 'Little Explorer (Age 2-4)',
       kg: 'KG',
       grade1: 'Class 1',
       grade2: 'Class 2',
@@ -306,18 +309,19 @@ export function ProfileProvider({ children }) {
 
     const newProfile = {
       id: `student_${Date.now()}`,
-      name: name.trim() || 'Explorer',
+      name: name.trim() || (isExplorer ? 'Little Explorer' : 'Explorer'),
       avatar: avatar || 'sheru',
       avatarEmoji: avatarEmoji,
-      grade: grade || 'grade2',
-      gradeLabel: gradeLabels[grade] || 'Class 2',
+      ageBand: ageBand,
+      grade: isExplorer ? 'preschool' : (grade || 'grade2'),
+      gradeLabel: isExplorer ? 'Little Explorer (Age 2-4)' : (gradeLabels[grade] || 'Class 2'),
       language: languageId || activeLanguage.id,
-      stars: 15, // Starter reward
+      stars: isExplorer ? 0 : 15, // Starter reward only for readers
       streak: 1,
       attendanceHistory: [formatDateKey()],
-      screeningCompleted: false,
+      screeningCompleted: isExplorer ? true : false,
       riskLevel: 'typical',
-      learningPathway: 'accelerated_fluency',
+      learningPathway: isExplorer ? 'early_play' : 'accelerated_fluency',
       screeningMetrics: null,
       parentFeedback: null,
       createdAt: new Date().toISOString()
@@ -326,7 +330,7 @@ export function ProfileProvider({ children }) {
     const normalized = normalizeProfile(newProfile);
     setActiveProfile(normalized);
     setLanguageById(normalized.language);
-    setCurrentView('screening'); // Jump to screening adventure
+    setCurrentView(isExplorer ? 'landing' : 'screening'); // Jump to explorer home or screening adventure
 
     // Asynchronously persist to Supabase
     try {
@@ -341,11 +345,12 @@ export function ProfileProvider({ children }) {
     return normalized;
   };
 
-  // Update an Existing Student Profile (Name, Avatar, Grade, Language)
-  const updateStudentProfile = async ({ name, avatar, grade, languageId }) => {
+  // Update an Existing Student Profile (Name, Avatar, Grade, Language, AgeBand)
+  const updateStudentProfile = async ({ name, avatar, grade, languageId, ageBand }) => {
     if (!activeProfile) return null;
 
     const gradeLabels = {
+      preschool: 'Little Explorer (Age 2-4)',
       kg: 'Kindergarten / KG',
       grade1: 'Grade 1',
       grade2: 'Grade 2',
@@ -359,7 +364,15 @@ export function ProfileProvider({ children }) {
       updates.avatar = avatar;
       updates.avatarEmoji = getAvatarEmoji(avatar);
     }
-    if (grade) {
+    if (ageBand) {
+      updates.ageBand = ageBand;
+      if (ageBand === '2-4') {
+        updates.screeningCompleted = true;
+        updates.grade = 'preschool';
+        updates.gradeLabel = 'Little Explorer (Age 2-4)';
+      }
+    }
+    if (grade && (!ageBand || ageBand !== '2-4') && activeProfile.ageBand !== '2-4') {
       updates.grade = grade;
       updates.gradeLabel = gradeLabels[grade] || 'Grade 2';
     }
