@@ -2,7 +2,7 @@
 
 > **"Making Reading Accessible in Every Indian Language"**
 
-[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-aksharmitra.vercel.app-10B981?style=for-the-badge&logo=vercel&logoColor=white)](https://aksharmitra.vercel.app/)
+[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-Launch_App-10B981?style=for-the-badge&logo=vercel&logoColor=white)](https://akshar-mitra-lensynhvc-biraj021s-projects.vercel.app/play)
 [![React](https://img.shields.io/badge/React-19.0.0-61DAFB?logo=react&logoColor=white)](https://react.dev/)
 [![Vite](https://img.shields.io/badge/Vite-6.2.0-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
 [![PWA](https://img.shields.io/badge/PWA-Installable-4F46E5?logo=pwa&logoColor=white)](https://web.dev/progressive-web-apps/)
@@ -15,10 +15,10 @@
 ## 🚀 Live Demo & Judge Walkthrough
 
 Experience AksharMitra live in your browser:  
-👉 **[Launch AksharMitra Live Demo (aksharmitra.vercel.app)](https://aksharmitra.vercel.app/)**
+👉 **[Launch AksharMitra Live Demo Play App](https://akshar-mitra-lensynhvc-biraj021s-projects.vercel.app/play)**
 
 ### ⚡ 30-Second Quick Demo Guide for Judges
-1. Click **[Launch Live Demo](https://aksharmitra.vercel.app/)**.
+1. Click **[Launch AksharMitra Live Demo](https://akshar-mitra-lensynhvc-biraj021s-projects.vercel.app/play)**.
 2. Select the pre-populated **Judge Demo Profile (`Aarav`)**.
 3. Open the **Companion Dashboard** to view:
    - **Cross-Signal Triangulation Confidence (90%)** combining screening telemetry and parent observations.
@@ -341,7 +341,7 @@ The repository includes `vercel.json` preconfigured for SPA routing and PWA head
 
 ## 🔗 Quick Links
 
-- 🚀 **Live Demo**: [https://aksharmitra.vercel.app/](https://aksharmitra.vercel.app/)
+- 🚀 **Live Demo**: [https://akshar-mitra-lensynhvc-biraj021s-projects.vercel.app/play](https://akshar-mitra-lensynhvc-biraj021s-projects.vercel.app/play)
 - 🐙 **GitHub Repository**: [https://github.com/Biraj021/AksharMitra](https://github.com/Biraj021/AksharMitra)
 - 🏗️ **Architecture Diagram**: [`docs/architecture.png`](docs/architecture.png)
 
