@@ -69,10 +69,12 @@ function AppRouter() {
 
     if (userRole === 'teacher' || currentUser?.role === 'teacher') {
       if (!isDashboardRoute) navigate('/dashboard', { replace: true });
-    } else if (activeProfile) {
-      if (!isPlayRoute) navigate('/play', { replace: true });
+    } else if (isAuthRoute) {
+      // Stay on auth if user explicitly went to /auth
     } else {
-      if (!isAuthRoute) navigate('/auth', { replace: true });
+      if (!isPlayRoute && !isDashboardRoute) {
+        navigate('/play', { replace: true });
+      }
     }
   }, [currentUser, userRole, activeProfile, location.pathname, navigate]);
 
@@ -105,7 +107,8 @@ function AppRouter() {
           />
         } />
         
-        <Route path="*" element={<Navigate to={userRole === 'teacher' ? "/dashboard" : (activeProfile ? "/play" : "/auth")} replace />} />
+        <Route path="/" element={<Navigate to={userRole === 'teacher' ? "/dashboard" : "/play"} replace />} />
+        <Route path="*" element={<Navigate to={userRole === 'teacher' ? "/dashboard" : "/play"} replace />} />
       </Routes>
 
       {/* Student Global Modals */}
@@ -147,20 +150,31 @@ function PlayEnvironment({ showOnboarding, setShowOnboarding, setShowProfileSele
     activeLanguage
   } = useProfile();
 
-  // If no student profile is active, redirect to auth / student portal
-  if (!activeProfile) {
-    return <Navigate to="/auth" replace />;
-  }
+  // Fallback to Aarav demo profile so student play view is never blank
+  const currentLearner = activeProfile || {
+    id: 'demo_aarav',
+    kidCode: 'AM-1001',
+    name: 'Aarav',
+    avatar: 'sheru',
+    avatarEmoji: '🦁',
+    grade: 'grade2',
+    gradeLabel: 'Grade 2',
+    language: activeLanguage?.id || 'english',
+    stars: 85,
+    streak: 2,
+    screeningCompleted: true,
+    riskLevel: 'elevated'
+  };
 
-  const isLittleExplorer = activeProfile?.ageBand === '2-4';
+  const isLittleExplorer = currentLearner?.ageBand === '2-4';
   const langKey = activeLanguage?.id || 'english';
-  const isScreeningGated = !isLittleExplorer && !activeProfile.screeningCompleted;
-  const adaptiveConfig = getAdaptiveLearningConfig(activeProfile);
+  const isScreeningGated = !isLittleExplorer && !currentLearner.screeningCompleted;
+  const adaptiveConfig = getAdaptiveLearningConfig(currentLearner);
 
-  // Fallback view if currentView is missing or undefined
+  // Fallback view: Default to Home Clubhouse ('landing')
   const effectiveView = currentView && currentView !== 'login' && currentView !== 'picker'
     ? currentView
-    : (isScreeningGated ? 'screening' : 'games');
+    : (isScreeningGated ? 'screening' : 'landing');
 
   return (
     <>
@@ -186,7 +200,7 @@ function PlayEnvironment({ showOnboarding, setShowOnboarding, setShowProfileSele
               <NameThatPicture onBack={() => setCurrentView('landing')} />
             )}
 
-            {/* ── 5-7 Reader Flow (Games, Quests, Trail Map & Dashboard) ── */}
+            {/* ── 5-7 Reader Flow (Home Clubhouse vs 3D Learning Trail Map) ── */}
             {!isLittleExplorer && effectiveView === 'landing' && (
               <LandingHero
                 onStartOnboarding={() => setShowOnboarding(true)}
@@ -224,7 +238,7 @@ function PlayEnvironment({ showOnboarding, setShowOnboarding, setShowProfileSele
         )}
       </main>
 
-      {!isLittleExplorer && activeProfile && <BottomNav />}
+      {!isLittleExplorer && <BottomNav />}
     </>
   );
 }

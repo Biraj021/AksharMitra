@@ -16,7 +16,8 @@ import {
   BookOpen,
   Zap,
   HelpCircle,
-  ChevronRight
+  ChevronRight,
+  Sparkle
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useProfile, getAvatarEmoji } from '../../context/ProfileContext';
@@ -49,7 +50,7 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
 
   const studentName = activeProfile?.name || (isHindi ? 'खोजी' : (isBengali ? 'অভিযাত্রী' : 'Explorer'));
   const studentEmoji = getAvatarEmoji(activeProfile?.avatarEmoji || activeProfile?.avatar);
-  const starsCount = activeProfile?.stars || 55;
+  const starsCount = activeProfile?.stars || 85;
   const streakDays = activeProfile?.streak || 2;
 
   const recommendation = getChildRecommendation(activeProfile, activeLanguage?.id);
@@ -96,6 +97,7 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
       descHi: 'दर्पण अक्षरों और सुंदर लिखावट के विजेता!',
       color: '#6366F1',
       bg: '#EEF2FF',
+      gradient: 'linear-gradient(135deg, #818CF8 0%, #4F46E5 100%)',
       islandId: 'island-letters'
     },
     {
@@ -109,6 +111,7 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
       descHi: 'वर्णमाला ट्रेन और ध्वनि मिलान के कुशल खिलाड़ी!',
       color: '#059669',
       bg: '#ECFDF5',
+      gradient: 'linear-gradient(135deg, #34D399 0%, #059669 100%)',
       islandId: 'island-sounds'
     },
     {
@@ -122,6 +125,7 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
       descHi: 'वर्तनी जालों को मात देने वाले शब्द सम्राट!',
       color: '#D97706',
       bg: '#FFFBEB',
+      gradient: 'linear-gradient(135deg, #FBBF24 0%, #D97706 100%)',
       islandId: 'island-words'
     },
     {
@@ -135,6 +139,7 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
       descHi: `लगातार ${streakDays} दिनों से पढ़ने की अद्भुत लगन!`,
       color: '#EA580C',
       bg: '#FFF7ED',
+      gradient: 'linear-gradient(135deg, #FB923C 0%, #EA580C 100%)',
       islandId: 'streak'
     }
   ];
@@ -170,11 +175,13 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
 
   const handleBadgeClick = (badge) => {
     playSuccessFanfare();
-    confetti({
-      particleCount: 45,
-      spread: 60,
-      origin: { y: 0.7 }
-    });
+    try {
+      confetti({
+        particleCount: 45,
+        spread: 60,
+        origin: { y: 0.7 }
+      });
+    } catch (e) {}
     setActiveBadgeModal(badge);
     const bName = isHindi ? badge.nameHi : (isBengali ? badge.nameBn : badge.nameEn);
     const bDesc = isHindi ? badge.descHi : (isBengali ? badge.descBn : badge.descEn);
@@ -188,7 +195,9 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
       [questKey]: !prev[questKey]
     }));
     if (!completedDailyQuests[questKey]) {
-      confetti({ particleCount: 30, spread: 50, origin: { y: 0.6 } });
+      try {
+        confetti({ particleCount: 30, spread: 50, origin: { y: 0.6 } });
+      } catch (e) {}
     }
     if (launchGameId) {
       setTimeout(() => {
@@ -202,189 +211,178 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
   return (
     <div
       style={{
-        maxWidth: '680px',
+        maxWidth: '780px',
         margin: '0 auto',
         display: 'flex',
         flexDirection: 'column',
-        gap: '1.25rem',
-        padding: '0.75rem 0.5rem 3rem'
+        gap: '1.4rem',
+        padding: '0.5rem 0.75rem 4rem'
       }}
     >
-      {/* ── 1. Hero Clubhouse Banner ──────────────────────────────────────── */}
+      {/* ── 1. 3D Holographic Hero Clubhouse Banner ────────────────────────── */}
       <div
+        className="holo-explorer-card"
         style={{
-          background: 'linear-gradient(135deg, #4338CA 0%, #312E81 100%)',
-          color: 'white',
-          borderRadius: '28px',
-          padding: '1.4rem 1.6rem',
-          boxShadow: '0 12px 28px rgba(49, 46, 129, 0.25)',
+          borderRadius: '30px',
+          padding: '1.6rem 1.8rem',
           position: 'relative',
           overflow: 'hidden'
         }}
       >
-        {/* Top bar: Welcome, Name, Edit, and Star Counter */}
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '0.65rem' }}>
-          <div>
-            <div style={{ fontSize: '0.82rem', color: '#C7D2FE', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-              {isHindi ? '🏰 आपके सीखने का क्लबहाउस' : (isBengali ? '🏰 তোমার শেখার ক্লাবহাউস' : '🏰 Your Learning Clubhouse')}
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', flexWrap: 'wrap', marginTop: '0.15rem' }}>
-              <h2 style={{ fontSize: '1.65rem', fontWeight: 900, margin: 0, color: 'white' }}>
-                {studentName}! {studentEmoji}
-              </h2>
-              <button
-                type="button"
-                onClick={() => {
-                  playPop();
-                  if (setShowEditProfileModal) setShowEditProfileModal(true);
-                }}
-                style={{
-                  background: 'rgba(255, 255, 255, 0.22)',
-                  border: '1px solid rgba(255, 255, 255, 0.4)',
-                  borderRadius: '9999px',
-                  padding: '0.2rem 0.65rem',
-                  fontSize: '0.72rem',
-                  fontWeight: 800,
-                  color: 'white',
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.25rem',
-                  backdropFilter: 'blur(4px)'
-                }}
-                title="Edit Profile"
-              >
-                <span>✏️</span>
-                <span>{isHindi ? 'बदलें' : (isBengali ? 'বদলান' : 'Edit')}</span>
-              </button>
-            </div>
-          </div>
-
-          <div
-            style={{
-              background: 'rgba(255, 255, 255, 0.18)',
-              padding: '0.45rem 0.85rem',
-              borderRadius: '9999px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.4rem',
-              color: '#FDE047',
-              fontWeight: 900,
-              fontSize: '1rem',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
-            }}
-          >
-            <Star size={18} fill="#FDE047" color="#FDE047" />
-            <span>{starsCount} ⭐</span>
-          </div>
-        </div>
-
-        {/* Streak Pill */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexWrap: 'wrap' }}>
-          <div
-            onClick={() => {
-              playPop();
-              if (setShowStreakModal) setShowStreakModal(true);
-            }}
-            title="Attendance & Streak Calendar"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.45rem',
-              background: 'rgba(255, 255, 255, 0.22)',
-              padding: '0.35rem 0.9rem',
-              borderRadius: '9999px',
-              fontSize: '0.82rem',
-              fontWeight: 800,
-              border: '1.5px solid rgba(255, 255, 255, 0.35)',
-              cursor: 'pointer',
-              transition: 'all 0.15s ease'
-            }}
-          >
-            <Flame size={16} fill="#F97316" color="#F97316" className="animate-pulse" />
-            <span>{streakDays} {t('readingStreak')}</span>
-            <span
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', position: 'relative', zIndex: 1 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem' }}>
+            <div
               style={{
-                fontSize: '0.72rem',
-                background: 'rgba(255, 255, 255, 0.3)',
-                padding: '2px 7px',
-                borderRadius: '9999px',
-                fontWeight: 800,
-                marginLeft: '0.2rem'
+                width: '74px',
+                height: '74px',
+                borderRadius: '24px',
+                background: 'linear-gradient(135deg, #FDE047 0%, #F59E0B 100%)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '3.2rem',
+                boxShadow: '0 10px 24px rgba(245, 158, 11, 0.45)',
+                border: '3px solid rgba(255, 255, 255, 0.8)',
+                flexShrink: 0
               }}
             >
-              📅 {isHindi ? 'कैलेंडर' : (isBengali ? 'ক্যালেন্ডার' : 'Calendar')}
-            </span>
+              {studentEmoji}
+            </div>
+
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <span style={{ fontSize: '0.76rem', color: '#FDE047', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                  🏰 {isHindi ? 'क्लबहाउस' : (isBengali ? 'ক্লাবহাউস' : 'Clubhouse')} • {activeProfile?.gradeLabel || 'Grade 2'}
+                </span>
+              </div>
+              <h2 style={{ fontSize: '1.85rem', fontWeight: 900, margin: '0.1rem 0 0.2rem', color: '#FFFFFF', letterSpacing: '-0.02em', textShadow: '0 2px 10px rgba(0,0,0,0.3)' }}>
+                {studentName}!
+              </h2>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    playPop();
+                    if (setShowEditProfileModal) setShowEditProfileModal(true);
+                  }}
+                  className="btn-3d"
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    border: '1.5px solid rgba(255, 255, 255, 0.45)',
+                    borderRadius: '9999px',
+                    padding: '0.25rem 0.75rem',
+                    fontSize: '0.74rem',
+                    fontWeight: 800,
+                    color: 'white',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.3rem',
+                    backdropFilter: 'blur(8px)'
+                  }}
+                >
+                  <span>✏️</span>
+                  <span>{isHindi ? 'प्रोफ़ाइल बदलें' : (isBengali ? 'প্রোফাইল' : 'Edit Profile')}</span>
+                </button>
+              </div>
+            </div>
           </div>
 
-          <div
-            style={{
-              fontSize: '0.8rem',
-              color: '#C7D2FE',
-              fontWeight: 600
-            }}
-          >
-            {isHindi
-              ? '✨ हर दिन खेलें, नई शक्तियां जीतें!'
-              : (isBengali
-                ? '✨ প্রতিদিন পড়ো, নতুন শক্তি জয় করো!'
-                : '✨ Play every day to level up your brain!')}
+          {/* Star & Streak HUD Badges */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+            <div
+              className="hud-chip-stars"
+              style={{
+                padding: '0.55rem 1.15rem',
+                borderRadius: '9999px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                color: '#78350F',
+                fontWeight: 900,
+                fontSize: '1.15rem'
+              }}
+            >
+              <Star size={22} fill="#F59E0B" color="#F59E0B" />
+              <span>{starsCount} ⭐</span>
+            </div>
+
+            <div
+              onClick={() => {
+                playPop();
+                if (setShowStreakModal) setShowStreakModal(true);
+              }}
+              className="hud-chip-streak"
+              style={{
+                padding: '0.55rem 1.1rem',
+                borderRadius: '9999px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.45rem',
+                color: '#7C2D12',
+                fontWeight: 900,
+                fontSize: '1rem',
+                cursor: 'pointer'
+              }}
+              title="Attendance & Streak Calendar"
+            >
+              <Flame size={20} fill="#EA580C" color="#EA580C" className="animate-pulse" />
+              <span>{streakDays}d Streak 🔥</span>
+            </div>
           </div>
         </div>
       </div>
 
       {/* ── 2. Mascot Mitra's Friendly Interactive Speech Bubble ─────────── */}
       <div
+        className="glass-telemetry-panel"
         style={{
-          background: '#FFFFFF',
-          border: '2px solid #E0E7FF',
-          borderRadius: '24px',
-          padding: '1.1rem 1.25rem',
+          borderRadius: '26px',
+          padding: '1.25rem 1.4rem',
           display: 'flex',
           alignItems: 'center',
-          gap: '1rem',
-          boxShadow: '0 6px 18px rgba(79, 70, 229, 0.06)'
+          gap: '1.15rem',
+          background: 'rgba(255, 255, 255, 0.92)'
         }}
       >
         <div
           onClick={handleMascotAudio}
           title="Tap Mitra to Listen!"
+          className="btn-3d"
           style={{
-            width: '56px',
-            height: '56px',
+            width: '62px',
+            height: '62px',
             borderRadius: '20px',
             background: 'linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '2rem',
+            fontSize: '2.3rem',
             cursor: 'pointer',
-            boxShadow: '0 4px 14px rgba(79, 70, 229, 0.3)',
-            flexShrink: 0,
-            transition: 'transform 0.15s ease'
+            boxShadow: '0 8px 18px rgba(79, 70, 229, 0.35)',
+            flexShrink: 0
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.08) rotate(5deg)')}
-          onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1) rotate(0deg)')}
         >
           🦉
         </div>
 
         <div style={{ flex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
-            <div style={{ fontWeight: 900, fontSize: '0.95rem', color: '#1E293B', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+            <div style={{ fontWeight: 900, fontSize: '0.98rem', color: '#1E293B', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
               <span>{isHindi ? 'मित्रा आपका साथी' : (isBengali ? 'মিত্রা তোমার বন্ধু' : 'Mitra Your Companion')}</span>
-              <span style={{ fontSize: '0.72rem', color: '#4F46E5', background: '#EEF2FF', padding: '0.1rem 0.45rem', borderRadius: '9999px', fontWeight: 800 }}>
-                {isHindi ? 'बोलने के लिए टैप करें' : (isBengali ? 'শুনতে ট্যাপ করো' : 'Tap to Listen')}
+              <span style={{ fontSize: '0.72rem', color: '#4F46E5', background: '#EEF2FF', border: '1px solid #C7D2FE', padding: '0.15rem 0.55rem', borderRadius: '9999px', fontWeight: 800 }}>
+                {isHindi ? 'बोलने के लिए टैप करें 🔊' : (isBengali ? 'শুনতে ট্যাপ করো 🔊' : 'Tap to Listen 🔊')}
               </span>
             </div>
             <button
               onClick={handleMascotAudio}
+              className="btn-3d"
               style={{
                 background: '#EEF2FF',
-                border: '1px solid #C7D2FE',
+                border: '1.5px solid #C7D2FE',
                 borderRadius: '50%',
-                width: '32px',
-                height: '32px',
+                width: '34px',
+                height: '34px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -393,43 +391,45 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
               }}
               title="Hear Mitra Speak"
             >
-              <Volume2 size={16} />
+              <Volume2 size={17} />
             </button>
           </div>
 
-          <p style={{ fontSize: '0.84rem', color: '#475569', margin: 0, lineHeight: 1.45 }}>
+          <p style={{ fontSize: '0.88rem', color: '#475569', margin: 0, lineHeight: 1.45, fontWeight: 700 }}>
             {isHindi
               ? `हूट-हूट! आज का दिन सीखने के लिए शानदार है। 3 जादुई द्वीपों पर मिशन आपका इंतज़ार कर रहे हैं!`
               : (isBengali
                 ? `হুট-হুট! আজকের দিনটি শেখার জন্য দারুণ। ৩টি জাদুকরী দ্বীপে তোমার নতুন অভিযান অপেক্ষা করছে!`
-                : `Hoot-hoot! Your brain is growing stronger today. 3 Magical Islands are waiting for your quest!`)}
+                : `Hoot-hoot! Your reading brain is getting stronger! 3 Adventure Islands and daily missions are waiting for you!`)}
           </p>
         </div>
       </div>
 
-      {/* ── 3. Today's Star Mission (Personalized AI or Featured Quest) ──── */}
+      {/* ── 3. Today's Star Mission (Personalized AI Quest) ───────────────── */}
       <div
+        className="biome-realm-card"
         style={{
           background: recommendation.hasPersonalized
             ? 'linear-gradient(135deg, #059669 0%, #047857 100%)'
             : 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
           color: 'white',
-          borderRadius: '24px',
-          padding: '1.25rem 1.4rem',
-          boxShadow: '0 10px 24px rgba(5, 150, 105, 0.22)',
+          borderRadius: '26px',
+          padding: '1.4rem 1.6rem',
+          boxShadow: '0 12px 28px rgba(5, 150, 105, 0.28)',
+          border: '2px solid rgba(255, 255, 255, 0.35)',
           display: 'flex',
           flexDirection: 'column',
-          gap: '0.85rem'
+          gap: '1rem'
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-            <span style={{ fontSize: '1.8rem' }}>{recommendation.icon || '🌟'}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+            <span style={{ fontSize: '2.4rem', filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.2))' }}>{recommendation.icon || '🌟'}</span>
             <div>
-              <div style={{ fontSize: '0.72rem', fontWeight: 900, textTransform: 'uppercase', color: '#A7F3D0', letterSpacing: '0.04em' }}>
+              <div style={{ fontSize: '0.74rem', fontWeight: 900, textTransform: 'uppercase', color: '#A7F3D0', letterSpacing: '0.06em' }}>
                 {isHindi ? '🌟 आज का खास अभियान' : (isBengali ? '🌟 আজকের বিশেষ মিশন' : "🌟 TODAY'S STAR MISSION")}
               </div>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: 900, margin: '0.1rem 0 0', color: 'white' }}>
+              <h3 style={{ fontSize: '1.35rem', fontWeight: 900, margin: '0.1rem 0 0', color: 'white' }}>
                 {recommendation.title}
               </h3>
             </div>
@@ -437,12 +437,13 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
 
           <button
             onClick={handleRecommendedAudio}
+            className="btn-3d"
             style={{
-              background: 'rgba(255, 255, 255, 0.2)',
-              border: '1px solid rgba(255, 255, 255, 0.35)',
+              background: 'rgba(255, 255, 255, 0.25)',
+              border: '1.5px solid rgba(255, 255, 255, 0.45)',
               borderRadius: '50%',
-              width: '34px',
-              height: '34px',
+              width: '38px',
+              height: '38px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -451,75 +452,68 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
             }}
             title="Listen to Mission"
           >
-            <Volume2 size={17} />
+            <Volume2 size={18} />
           </button>
         </div>
 
-        <p style={{ fontSize: '0.88rem', color: '#ECFDF5', margin: 0, lineHeight: 1.45, fontWeight: 500 }}>
+        <p style={{ fontSize: '0.94rem', color: '#ECFDF5', margin: 0, lineHeight: 1.5, fontWeight: 700 }}>
           {recommendation.childPrompt}
         </p>
 
         <button
           onClick={handleLaunchRecommended}
+          className="btn-3d btn-3d-amber"
           style={{
-            background: 'white',
-            color: '#065F46',
-            border: 'none',
             borderRadius: '9999px',
-            padding: '0.75rem 1.5rem',
-            fontSize: '0.92rem',
-            fontWeight: 900,
-            cursor: 'pointer',
-            boxShadow: '0 4px 14px rgba(0, 0, 0, 0.12)',
+            padding: '0.85rem 1.8rem',
+            fontSize: '1rem',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '0.5rem',
-            transition: 'all 0.15s ease'
+            gap: '0.6rem',
+            width: '100%'
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-2px)')}
-          onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
         >
-          <Play size={16} fill="#065F46" color="#065F46" />
+          <Play size={18} fill="#78350F" color="#78350F" />
           <span>{recommendation.buttonText}</span>
-          <ArrowRight size={16} />
+          <ArrowRight size={18} />
         </button>
       </div>
 
-      {/* ── 4. Daily Mini-Quests (3-Step Checklist with Star Rewards) ─────── */}
+      {/* ── 4. Daily Mini-Quests (3-Step Interactive Checklist) ─────────── */}
       <div
+        className="glass-telemetry-panel"
         style={{
-          background: '#FFFFFF',
-          borderRadius: '24px',
-          border: '2px solid #F1F5F9',
-          padding: '1.25rem 1.35rem',
-          boxShadow: '0 4px 16px rgba(0, 0, 0, 0.04)'
+          borderRadius: '26px',
+          padding: '1.35rem 1.5rem',
+          background: 'rgba(255, 255, 255, 0.95)'
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.85rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.9rem' }}>
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-              <span style={{ fontSize: '1.2rem' }}>🎯</span>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 900, color: '#1E293B', margin: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span style={{ fontSize: '1.4rem' }}>🎯</span>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 900, color: '#1E293B', margin: 0 }}>
                 {isHindi ? 'दैनिक मिनी-क्वेस्ट' : (isBengali ? 'দৈনিক মিনি-কোয়েস্ট' : 'Daily Mini-Quests')}
               </h3>
             </div>
-            <p style={{ fontSize: '0.78rem', color: '#64748B', margin: '0.15rem 0 0' }}>
+            <p style={{ fontSize: '0.8rem', color: '#64748B', margin: '0.15rem 0 0', fontWeight: 700 }}>
               {isHindi
                 ? 'आज के 3 लक्ष्य पूरे करें और बोनस सितारे जीतें!'
                 : (isBengali
                   ? 'আজকের ৩টি লক্ষ্য পূরণ করো এবং বোনাস তারা জেতো!'
-                  : 'Finish 3 goals today and earn bonus stars!')}
+                  : 'Finish 3 daily goals and claim bonus reward stars!')}
             </p>
           </div>
 
           <span
             style={{
-              fontSize: '0.75rem',
-              fontWeight: 800,
+              fontSize: '0.82rem',
+              fontWeight: 900,
               color: completedCount === 3 ? '#15803D' : '#4338CA',
               background: completedCount === 3 ? '#DCFCE7' : '#EEF2FF',
-              padding: '0.25rem 0.65rem',
+              border: completedCount === 3 ? '1.5px solid #86EFAC' : '1.5px solid #C7D2FE',
+              padding: '0.35rem 0.85rem',
               borderRadius: '9999px'
             }}
           >
@@ -528,93 +522,90 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
         </div>
 
         {/* Progress bar */}
-        <div style={{ width: '100%', height: '8px', background: '#F1F5F9', borderRadius: '9999px', overflow: 'hidden', marginBottom: '1rem' }}>
+        <div style={{ width: '100%', height: '10px', background: '#F1F5F9', borderRadius: '9999px', overflow: 'hidden', marginBottom: '1.15rem', border: '1px solid #E2E8F0' }}>
           <div
             style={{
               width: `${(completedCount / 3) * 100}%`,
               height: '100%',
               background: 'linear-gradient(90deg, #10B981 0%, #059669 100%)',
-              transition: 'width 0.3s ease',
+              transition: 'width 0.4s ease',
               borderRadius: '9999px'
             }}
           />
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
           {/* Quest 1: Daily Checkin */}
           <div
             onClick={() => toggleQuest('login')}
+            className="btn-3d"
             style={{
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              padding: '0.65rem 0.85rem',
-              borderRadius: '16px',
+              padding: '0.8rem 1rem',
+              borderRadius: '18px',
               background: completedDailyQuests.login ? '#F0FDF4' : '#F8FAFC',
-              border: completedDailyQuests.login ? '1.5px solid #86EFAC' : '1.5px solid #E2E8F0',
+              border: completedDailyQuests.login ? '2px solid #86EFAC' : '2px solid #E2E8F0',
               cursor: 'pointer'
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
               {completedDailyQuests.login ? (
-                <CheckCircle2 size={20} color="#16A34A" />
+                <CheckCircle2 size={22} color="#16A34A" />
               ) : (
-                <Circle size={20} color="#94A3B8" />
+                <Circle size={22} color="#94A3B8" />
               )}
               <div>
-                <div style={{ fontSize: '0.88rem', fontWeight: 800, color: completedDailyQuests.login ? '#166534' : '#334155' }}>
+                <div style={{ fontSize: '0.92rem', fontWeight: 900, color: completedDailyQuests.login ? '#166534' : '#1E293B' }}>
                   {isHindi ? 'क्लबहाउस में हाज़िरी' : (isBengali ? 'ক্লাবহাউসে উপস্থিতি' : 'Clubhouse Daily Check-in')}
                 </div>
-                <div style={{ fontSize: '0.72rem', color: '#64748B' }}>
+                <div style={{ fontSize: '0.74rem', color: '#64748B', fontWeight: 700 }}>
                   {isHindi ? 'सिलसिला जारी रखने के लिए' : (isBengali ? 'ধারাবাহিকতা বজায় রাখতে' : 'Keep your streak alive')}
                 </div>
               </div>
             </div>
-            <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#D97706' }}>+1 ⭐</span>
+            <span style={{ fontSize: '0.84rem', fontWeight: 900, color: '#D97706', background: '#FEF3C7', padding: '0.2rem 0.6rem', borderRadius: '9999px' }}>+1 ⭐</span>
           </div>
 
           {/* Quest 2: Letter or Sound Mission */}
           <div
             onClick={() => toggleQuest('letterQuest', 'letter-hunter')}
+            className="btn-3d"
             style={{
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              padding: '0.65rem 0.85rem',
-              borderRadius: '16px',
+              padding: '0.8rem 1rem',
+              borderRadius: '18px',
               background: completedDailyQuests.letterQuest ? '#F0FDF4' : '#F8FAFC',
-              border: completedDailyQuests.letterQuest ? '1.5px solid #86EFAC' : '1.5px solid #E2E8F0',
+              border: completedDailyQuests.letterQuest ? '2px solid #86EFAC' : '2px solid #E2E8F0',
               cursor: 'pointer'
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
               {completedDailyQuests.letterQuest ? (
-                <CheckCircle2 size={20} color="#16A34A" />
+                <CheckCircle2 size={22} color="#16A34A" />
               ) : (
-                <Circle size={20} color="#94A3B8" />
+                <Circle size={22} color="#94A3B8" />
               )}
               <div>
-                <div style={{ fontSize: '0.88rem', fontWeight: 800, color: completedDailyQuests.letterQuest ? '#166534' : '#334155' }}>
+                <div style={{ fontSize: '0.92rem', fontWeight: 900, color: completedDailyQuests.letterQuest ? '#166534' : '#1E293B' }}>
                   {isHindi ? '1 अक्षर या ध्वनि खेल खेलें' : (isBengali ? '১টি বর্ণ বা সুরের খেলা খেলো' : 'Conquer 1 Letter or Sound Quest')}
                 </div>
-                <div style={{ fontSize: '0.72rem', color: '#64748B' }}>
-                  {isHindi ? 'बाज की नज़र या अक्षर ट्रेन' : (isBengali ? 'ঈগল চোখ বা বর্ণমালা ট্রেন' : 'Eagle Eye or Alphabet Train')}
+                <div style={{ fontSize: '0.74rem', color: '#64748B', fontWeight: 700 }}>
+                  {isHindi ? 'बाज की नज़र या अक्षर ट्रेन' : (isBengali ? 'ঈগল চোখ বা বর্ণমালা ট্রেন' : 'Eagle Eye or Word Snapper')}
                 </div>
               </div>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#D97706' }}>+3 ⭐</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span style={{ fontSize: '0.84rem', fontWeight: 900, color: '#D97706', background: '#FEF3C7', padding: '0.2rem 0.6rem', borderRadius: '9999px' }}>+3 ⭐</span>
               <button
                 type="button"
+                className="btn-3d btn-3d-indigo"
                 style={{
-                  background: '#4F46E5',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '9999px',
-                  padding: '0.25rem 0.65rem',
-                  fontSize: '0.72rem',
-                  fontWeight: 800,
-                  cursor: 'pointer'
+                  padding: '0.35rem 0.85rem',
+                  fontSize: '0.76rem'
                 }}
               >
                 {isHindi ? 'खेलें' : (isBengali ? 'খেলো' : 'Play')}
@@ -625,45 +616,41 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
           {/* Quest 3: Spelling Trap Buster */}
           <div
             onClick={() => toggleQuest('spellingQuest', 'spelling-traps')}
+            className="btn-3d"
             style={{
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              padding: '0.65rem 0.85rem',
-              borderRadius: '16px',
+              padding: '0.8rem 1rem',
+              borderRadius: '18px',
               background: completedDailyQuests.spellingQuest ? '#F0FDF4' : '#F8FAFC',
-              border: completedDailyQuests.spellingQuest ? '1.5px solid #86EFAC' : '1.5px solid #E2E8F0',
+              border: completedDailyQuests.spellingQuest ? '2px solid #86EFAC' : '2px solid #E2E8F0',
               cursor: 'pointer'
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
               {completedDailyQuests.spellingQuest ? (
-                <CheckCircle2 size={20} color="#16A34A" />
+                <CheckCircle2 size={22} color="#16A34A" />
               ) : (
-                <Circle size={20} color="#94A3B8" />
+                <Circle size={22} color="#94A3B8" />
               )}
               <div>
-                <div style={{ fontSize: '0.88rem', fontWeight: 800, color: completedDailyQuests.spellingQuest ? '#166534' : '#334155' }}>
+                <div style={{ fontSize: '0.92rem', fontWeight: 900, color: completedDailyQuests.spellingQuest ? '#166534' : '#1E293B' }}>
                   {isHindi ? '1 वर्तनी जाल पकड़ें' : (isBengali ? '১টি বানানের ফাঁদ ধরো' : 'Beat 1 Sneaky Spelling Trap')}
                 </div>
-                <div style={{ fontSize: '0.72rem', color: '#64748B' }}>
-                  {isHindi ? 'FROM vs FORM या जल vs लज' : (isBengali ? 'জল বনাম লজ এর ফাঁদ' : 'Catch letter swaps')}
+                <div style={{ fontSize: '0.74rem', color: '#64748B', fontWeight: 700 }}>
+                  {isHindi ? 'FROM vs FORM या जल vs लज' : (isBengali ? 'জল বনাম লজ এর ফাঁদ' : 'Catch tricky letter reversals')}
                 </div>
               </div>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#D97706' }}>+5 ⭐</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span style={{ fontSize: '0.84rem', fontWeight: 900, color: '#D97706', background: '#FEF3C7', padding: '0.2rem 0.6rem', borderRadius: '9999px' }}>+5 ⭐</span>
               <button
                 type="button"
+                className="btn-3d btn-3d-amber"
                 style={{
-                  background: '#D97706',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '9999px',
-                  padding: '0.25rem 0.65rem',
-                  fontSize: '0.72rem',
-                  fontWeight: 800,
-                  cursor: 'pointer'
+                  padding: '0.35rem 0.85rem',
+                  fontSize: '0.76rem'
                 }}
               >
                 {isHindi ? 'खेलें' : (isBengali ? 'খেলো' : 'Play')}
@@ -673,19 +660,19 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
         </div>
       </div>
 
-      {/* ── 5. 3 Magical Adventure Islands (Direct Launch Showcase) ──────── */}
+      {/* ── 5. 3 Magical Adventure Islands (Direct Biome Launch) ───────────── */}
       <div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.85rem' }}>
           <div>
-            <h3 style={{ fontSize: '1.25rem', fontWeight: 900, color: '#1E293B', margin: 0 }}>
+            <h3 style={{ fontSize: '1.3rem', fontWeight: 900, color: '#1E293B', margin: 0 }}>
               {isHindi ? '🗺️ 3 जादुई सीखने के द्वीप' : (isBengali ? '🗺️ ৩টি জাদুকরী শেখার দ্বীপ' : '🗺️ 3 Magical Learning Islands')}
             </h3>
-            <p style={{ fontSize: '0.8rem', color: '#64748B', margin: '0.15rem 0 0' }}>
+            <p style={{ fontSize: '0.82rem', color: '#64748B', margin: '0.15rem 0 0', fontWeight: 700 }}>
               {isHindi
                 ? 'अपनी पसंद का द्वीप चुनें और साहसिक यात्रा शुरू करें!'
                 : (isBengali
                   ? 'পছন্দের দ্বীপ বেছে নিয়ে মজার অভিযান শুরু করো!'
-                  : 'Choose an island module and launch right in!')}
+                  : 'Choose an island kingdom or jump straight into the full map!')}
             </p>
           </div>
 
@@ -694,30 +681,27 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
               playPop();
               setCurrentView('games');
             }}
+            className="btn-3d btn-3d-indigo"
             style={{
-              background: '#EEF2FF',
-              color: '#4338CA',
-              border: '1px solid #C7D2FE',
-              borderRadius: '9999px',
-              padding: '0.4rem 0.9rem',
-              fontSize: '0.78rem',
-              fontWeight: 800,
-              cursor: 'pointer',
+              padding: '0.45rem 1rem',
+              fontSize: '0.82rem',
               display: 'flex',
               alignItems: 'center',
-              gap: '0.3rem'
+              gap: '0.35rem'
             }}
           >
-            <span>{isHindi ? 'पूरा नक्शा' : (isBengali ? 'পুরো মানচিত্র' : 'Full Map')}</span>
-            <ChevronRight size={14} />
+            <span>{isHindi ? '3D नक्शा खोलें' : (isBengali ? '৩ডি মানচিত্র' : '3D Trail Map')}</span>
+            <ChevronRight size={16} />
           </button>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: '0.85rem' }}>
-          {ADVENTURE_ISLANDS.map((island) => {
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '0.95rem' }}>
+          {(ADVENTURE_ISLANDS || []).map((island) => {
             const islandName = isHindi ? island.nameHi : (isBengali ? island.nameBn : island.nameEn);
             const islandSubtitle = isHindi ? island.subtitleHi : (isBengali ? island.subtitleBn : island.subtitleEn);
-            const firstMissionId = island.missions[0]?.id || 'letter-hunter';
+            const firstMissionId = island.nodes?.[0]?.id || 'letter-hunter';
+            const realmNum = island.realmNumber || 1;
+            const accentColor = island.accentColor || '#4F46E5';
 
             return (
               <div
@@ -726,65 +710,63 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
                   playStarTwinkle();
                   setCurrentView(firstMissionId);
                 }}
+                className="biome-realm-card btn-3d"
                 style={{
-                  background: 'white',
-                  borderRadius: '22px',
-                  border: `2px solid ${island.badgeBorder}`,
-                  padding: '1.15rem 1rem',
+                  background: '#FFFFFF',
+                  borderRadius: '24px',
+                  border: `2.5px solid ${accentColor}44`,
+                  padding: '1.25rem 1.15rem',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
-                  gap: '0.85rem',
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 14px rgba(0, 0, 0, 0.04)',
-                  transition: 'all 0.18s ease'
+                  gap: '1rem',
+                  cursor: 'pointer'
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-3px)')}
-                onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
               >
                 <div>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                    <span style={{ fontSize: '2rem' }}>{island.icon}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.65rem' }}>
+                    <span style={{ fontSize: '2.5rem', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.15))' }}>{island.icon}</span>
                     <span
                       style={{
-                        fontSize: '0.68rem',
-                        fontWeight: 800,
-                        color: island.badgeColor,
-                        background: island.badgeBg,
-                        padding: '0.2rem 0.55rem',
+                        fontSize: '0.72rem',
+                        fontWeight: 900,
+                        color: accentColor,
+                        background: `${accentColor}18`,
+                        border: `1.5px solid ${accentColor}44`,
+                        padding: '0.25rem 0.65rem',
                         borderRadius: '9999px'
                       }}
                     >
-                      {isHindi ? `मॉड्यूल ${island.islandNumber}` : (isBengali ? `মডিউল ${island.islandNumber}` : `Module ${island.islandNumber}`)}
+                      {isHindi ? `मॉड्यूल ${realmNum}` : (isBengali ? `মডিউল ${realmNum}` : `Module ${realmNum}`)}
                     </span>
                   </div>
 
-                  <h4 style={{ fontSize: '1.05rem', fontWeight: 900, color: '#1E293B', margin: '0 0 0.25rem' }}>
+                  <h4 style={{ fontSize: '1.15rem', fontWeight: 900, color: '#1E293B', margin: '0 0 0.3rem' }}>
                     {islandName}
                   </h4>
-                  <p style={{ fontSize: '0.76rem', color: '#64748B', margin: 0, lineHeight: 1.35 }}>
+                  <p style={{ fontSize: '0.8rem', color: '#64748B', margin: 0, lineHeight: 1.4, fontWeight: 700 }}>
                     {islandSubtitle}
                   </p>
                 </div>
 
                 <div
                   style={{
-                    background: island.gradient,
+                    background: `linear-gradient(135deg, ${accentColor} 0%, #312E81 100%)`,
                     color: 'white',
-                    padding: '0.45rem',
-                    borderRadius: '12px',
-                    fontSize: '0.78rem',
-                    fontWeight: 800,
+                    padding: '0.6rem',
+                    borderRadius: '16px',
+                    fontSize: '0.85rem',
+                    fontWeight: 900,
                     textAlign: 'center',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    gap: '0.3rem',
-                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.12)'
+                    gap: '0.4rem',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
                   }}
                 >
-                  <Play size={13} fill="white" color="white" />
-                  <span>{isHindi ? 'खोलें' : (isBengali ? 'খেলো' : 'Launch Island')}</span>
+                  <Play size={15} fill="white" color="white" />
+                  <span>{isHindi ? 'द्वीप खोलें' : (isBengali ? 'দ্বীপ খোলো' : 'Launch Island')}</span>
                 </div>
               </div>
             );
@@ -794,34 +776,36 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
 
       {/* ── 6. Interactive "Magic Letter of the Day" Tile ─────────────────── */}
       <div
+        className="glass-telemetry-panel"
         style={{
           background: 'linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%)',
-          border: '2px solid #FDE68A',
-          borderRadius: '24px',
-          padding: '1.15rem 1.3rem',
+          border: '2.5px solid #FDE68A',
+          borderRadius: '26px',
+          padding: '1.3rem 1.5rem',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          boxShadow: '0 4px 14px rgba(217, 119, 6, 0.08)'
+          flexWrap: 'wrap',
+          gap: '1rem'
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1.15rem' }}>
           <div
             onClick={handleMagicLetterAudio}
             title="Hear Letter Sound"
+            className="candy-tile-3d"
             style={{
-              width: '54px',
-              height: '54px',
-              borderRadius: '18px',
+              width: '64px',
+              height: '64px',
+              borderRadius: '20px',
               background: '#F59E0B',
               color: 'white',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '2rem',
+              fontSize: '2.4rem',
               fontWeight: 900,
               cursor: 'pointer',
-              boxShadow: '0 4px 12px rgba(245, 158, 11, 0.35)',
               flexShrink: 0
             }}
           >
@@ -829,24 +813,25 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
           </div>
 
           <div>
-            <div style={{ fontSize: '0.72rem', fontWeight: 900, textTransform: 'uppercase', color: '#B45309', letterSpacing: '0.04em' }}>
+            <div style={{ fontSize: '0.76rem', fontWeight: 900, textTransform: 'uppercase', color: '#B45309', letterSpacing: '0.06em' }}>
               ✨ {currentMagicLetter.title}
             </div>
-            <p style={{ fontSize: '0.82rem', color: '#92400E', margin: '0.15rem 0 0', lineHeight: 1.35, fontWeight: 600 }}>
+            <p style={{ fontSize: '0.88rem', color: '#92400E', margin: '0.2rem 0 0', lineHeight: 1.4, fontWeight: 700 }}>
               {currentMagicLetter.clue}
             </p>
           </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexShrink: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexShrink: 0 }}>
           <button
             onClick={handleMagicLetterAudio}
+            className="btn-3d"
             style={{
               background: 'white',
-              border: '1.5px solid #FDE68A',
+              border: '2px solid #FDE68A',
               borderRadius: '50%',
-              width: '36px',
-              height: '36px',
+              width: '42px',
+              height: '42px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -855,7 +840,7 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
             }}
             title="Listen to Sound"
           >
-            <Volume2 size={18} />
+            <Volume2 size={20} />
           </button>
 
           <button
@@ -863,16 +848,11 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
               playStarTwinkle();
               setCurrentView(currentMagicLetter.targetGame);
             }}
+            className="btn-3d btn-3d-amber"
             style={{
-              background: '#D97706',
-              color: 'white',
-              border: 'none',
               borderRadius: '9999px',
-              padding: '0.45rem 0.95rem',
-              fontSize: '0.8rem',
-              fontWeight: 800,
-              cursor: 'pointer',
-              boxShadow: '0 2px 8px rgba(217, 119, 6, 0.25)'
+              padding: '0.6rem 1.25rem',
+              fontSize: '0.88rem'
             }}
           >
             {isHindi ? 'सुलेख करें ✍️' : (isBengali ? 'আঁকা শিখি ✍️' : 'Trace It ✍️')}
@@ -882,33 +862,32 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
 
       {/* ── 7. Kid's Trophy & Badges Showcase ────────────────────────────── */}
       <div
+        className="glass-telemetry-panel"
         style={{
-          background: '#FFFFFF',
-          borderRadius: '24px',
-          border: '2px solid #F1F5F9',
-          padding: '1.25rem 1.35rem',
-          boxShadow: '0 4px 16px rgba(0, 0, 0, 0.04)'
+          borderRadius: '26px',
+          padding: '1.35rem 1.5rem',
+          background: 'rgba(255, 255, 255, 0.95)'
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.85rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.95rem' }}>
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-              <span style={{ fontSize: '1.25rem' }}>🏆</span>
-              <h3 style={{ fontSize: '1.15rem', fontWeight: 900, color: '#1E293B', margin: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span style={{ fontSize: '1.4rem' }}>🏆</span>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 900, color: '#1E293B', margin: 0 }}>
                 {isHindi ? 'आपकी ट्रॉफियां और पदक' : (isBengali ? 'তোমার ট্রফি ও পদকসমূহ' : 'Your Trophies & Badges')}
               </h3>
             </div>
-            <p style={{ fontSize: '0.78rem', color: '#64748B', margin: '0.15rem 0 0' }}>
+            <p style={{ fontSize: '0.8rem', color: '#64748B', margin: '0.15rem 0 0', fontWeight: 700 }}>
               {isHindi
                 ? 'किसी भी बैज पर टैप करके अपनी उपलब्धि देखें!'
                 : (isBengali
                   ? 'যেকোনো ব্যাজে ট্যাপ করে তোমার গৌরবময় অর্জন দেখো!'
-                  : 'Tap any badge to celebrate your achievements!')}
+                  : 'Tap any badge to celebrate your reading achievements!')}
             </p>
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.75rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.85rem' }}>
           {BADGES.map((badge) => {
             const bName = isHindi ? badge.nameHi : (isBengali ? badge.nameBn : badge.nameEn);
 
@@ -916,27 +895,25 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
               <div
                 key={badge.id}
                 onClick={() => handleBadgeClick(badge)}
+                className="btn-3d"
                 style={{
                   background: badge.bg,
-                  borderRadius: '18px',
-                  border: `1.5px solid ${badge.color}33`,
-                  padding: '0.85rem 0.6rem',
+                  borderRadius: '20px',
+                  border: `2px solid ${badge.color}44`,
+                  padding: '1rem 0.75rem',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
                   textAlign: 'center',
-                  gap: '0.35rem',
-                  cursor: 'pointer',
-                  transition: 'transform 0.15s ease'
+                  gap: '0.45rem',
+                  cursor: 'pointer'
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
-                onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
               >
-                <span style={{ fontSize: '2.1rem' }}>{badge.icon}</span>
-                <span style={{ fontSize: '0.78rem', fontWeight: 800, color: badge.color, lineHeight: 1.2 }}>
+                <span style={{ fontSize: '2.5rem', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.15))' }}>{badge.icon}</span>
+                <span style={{ fontSize: '0.84rem', fontWeight: 900, color: badge.color, lineHeight: 1.25 }}>
                   {bName}
                 </span>
-                <span style={{ fontSize: '0.66rem', color: '#64748B', background: 'white', padding: '0.1rem 0.45rem', borderRadius: '9999px', fontWeight: 700 }}>
+                <span style={{ fontSize: '0.7rem', color: '#475569', background: 'white', border: `1px solid ${badge.color}33`, padding: '0.15rem 0.55rem', borderRadius: '9999px', fontWeight: 800 }}>
                   ★ {isHindi ? 'अनलॉक' : (isBengali ? 'আনলক' : 'Unlocked')}
                 </span>
               </div>
@@ -948,37 +925,38 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
         {activeBadgeModal && (
           <div
             style={{
-              marginTop: '1rem',
+              marginTop: '1.15rem',
               background: activeBadgeModal.bg,
-              border: `2px solid ${activeBadgeModal.color}`,
-              borderRadius: '18px',
-              padding: '0.85rem 1rem',
+              border: `2.5px solid ${activeBadgeModal.color}`,
+              borderRadius: '20px',
+              padding: '1rem 1.2rem',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
               animation: 'fadeIn 0.2s ease'
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-              <span style={{ fontSize: '1.8rem' }}>{activeBadgeModal.icon}</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+              <span style={{ fontSize: '2.2rem' }}>{activeBadgeModal.icon}</span>
               <div>
-                <div style={{ fontWeight: 900, fontSize: '0.92rem', color: activeBadgeModal.color }}>
+                <div style={{ fontWeight: 900, fontSize: '0.98rem', color: activeBadgeModal.color }}>
                   {isHindi ? activeBadgeModal.nameHi : (isBengali ? activeBadgeModal.nameBn : activeBadgeModal.nameEn)}
                 </div>
-                <div style={{ fontSize: '0.76rem', color: '#475569' }}>
+                <div style={{ fontSize: '0.82rem', color: '#475569', fontWeight: 700 }}>
                   {isHindi ? activeBadgeModal.descHi : (isBengali ? activeBadgeModal.descBn : activeBadgeModal.descEn)}
                 </div>
               </div>
             </div>
             <button
               onClick={() => setActiveBadgeModal(null)}
+              className="btn-3d"
               style={{
                 background: 'white',
-                border: 'none',
+                border: '1.5px solid #CBD5E1',
                 borderRadius: '9999px',
-                padding: '0.2rem 0.6rem',
-                fontSize: '0.72rem',
-                fontWeight: 800,
+                padding: '0.3rem 0.75rem',
+                fontSize: '0.78rem',
+                fontWeight: 900,
                 color: '#64748B',
                 cursor: 'pointer'
               }}
@@ -987,62 +965,6 @@ export default function LandingHero({ onStartOnboarding, onOpenProfileSelector }
             </button>
           </div>
         )}
-      </div>
-
-      {/* ── 8. Quick Discovery / Screening Island Link ────────────────────── */}
-      <div
-        onClick={() => {
-          playStarTwinkle();
-          setCurrentView('screening');
-        }}
-        style={{
-          background: 'linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%)',
-          borderRadius: '22px',
-          border: '1.5px solid #C7D2FE',
-          padding: '1rem 1.25rem',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          cursor: 'pointer',
-          boxShadow: '0 4px 14px rgba(79, 70, 229, 0.05)',
-          transition: 'all 0.15s ease'
-        }}
-        onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-2px)')}
-        onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
-          <div
-            style={{
-              width: '44px',
-              height: '44px',
-              borderRadius: '14px',
-              background: '#4F46E5',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '1.4rem',
-              color: 'white'
-            }}
-          >
-            🎯
-          </div>
-
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <h4 style={{ fontSize: '0.98rem', fontWeight: 900, color: '#1E293B', margin: 0 }}>
-                {t('screeningIslandTitle')}
-              </h4>
-              <span style={{ fontSize: '0.68rem', fontWeight: 800, color: '#4338CA', background: 'white', padding: '0.1rem 0.45rem', borderRadius: '9999px' }}>
-                3 Mini-Games
-              </span>
-            </div>
-            <p style={{ fontSize: '0.78rem', color: '#475569', margin: '0.1rem 0 0' }}>
-              {t('screeningIslandSubtitle')}
-            </p>
-          </div>
-        </div>
-
-        <ArrowRight size={18} color="#4F46E5" />
       </div>
     </div>
   );

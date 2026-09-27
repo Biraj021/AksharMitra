@@ -151,23 +151,21 @@ export function ProfileProvider({ children }) {
   // Current authenticated user session (teacher, parent, or student)
   const [currentUser, setCurrentUser] = useState(() => {
     try {
-      return getCurrentUser();
-    } catch {
-      return null;
-    }
+      const user = getCurrentUser();
+      if (user) return user;
+    } catch { }
+    return { id: 'demo_aarav_user', name: 'Aarav', role: 'student', isDemo: true, kidCode: 'AM-1001' };
   });
 
-  // Current session role: 'teacher' | 'student' | 'parent' | null
+  // Current session role: 'teacher' | 'student' | 'parent'
   const [userRole, setUserRole] = useState(() => {
     try {
       const saved = localStorage.getItem('aksharmitra_user_role_v1');
       if (saved) return saved;
       const initialUser = getCurrentUser();
       if (initialUser?.role) return initialUser.role;
-      return initialUser ? 'teacher' : null;
-    } catch {
-      return null;
-    }
+    } catch { }
+    return 'student';
   });
 
   // Sync / Network state
@@ -176,42 +174,17 @@ export function ProfileProvider({ children }) {
 
   // User-scoped profiles store: guarantees multi-user data isolation
   const [profilesList, setProfilesList] = useState(() => {
-    const initialUser = getCurrentUser();
-    if (!initialUser) return [];
-    if (initialUser.isDemo) {
-      try {
-        const saved = localStorage.getItem(getProfilesStorageKey(initialUser));
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            return parsed.map(normalizeProfile);
-          }
-        }
-      } catch { }
-      return DEMO_PROFILES.map(normalizeProfile);
-    }
-
+    const initialUser = getCurrentUser() || { id: 'demo_aarav_user', isDemo: true };
     try {
       const saved = localStorage.getItem(getProfilesStorageKey(initialUser));
-      let list = [];
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) {
-          list = parsed.map(normalizeProfile);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.map(normalizeProfile);
         }
       }
-      // Merge linked students for this teacher
-      const linked = getTeacherLinkedStudents(initialUser.id).map(normalizeProfile);
-      const existing = new Set(list.map((l) => l.id));
-      for (const l of linked) {
-        if (!existing.has(l.id)) {
-          list.push(l);
-          existing.add(l.id);
-        }
-      }
-      return list;
     } catch { }
-    return [];
+    return DEMO_PROFILES.map(normalizeProfile);
   });
 
   // Active child learner (for /play or focused report in /dashboard)
@@ -225,31 +198,30 @@ export function ProfileProvider({ children }) {
     } catch { }
 
     const initialUser = getCurrentUser();
-    if (!initialUser) return null;
-    try {
-      const saved = localStorage.getItem(getActiveStorageKey(initialUser));
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (parsed?.id) {
-          if (parsed.id === 'aarav_demo' || parsed.id === 'demo_aarav') return normalizeProfile({ ...DEMO_PROFILES[0] });
-          if (parsed.id === 'priya_demo' || parsed.id === 'demo_priya') return normalizeProfile({ ...DEMO_PROFILES[1] });
-          return normalizeProfile(parsed);
+    if (initialUser) {
+      try {
+        const saved = localStorage.getItem(getActiveStorageKey(initialUser));
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed?.id) {
+            if (parsed.id === 'aarav_demo' || parsed.id === 'demo_aarav') return normalizeProfile({ ...DEMO_PROFILES[0] });
+            if (parsed.id === 'priya_demo' || parsed.id === 'demo_priya') return normalizeProfile({ ...DEMO_PROFILES[1] });
+            return normalizeProfile(parsed);
+          }
         }
-      }
-    } catch { }
-    return null;
+      } catch { }
+    }
+    // Default immediately to Aarav so /play is never blank
+    return normalizeProfile({ ...DEMO_PROFILES[0] });
   });
 
   // Navigation / View states: 'login' | 'picker' | 'landing' | 'screening' | 'games' | 'dashboard' | game subviews
   const [currentView, setCurrentView] = useState(() => {
-    const initialUser = getCurrentUser();
-    if (!initialUser) return 'login';
     try {
-      const saved = localStorage.getItem(getActiveStorageKey(initialUser));
-      return saved ? 'landing' : 'picker';
-    } catch {
-      return 'picker';
-    }
+      const savedView = localStorage.getItem('aksharmitra_current_view_v1');
+      if (savedView && savedView !== 'login' && savedView !== 'picker') return savedView;
+    } catch { }
+    return 'landing';
   });
 
   // Streak & Profile Edit Modals
