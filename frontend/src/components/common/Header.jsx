@@ -105,21 +105,33 @@ export default function Header() {
             <button
               onClick={openDyslexiaSettings}
               style={{
-                width: '38px',
-                height: '38px',
-                borderRadius: '50%',
-                background: '#EEF2FF',
-                border: '1.5px solid #C7D2FE',
+                height: '42px',
+                padding: '0 0.85rem',
+                borderRadius: '9999px',
+                background: 'linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%)',
+                border: '2px solid #C7D2FE',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center',
+                gap: '0.4rem',
                 cursor: 'pointer',
-                color: '#4F46E5',
-                transition: 'all 0.15s ease'
+                color: '#4338CA',
+                fontWeight: 800,
+                fontSize: '0.82rem',
+                boxShadow: '0 2px 8px rgba(99, 102, 241, 0.15)',
+                transition: 'all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)'
               }}
-              title={t('dyslexiaComfort') || 'Dyslexia Comfort & Ruler'}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 6px 16px rgba(99, 102, 241, 0.25)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 2px 8px rgba(99, 102, 241, 0.15)';
+              }}
+              title={t('dyslexiaComfort') || 'Dyslexia Reading Ruler & Comfort Mode'}
             >
-              <Eye size={18} color="#4F46E5" />
+              <Eye size={17} color="#4F46E5" />
+              <span style={{ display: 'inline' }}>Reading Helper</span>
             </button>
           )}
 
@@ -128,21 +140,22 @@ export default function Header() {
             <button
               onClick={toggleSound}
               style={{
-                width: '38px',
-                height: '38px',
+                width: '42px',
+                height: '42px',
                 borderRadius: '50%',
-                background: '#F8FAFC',
-                border: '1.5px solid #E2E8F0',
+                background: soundEnabled ? '#F0FDF4' : '#F8FAFC',
+                border: soundEnabled ? '2px solid #86EFAC' : '2px solid #E2E8F0',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 cursor: 'pointer',
-                color: soundEnabled ? '#4F46E5' : '#94A3B8',
-                transition: 'all 0.15s ease'
+                color: soundEnabled ? '#16A34A' : '#94A3B8',
+                boxShadow: soundEnabled ? '0 2px 8px rgba(22, 163, 74, 0.2)' : 'none',
+                transition: 'all 0.2s ease'
               }}
               title={soundEnabled ? t('muteSound') : t('enableSound')}
             >
-              {soundEnabled ? <Volume2 size={18} color="#4F46E5" /> : <VolumeX size={18} color="#94A3B8" />}
+              {soundEnabled ? <Volume2 size={19} color="#16A34A" /> : <VolumeX size={19} color="#94A3B8" />}
             </button>
           )}
 
@@ -154,16 +167,17 @@ export default function Header() {
               setLanguageById(e.target.value);
             }}
             style={{
-              padding: '0.35rem 0.65rem',
+              padding: '0.45rem 0.75rem',
               borderRadius: '9999px',
-              border: '1.5px solid #CBD5E1',
+              border: '2px solid #CBD5E1',
               background: '#FFFFFF',
               fontFamily: 'inherit',
-              fontWeight: 700,
-              fontSize: '0.8rem',
+              fontWeight: 800,
+              fontSize: '0.82rem',
               color: '#334155',
               cursor: 'pointer',
-              outline: 'none'
+              outline: 'none',
+              boxShadow: '0 2px 6px rgba(0,0,0,0.04)'
             }}
           >
             {SUPPORTED_LANGUAGES.map((lang) => (
@@ -173,37 +187,77 @@ export default function Header() {
             ))}
           </select>
 
-          {/* ── KID SPECIFIC BADGE (Avatar + Kid ID + Stars) ── */}
+          {/* ── KID SPECIFIC BADGES (Streak Fire + Stars XP + Avatar Pass) ── */}
           {isPlayRoute && activeProfile && (
-            <div
-              onClick={() => {
-                playPop();
-                setShowKidPassModal(true);
-              }}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                background: '#ECFDF5',
-                border: '1.5px solid #86EFAC',
-                padding: '0.3rem 0.75rem',
-                borderRadius: '9999px',
-                cursor: 'pointer',
-                boxShadow: '0 2px 6px rgba(16, 185, 129, 0.12)'
-              }}
-              title="Click to view Kid ID Pass"
-            >
-              <span style={{ fontSize: '1.25rem' }}>{getAvatarEmoji(activeProfile.avatarEmoji || activeProfile.avatar)}</span>
-              <span style={{ fontWeight: 800, fontSize: '0.85rem', color: '#14532D' }}>
-                {activeProfile.name}
-              </span>
-              <span style={{ background: '#DCFCE7', color: '#166534', padding: '0.15rem 0.45rem', borderRadius: '6px', fontSize: '0.72rem', fontWeight: 900 }}>
-                {activeProfile.kidCode || 'AM-???'}
-              </span>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '2px', marginLeft: '2px' }}>
-                <Star size={14} fill="#F59E0B" color="#F59E0B" />
-                <span style={{ fontWeight: 800, fontSize: '0.85rem', color: '#B45309' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              
+              {/* Daily Streak Flame Pill */}
+              <div
+                onClick={() => {
+                  playPop();
+                  setShowKidPassModal(true);
+                }}
+                className="hud-chip hud-chip-streak"
+                style={{ cursor: 'pointer' }}
+                title="Daily Reading Streak"
+              >
+                <span className="flame-pulsing" style={{ fontSize: '1.1rem' }}>🔥</span>
+                <span style={{ fontWeight: 800, fontSize: '0.85rem' }}>{activeProfile.streak || 1}d</span>
+              </div>
+
+              {/* Star XP Glow Pill */}
+              <div
+                className="hud-chip hud-chip-stars"
+                style={{ cursor: 'pointer' }}
+                title="Stars Collected in Quests"
+              >
+                <Star size={15} fill="#F59E0B" color="#F59E0B" />
+                <span style={{ fontWeight: 800, fontSize: '0.9rem' }}>
                   {activeProfile.stars ?? 0}
+                </span>
+              </div>
+
+              {/* Avatar Pass Pill */}
+              <div
+                onClick={() => {
+                  playPop();
+                  setShowKidPassModal(true);
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  background: '#FFFFFF',
+                  border: '2px solid #86EFAC',
+                  padding: '0.25rem 0.75rem 0.25rem 0.35rem',
+                  borderRadius: '9999px',
+                  cursor: 'pointer',
+                  boxShadow: '0 2px 10px rgba(16, 185, 129, 0.15)',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-2px)')}
+                onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
+                title="Click to view Kid Explorer Pass"
+              >
+                <div
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '50%',
+                    background: '#ECFDF5',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '1.25rem'
+                  }}
+                >
+                  {getAvatarEmoji(activeProfile.avatarEmoji || activeProfile.avatar)}
+                </div>
+                <span style={{ fontWeight: 800, fontSize: '0.88rem', color: '#14532D' }}>
+                  {activeProfile.name}
+                </span>
+                <span style={{ background: '#DCFCE7', color: '#166534', padding: '0.15rem 0.5rem', borderRadius: '8px', fontSize: '0.72rem', fontWeight: 900, letterSpacing: '0.04em' }}>
+                  {activeProfile.kidCode || 'AM-???'}
                 </span>
               </div>
             </div>
@@ -217,10 +271,10 @@ export default function Header() {
                 alignItems: 'center',
                 gap: '0.45rem',
                 background: '#EEF2FF',
-                border: '1.5px solid #C7D2FE',
-                padding: '0.35rem 0.75rem',
+                border: '2px solid #C7D2FE',
+                padding: '0.4rem 0.85rem',
                 borderRadius: '9999px',
-                fontSize: '0.82rem',
+                fontSize: '0.85rem',
                 fontWeight: 800,
                 color: '#312E81'
               }}
@@ -234,17 +288,28 @@ export default function Header() {
           <button
             onClick={handleExit}
             style={{
-              padding: '0.4rem 0.75rem',
+              padding: '0.45rem 0.85rem',
               borderRadius: '9999px',
-              border: '1.5px solid #E2E8F0',
+              border: '2px solid #E2E8F0',
               background: '#F8FAFC',
               color: '#64748B',
-              fontWeight: 700,
-              fontSize: '0.8rem',
+              fontWeight: 800,
+              fontSize: '0.82rem',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: '4px'
+              gap: '5px',
+              transition: 'all 0.15s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#FEE2E2';
+              e.currentTarget.style.borderColor = '#FECACA';
+              e.currentTarget.style.color = '#DC2626';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = '#F8FAFC';
+              e.currentTarget.style.borderColor = '#E2E8F0';
+              e.currentTarget.style.color = '#64748B';
             }}
             title="Log Out & Switch Portal Role"
           >

@@ -1,16 +1,19 @@
 import React, { useState, useRef } from 'react';
-import { Volume2, ArrowRight, ArrowLeft, Trophy, Sparkles, Award, CheckCircle, Brain, Target, Mic, Music, AlertCircle } from 'lucide-react';
+import { Volume2, ArrowRight, ArrowLeft, Trophy, Sparkles, Award, CheckCircle, Brain, Target, Mic, Music, AlertCircle, Play, Star } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import MirrorLetterQuest from '../../screening/MirrorLetterQuest';
 import RhymeBeatsQuest from '../../screening/RhymeBeatsQuest';
 import ReadAloudQuest from '../../screening/ReadAloudQuest';
-import { useProfile } from '../../context/ProfileContext';
+import { useProfile, getAvatarEmoji } from '../../context/ProfileContext';
 import { useAudio } from '../../context/AudioContext';
 
 export default function ScreeningContainer() {
   const { activeProfile, setActiveProfile, saveScreeningResults, setCurrentView, activeLanguage, t } = useProfile();
   const { playPop, playStarTwinkle, speakText } = useAudio();
+
   const isBengali = activeLanguage?.id === 'bengali';
+  const isHindi = activeLanguage?.id === 'hindi';
+  const speechLang = isHindi ? 'hi-IN' : (isBengali ? 'bn-IN' : 'en-US');
 
   // 0: Roadmap Overview, 1: Mirror Letters, 2: Rhyme Beats, 3: Read Aloud, 4: Diagnostic Snapshot
   const [activeStep, setActiveStep] = useState(0);
@@ -40,10 +43,6 @@ export default function ScreeningContainer() {
 
   const handleQuestComplete = (data) => {
     playStarTwinkle();
-    const isBengali = activeLanguage?.id === 'bengali';
-    const isHindi = activeLanguage?.id === 'hindi';
-    const speechLang = isHindi ? 'hi-IN' : (isBengali ? 'bn-IN' : 'en-US');
-
     if (data.questId === 'mirror_letters') {
       sessionDataRef.current.mirrorLetters = data.metrics;
       setSessionData({ ...sessionDataRef.current });
@@ -163,15 +162,12 @@ export default function ScreeningContainer() {
         : pathway === 'accelerated_fluency'
         ? 'Great job! You are ready for advanced fluency and word building adventures!'
         : 'Awesome effort! Mitra has prepared personalized multisensory games just for you!',
-      'en-US'
+      speechLang
     );
   };
 
   const handleMitraIntroAudio = () => {
     playPop();
-    const isBengali = activeLanguage?.id === 'bengali';
-    const isHindi = activeLanguage?.id === 'hindi';
-    const speechLang = isHindi ? 'hi-IN' : (isBengali ? 'bn-IN' : 'en-US');
     const text = isHindi
       ? "अक्षरमित्र में आपका स्वागत है! हम अक्षरों की दिशा, तुकबंदी और कहानी पढ़ने के 3 मजेदार खेल खेलेंगे। क्या आप तैयार हैं?"
       : isBengali
@@ -187,42 +183,45 @@ export default function ScreeningContainer() {
 
   const isTypical = visualAccuracy >= 75 && phonologicalScore >= 75;
   const isIncomplete = !sessionData.mirrorLetters || !sessionData.rhymeBeats || !sessionData.readAloud;
+  const studentName = activeProfile?.name || (isHindi ? 'नन्हे खोजी' : (isBengali ? 'অনন্য' : 'Explorer'));
 
   return (
     <div
       style={{
-        maxWidth: '560px',
+        maxWidth: '640px',
         margin: '0 auto',
         display: 'flex',
         flexDirection: 'column',
-        gap: '1.25rem',
-        padding: '0.5rem 0.25rem 2rem'
+        gap: '1.4rem',
+        padding: '0.5rem 0.5rem 3.5rem'
       }}
     >
       {/* ─────────────────────────────────────────────────────────────
-          VIEW 0: SCREENING ISLAND ROADMAP (Exact Screenshot 3)
+          VIEW 0: SCREENING ISLAND ROADMAP
          ───────────────────────────────────────────────────────────── */}
       {activeStep === 0 && (
         <>
-          {/* Top Deep Purple Banner */}
+          {/* Top Hero Banner */}
           <div
             style={{
-              background: 'linear-gradient(135deg, #4F46E5 0%, #312E81 100%)',
+              background: 'linear-gradient(135deg, #4338CA 0%, #312E81 100%)',
               color: 'white',
               borderRadius: '28px',
-              padding: '1.5rem',
-              boxShadow: '0 12px 28px rgba(79, 70, 229, 0.25)'
+              padding: '1.6rem',
+              boxShadow: '0 12px 30px rgba(49, 46, 129, 0.28)',
+              position: 'relative',
+              overflow: 'hidden'
             }}
           >
             <div
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '0.4rem',
-                background: 'rgba(255, 255, 255, 0.15)',
-                padding: '0.3rem 0.8rem',
+                gap: '0.45rem',
+                background: 'rgba(255, 255, 255, 0.18)',
+                padding: '0.35rem 0.9rem',
                 borderRadius: '9999px',
-                fontSize: '0.75rem',
+                fontSize: '0.78rem',
                 fontWeight: 800,
                 color: '#E0E7FF',
                 marginBottom: '0.85rem',
@@ -233,35 +232,36 @@ export default function ScreeningContainer() {
               <span>{t('screeningTimeEstimate')}</span>
             </div>
 
-            <h2 style={{ fontSize: '1.65rem', fontWeight: 800, color: 'white', margin: '0 0 0.4rem', fontFamily: "'Lexend', sans-serif" }}>
+            <h2 style={{ fontSize: '1.75rem', fontWeight: 900, color: 'white', margin: '0 0 0.4rem', letterSpacing: '-0.02em' }}>
               {t('screeningRoadmapTitle')}
             </h2>
-            <p style={{ fontSize: '0.88rem', color: '#C7D2FE', lineHeight: 1.45, margin: 0 }}>
+            <p style={{ fontSize: '0.9rem', color: '#C7D2FE', lineHeight: 1.5, margin: 0 }}>
               {t('screeningRoadmapSubtitle')}
             </p>
           </div>
 
-          {/* Unscreened Initial Onboarding Banner */}
+          {/* Unscreened Initial Notification Banner */}
           {!activeProfile?.screeningCompleted && (
             <div
               style={{
                 background: 'linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%)',
-                border: '1.5px solid #F59E0B',
-                borderRadius: '20px',
-                padding: '1rem 1.25rem',
+                border: '2px solid #F59E0B',
+                borderRadius: '24px',
+                padding: '1.15rem 1.4rem',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.85rem'
+                gap: '1rem',
+                boxShadow: '0 6px 16px rgba(245, 158, 11, 0.15)'
               }}
             >
-              <span style={{ fontSize: '1.8rem' }}>🌟</span>
+              <span style={{ fontSize: '2.2rem' }}>🌟</span>
               <div>
-                <div style={{ fontWeight: 800, fontSize: '0.92rem', color: '#92400E' }}>
-                  {isBengali ? `স্বাগতম ${activeProfile?.name || 'অভিযাত্রী'}! প্রাথমিক মূল্যায়ন আবশ্যক` : `Welcome ${activeProfile?.name || 'Explorer'}! Initial Quest Required`}
+                <div style={{ fontWeight: 900, fontSize: '1rem', color: '#92400E' }}>
+                  {isBengali ? `স্বাগতম ${studentName}! প্রাথমিক মূল্যায়ন আবশ্যক` : `Welcome ${studentName}! Initial Quest Required`}
                 </div>
-                <div style={{ fontSize: '0.78rem', color: '#B45309', marginTop: '0.15rem', lineHeight: 1.4 }}>
+                <div style={{ fontSize: '0.82rem', color: '#B45309', marginTop: '0.2rem', lineHeight: 1.45 }}>
                   {isBengali
-                    ? 'প্ল্যাটফর্মের সম্পূর্ণ অংশ আনলক করতে ও ডিসলেক্সিয়া সংক্রান্ত নির্দেশিত শিক্ষণ পথ সক্রিয় করতে মিত্রার সাথে ৩-ধাপের এই স্ক্রীনিং পর্বটি সম্পন্ন করুন!'
+                    ? 'প্ল্যাটফর্মের সম্পূর্ণ অংশ আনলক করতে ও নির্দেশিত শিক্ষণ পথ সক্রিয় করতে মিত্রার সাথে ৩-ধাপের এই স্ক্রীনিং পর্বটি সম্পন্ন করো!'
                     : 'Complete this 3-step screening quest with Mitra to unlock full platform access, identify potential dyslexia risk indicators, and activate your custom learning path!'}
                 </div>
               </div>
@@ -273,57 +273,50 @@ export default function ScreeningContainer() {
             <div
               style={{
                 background: '#ECFDF5',
-                border: '1.5px solid #10B981',
-                borderRadius: '20px',
-                padding: '1rem 1.25rem',
+                border: '2px solid #10B981',
+                borderRadius: '24px',
+                padding: '1.15rem 1.4rem',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 flexWrap: 'wrap',
-                gap: '0.75rem'
+                gap: '0.85rem',
+                boxShadow: '0 6px 16px rgba(16, 185, 129, 0.12)'
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-                <span style={{ fontSize: '1.6rem' }}>✅</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <span style={{ fontSize: '2rem' }}>✅</span>
                 <div>
-                  <div style={{ fontWeight: 800, fontSize: '0.9rem', color: '#065F46' }}>
-                    {isBengali ? `${activeProfile.name}-এর স্ক্রীনিং ইতিমধ্যে সম্পন্ন হয়েছে!` : `Screening Already Completed for ${activeProfile.name}!`}
+                  <div style={{ fontWeight: 900, fontSize: '0.98rem', color: '#065F46' }}>
+                    {isBengali ? `${studentName}-এর স্ক্রীনিং ইতিমধ্যে সম্পন্ন হয়েছে!` : `Screening Already Completed for ${studentName}!`}
                   </div>
-                  <div style={{ fontSize: '0.75rem', color: '#047857' }}>
+                  <div style={{ fontSize: '0.8rem', color: '#047857' }}>
                     {isBengali ? 'ডায়াগনস্টিক প্রোফাইল ও নির্দেশিত শিক্ষণ পথ ড্যাশবোর্ডে সক্রিয়।' : 'Diagnostic profile & learning pathway are active on the dashboard.'}
                   </div>
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
                 <button
                   onClick={() => {
                     playPop();
                     setCurrentView('dashboard');
                   }}
-                  style={{
-                    background: '#10B981',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '9999px',
-                    padding: '0.45rem 0.95rem',
-                    fontSize: '0.78rem',
-                    fontWeight: 800,
-                    cursor: 'pointer'
-                  }}
+                  className="btn-3d btn-3d-emerald"
+                  style={{ padding: '0.5rem 1rem', fontSize: '0.82rem' }}
                 >
-                  {isBengali ? 'রিপোর্ট দেখুন' : 'View My Report'}
+                  {isBengali ? 'রিপোর্ট দেখুন' : 'View Report'}
                 </button>
                 <button
                   onClick={() => handleStartQuest(1)}
                   style={{
                     background: 'white',
                     color: '#065F46',
-                    border: '1px solid #10B981',
+                    border: '2px solid #10B981',
                     borderRadius: '9999px',
-                    padding: '0.45rem 0.95rem',
-                    fontSize: '0.78rem',
-                    fontWeight: 700,
+                    padding: '0.5rem 1rem',
+                    fontSize: '0.82rem',
+                    fontWeight: 800,
                     cursor: 'pointer'
                   }}
                 >
@@ -333,45 +326,63 @@ export default function ScreeningContainer() {
             </div>
           )}
 
-          {/* Mitra Greeting Card */}
+          {/* Mitra Mascot Greeting Card */}
           <div
+            className="glass-card"
             style={{
-              background: '#F0F4FF',
-              border: '1.5px solid #DBEAFE',
-              borderRadius: '24px',
-              padding: '1.25rem',
+              background: '#FFFFFF',
+              border: '2px solid #E0E7FF',
+              borderRadius: '26px',
+              padding: '1.4rem',
               display: 'flex',
-              gap: '1rem',
-              alignItems: 'flex-start'
+              gap: '1.25rem',
+              alignItems: 'flex-start',
+              boxShadow: '0 8px 24px rgba(99, 102, 241, 0.06)'
             }}
           >
-            <div style={{ fontSize: '2.5rem', lineHeight: 1, userSelect: 'none' }}>🦉</div>
+            <div
+              className="avatar-halo"
+              style={{
+                width: '64px',
+                height: '64px',
+                borderRadius: '22px',
+                background: 'linear-gradient(135deg, #6366F1 0%, #4338CA 100%)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '2.4rem',
+                flexShrink: 0
+              }}
+            >
+              🦉
+            </div>
 
             <div style={{ flex: 1 }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.35rem' }}>
-                <h4 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#1E293B', margin: 0 }}>
-                  {isBengali ? 'মিত্রা বলছে:' : 'Mitra says:'}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
+                <h4 style={{ fontSize: '1.05rem', fontWeight: 900, color: '#1E293B', margin: 0 }}>
+                  {isHindi ? 'मित्रा कहती है:' : (isBengali ? 'মিত্রা বলছে:' : 'Mitra says:')}
                 </h4>
                 <button
                   onClick={handleMitraIntroAudio}
                   style={{
-                    background: 'white',
-                    border: '1px solid #CBD5E1',
+                    background: '#F8FAFC',
+                    border: '1.5px solid #CBD5E1',
                     borderRadius: '50%',
-                    width: '28px',
-                    height: '28px',
+                    width: '34px',
+                    height: '34px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    color: '#6366F1'
                   }}
                   title={t('listen')}
                 >
-                  <Volume2 size={15} color="#4F46E5" />
+                  <Volume2 size={17} />
                 </button>
               </div>
 
-              <p style={{ fontSize: '0.82rem', color: '#475569', lineHeight: 1.45, margin: '0 0 0.85rem' }}>
+              <p style={{ fontSize: '0.86rem', color: '#475569', lineHeight: 1.5, margin: '0 0 1rem' }}>
                 {activeLanguage?.id === 'hindi'
                   ? 'अक्षरमित्र में आपका स्वागत है! हम अक्षरों की दिशा, तुकबंदी और कहानी पढ़ने के 3 मजेदार खेल खेलेंगे। क्या आप तैयार हैं?'
                   : activeLanguage?.id === 'bengali'
@@ -384,113 +395,182 @@ export default function ScreeningContainer() {
                   playStarTwinkle();
                   handleStartQuest(1); // Start with Quest 1: Mirror Letters
                 }}
-                className="animate-pulse-glow"
+                className="btn-3d btn-3d-indigo"
                 style={{
-                  background: '#4F46E5',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '9999px',
-                  padding: '0.55rem 1.35rem',
-                  fontSize: '0.85rem',
-                  fontWeight: 800,
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 12px rgba(79, 70, 229, 0.3)'
+                  padding: '0.7rem 1.6rem',
+                  fontSize: '0.92rem',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.45rem'
                 }}
               >
-                {activeProfile?.screeningCompleted ? (isBengali ? 'আবার স্ক্রীনিং শুরু করো' : 'Retake 3-Step Screening') : (isBengali ? '৩-ধাপের স্ক্রীনিং শুরু করো 🚀' : 'Start 3-Step Screening 🚀')}
+                <Play size={16} fill="white" color="white" />
+                <span>{activeProfile?.screeningCompleted ? (isBengali ? 'আবার স্ক্রীনিং শুরু করো' : 'Retake 3-Step Screening') : (isBengali ? '৩-ধাপের স্ক্রীনিং শুরু করো 🚀' : 'Start 3-Step Screening 🚀')}</span>
               </button>
             </div>
           </div>
 
-          {/* Quest Roadmap Section */}
+          {/* Quest Roadmap 3D Tiles */}
           <div>
-            <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1E293B', margin: '0 0 0.85rem' }}>
-              {isBengali ? 'অভিযানের ধাপসমূহ' : 'Quest Roadmap'}
+            <h3 style={{ fontSize: '1.3rem', fontWeight: 900, color: '#1E293B', margin: '0 0 1rem' }}>
+              {isHindi ? 'स्क्रीनिंग के 3 जादुई चरण' : (isBengali ? 'অভিযানের ৩টি ধাপ' : '3 Screening Quests')}
             </h3>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.9rem' }}>
               {/* Quest 1: Mirror Letters */}
               <div
                 onClick={() => handleStartQuest(1)}
+                className="quest-island-card"
                 style={{
                   background: 'white',
-                  borderRadius: '20px',
-                  padding: '1rem 1.15rem',
-                  border: '1.5px solid #E2E8F0',
+                  borderRadius: '24px',
+                  padding: '1.2rem 1.35rem',
+                  border: '2px solid #E2E8F0',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '1rem',
+                  gap: '1.15rem',
                   cursor: 'pointer',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
-                  transition: 'transform 0.15s ease'
+                  boxShadow: '0 4px 14px rgba(0,0,0,0.04)'
                 }}
               >
-                <div style={{ fontSize: '2rem' }}>🪞</div>
+                <div
+                  style={{
+                    width: '56px',
+                    height: '56px',
+                    borderRadius: '18px',
+                    background: '#EEF2FF',
+                    border: '1.5px solid #C7D2FE',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '2rem',
+                    flexShrink: 0
+                  }}
+                >
+                  🪞
+                </div>
                 <div style={{ flex: 1 }}>
-                  <h4 style={{ fontSize: '0.98rem', fontWeight: 800, color: '#1E293B', margin: '0 0 0.15rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.15rem' }}>
+                    <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#4F46E5', background: '#EEF2FF', padding: '0.15rem 0.5rem', borderRadius: '9999px' }}>
+                      QUEST 1
+                    </span>
+                    <span style={{ fontSize: '0.76rem', color: '#94A3B8' }}>•</span>
+                    <span style={{ fontSize: '0.76rem', color: '#64748B', fontWeight: 700 }}>Visual Orientation</span>
+                  </div>
+                  <h4 style={{ fontSize: '1.05rem', fontWeight: 900, color: '#1E293B', margin: '0 0 0.15rem' }}>
                     {t('round1Title')}
                   </h4>
-                  <p style={{ fontSize: '0.8rem', color: '#64748B', margin: 0 }}>
+                  <p style={{ fontSize: '0.82rem', color: '#64748B', margin: 0, lineHeight: 1.4 }}>
                     {t('round1Desc')}
                   </p>
                 </div>
-                <ArrowRight size={18} color="#94A3B8" />
+                <div className="btn-3d btn-3d-indigo" style={{ padding: '0.45rem 0.85rem', borderRadius: '9999px' }}>
+                  <ArrowRight size={16} />
+                </div>
               </div>
 
               {/* Quest 2: Rhyme Beats */}
               <div
                 onClick={() => handleStartQuest(2)}
+                className="quest-island-card"
                 style={{
                   background: 'white',
-                  borderRadius: '20px',
-                  padding: '1rem 1.15rem',
-                  border: '1.5px solid #E2E8F0',
+                  borderRadius: '24px',
+                  padding: '1.2rem 1.35rem',
+                  border: '2px solid #E2E8F0',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '1rem',
+                  gap: '1.15rem',
                   cursor: 'pointer',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
-                  transition: 'transform 0.15s ease'
+                  boxShadow: '0 4px 14px rgba(0,0,0,0.04)'
                 }}
               >
-                <div style={{ fontSize: '2rem' }}>🥁</div>
+                <div
+                  style={{
+                    width: '56px',
+                    height: '56px',
+                    borderRadius: '18px',
+                    background: '#ECFDF5',
+                    border: '1.5px solid #A7F3D0',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '2rem',
+                    flexShrink: 0
+                  }}
+                >
+                  🥁
+                </div>
                 <div style={{ flex: 1 }}>
-                  <h4 style={{ fontSize: '0.98rem', fontWeight: 800, color: '#1E293B', margin: '0 0 0.15rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.15rem' }}>
+                    <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#059669', background: '#ECFDF5', padding: '0.15rem 0.5rem', borderRadius: '9999px' }}>
+                      QUEST 2
+                    </span>
+                    <span style={{ fontSize: '0.76rem', color: '#94A3B8' }}>•</span>
+                    <span style={{ fontSize: '0.76rem', color: '#64748B', fontWeight: 700 }}>Phonological Beats</span>
+                  </div>
+                  <h4 style={{ fontSize: '1.05rem', fontWeight: 900, color: '#1E293B', margin: '0 0 0.15rem' }}>
                     {t('round2Title')}
                   </h4>
-                  <p style={{ fontSize: '0.8rem', color: '#64748B', margin: 0 }}>
+                  <p style={{ fontSize: '0.82rem', color: '#64748B', margin: 0, lineHeight: 1.4 }}>
                     {t('round2Desc')}
                   </p>
                 </div>
-                <ArrowRight size={18} color="#94A3B8" />
+                <div className="btn-3d btn-3d-emerald" style={{ padding: '0.45rem 0.85rem', borderRadius: '9999px' }}>
+                  <ArrowRight size={16} />
+                </div>
               </div>
 
               {/* Quest 3: Read Aloud */}
               <div
                 onClick={() => handleStartQuest(3)}
+                className="quest-island-card"
                 style={{
                   background: 'white',
-                  borderRadius: '20px',
-                  padding: '1rem 1.15rem',
-                  border: '1.5px solid #E2E8F0',
+                  borderRadius: '24px',
+                  padding: '1.2rem 1.35rem',
+                  border: '2px solid #E2E8F0',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '1rem',
+                  gap: '1.15rem',
                   cursor: 'pointer',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
-                  transition: 'transform 0.15s ease'
+                  boxShadow: '0 4px 14px rgba(0,0,0,0.04)'
                 }}
               >
-                <div style={{ fontSize: '2rem' }}>🎙️</div>
+                <div
+                  style={{
+                    width: '56px',
+                    height: '56px',
+                    borderRadius: '18px',
+                    background: '#FFFBEB',
+                    border: '1.5px solid #FDE68A',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '2rem',
+                    flexShrink: 0
+                  }}
+                >
+                  🎙️
+                </div>
                 <div style={{ flex: 1 }}>
-                  <h4 style={{ fontSize: '0.98rem', fontWeight: 800, color: '#1E293B', margin: '0 0 0.15rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.15rem' }}>
+                    <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#D97706', background: '#FFFBEB', padding: '0.15rem 0.5rem', borderRadius: '9999px' }}>
+                      QUEST 3
+                    </span>
+                    <span style={{ fontSize: '0.76rem', color: '#94A3B8' }}>•</span>
+                    <span style={{ fontSize: '0.76rem', color: '#64748B', fontWeight: 700 }}>Reading Fluency</span>
+                  </div>
+                  <h4 style={{ fontSize: '1.05rem', fontWeight: 900, color: '#1E293B', margin: '0 0 0.15rem' }}>
                     {t('round3Title')}
                   </h4>
-                  <p style={{ fontSize: '0.8rem', color: '#64748B', margin: 0 }}>
+                  <p style={{ fontSize: '0.82rem', color: '#64748B', margin: 0, lineHeight: 1.4 }}>
                     {t('round3Desc')}
                   </p>
                 </div>
-                <ArrowRight size={18} color="#94A3B8" />
+                <div className="btn-3d btn-3d-amber" style={{ padding: '0.45rem 0.85rem', borderRadius: '9999px' }}>
+                  <ArrowRight size={16} />
+                </div>
               </div>
             </div>
           </div>
@@ -501,19 +581,19 @@ export default function ScreeningContainer() {
           ACTIVE QUESTS (1: Mirror Letters, 2: Rhymes, 3: Read-Aloud)
          ───────────────────────────────────────────────────────────── */}
       {activeStep > 0 && activeStep < 4 && (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
           <button
             onClick={() => {
               playPop();
               setActiveStep(0);
             }}
             className="btn-secondary btn-pill"
-            style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.8rem', padding: '0.35rem 0.85rem' }}
+            style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.85rem', padding: '0.45rem 1rem' }}
           >
-            <ArrowLeft size={16} />
+            <ArrowLeft size={17} />
             <span>{t('screeningMap')}</span>
           </button>
-          <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#4F46E5', background: '#EEF2FF', padding: '0.25rem 0.75rem', borderRadius: '9999px' }}>
+          <span style={{ fontSize: '0.85rem', fontWeight: 900, color: '#4F46E5', background: '#EEF2FF', padding: '0.35rem 0.9rem', borderRadius: '9999px', border: '1px solid #C7D2FE' }}>
             {t('questWord')} {activeStep} {t('ofWord')} 3
           </span>
         </div>
@@ -524,29 +604,29 @@ export default function ScreeningContainer() {
       {activeStep === 3 && <ReadAloudQuest onCompleteQuest={handleQuestComplete} />}
 
       {/* ─────────────────────────────────────────────────────────────
-          VIEW 4: CONCLUSION SNAPSHOT CARD (Cross-Signal Diagnosis)
+          VIEW 4: CONCLUSION CELEBRATION SNAPSHOT CARD
          ───────────────────────────────────────────────────────────── */}
       {activeStep === 4 && (
         <div
           className="glass-card"
           style={{
-            padding: '2rem 1.5rem',
+            padding: '2.25rem 1.75rem',
             textAlign: 'center',
-            borderRadius: '28px',
-            background: 'white',
-            boxShadow: '0 16px 36px rgba(79, 70, 229, 0.12)',
-            border: '2px solid #E0E7FF'
+            borderRadius: '32px',
+            background: '#FFFFFF',
+            boxShadow: '0 20px 45px rgba(79, 70, 229, 0.15)',
+            border: '2.5px solid #E0E7FF'
           }}
         >
-          <div style={{ fontSize: '3.5rem', marginBottom: '0.25rem' }}>🏆</div>
-          <div style={{ display: 'inline-block', background: '#FEF3C7', color: '#B45309', padding: '0.3rem 1rem', borderRadius: '9999px', fontSize: '0.8rem', fontWeight: 800, marginBottom: '0.5rem' }}>
-            {t('questReward')}
+          <div style={{ fontSize: '4rem', marginBottom: '0.35rem', filter: 'drop-shadow(0 6px 12px rgba(0,0,0,0.1))' }}>🏆</div>
+          <div style={{ display: 'inline-block', background: '#FEF3C7', color: '#B45309', padding: '0.35rem 1.15rem', borderRadius: '9999px', fontSize: '0.85rem', fontWeight: 900, marginBottom: '0.65rem' }}>
+            {t('questReward')} • +35 Stars ⭐
           </div>
 
-          <h2 style={{ fontSize: '1.65rem', fontWeight: 800, color: '#1E293B', margin: '0 0 0.25rem' }}>
-            {t('screeningCompleteHeader')} {activeProfile?.name || (isBengali ? 'অনন্য' : 'Explorer')}!
+          <h2 style={{ fontSize: '1.8rem', fontWeight: 900, color: '#1E293B', margin: '0 0 0.35rem', letterSpacing: '-0.02em' }}>
+            {t('screeningCompleteHeader')} {studentName}!
           </h2>
-          <p style={{ fontSize: '0.85rem', color: '#64748B', margin: '0 0 1.25rem' }}>
+          <p style={{ fontSize: '0.9rem', color: '#64748B', margin: '0 0 1.5rem', lineHeight: 1.5 }}>
             {t('mitraAnalyzedDesc')}
           </p>
 
@@ -554,52 +634,52 @@ export default function ScreeningContainer() {
           <div
             style={{
               background: '#F8FAFC',
-              borderRadius: '20px',
-              padding: '1.25rem',
-              border: '1.5px solid #E2E8F0',
+              borderRadius: '24px',
+              padding: '1.4rem',
+              border: '2px solid #E2E8F0',
               textAlign: 'left',
-              marginBottom: '1.25rem'
+              marginBottom: '1.5rem'
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', paddingBottom: '0.5rem', borderBottom: '1px solid #E2E8F0' }}>
-              <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#1E293B' }}>{t('diagnosticSnapshotTitle')}</span>
-              <span style={{ fontSize: '0.72rem', padding: '0.2rem 0.6rem', borderRadius: '9999px', background: isIncomplete ? '#F1F5F9' : isTypical ? '#D1FAE5' : '#FEF3C7', color: isIncomplete ? '#475569' : isTypical ? '#065F46' : '#92400E', fontWeight: 700 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.85rem', paddingBottom: '0.65rem', borderBottom: '1.5px solid #E2E8F0' }}>
+              <span style={{ fontSize: '0.92rem', fontWeight: 900, color: '#1E293B' }}>{t('diagnosticSnapshotTitle')}</span>
+              <span style={{ fontSize: '0.76rem', padding: '0.25rem 0.75rem', borderRadius: '9999px', background: isIncomplete ? '#F1F5F9' : isTypical ? '#D1FAE5' : '#FEF3C7', color: isIncomplete ? '#475569' : isTypical ? '#065F46' : '#92400E', fontWeight: 800 }}>
                 {isIncomplete ? 'Incomplete' : isTypical ? t('typicalDevBadge') : t('targetedSupportBadge')}
               </span>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.82rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.88rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ color: '#64748B', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                <span style={{ color: '#64748B', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
                   <span>🪞</span> {t('letterAccuracyLabel')}
                 </span>
-                <span style={{ fontWeight: 800, color: sessionData.mirrorLetters ? (visualAccuracy >= 75 ? '#10B981' : '#F59E0B') : '#94A3B8' }}>
+                <span style={{ fontWeight: 900, color: sessionData.mirrorLetters ? (visualAccuracy >= 75 ? '#10B981' : '#F59E0B') : '#94A3B8' }}>
                   {sessionData.mirrorLetters ? `${visualAccuracy}% ${t('accuracyUnit')}` : 'Incomplete'}
                 </span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ color: '#64748B', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                <span style={{ color: '#64748B', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
                   <span>🥁</span> {t('phonoScoreLabel')}
                 </span>
-                <span style={{ fontWeight: 800, color: sessionData.rhymeBeats ? (phonologicalScore >= 75 ? '#0284C7' : '#F59E0B') : '#94A3B8' }}>
+                <span style={{ fontWeight: 900, color: sessionData.rhymeBeats ? (phonologicalScore >= 75 ? '#0284C7' : '#F59E0B') : '#94A3B8' }}>
                   {sessionData.rhymeBeats ? `${phonologicalScore}% ${t('scoreUnit')}` : 'Incomplete'}
                 </span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ color: '#64748B', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                <span style={{ color: '#64748B', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
                   <span>🎙️</span> {t('readingFluencyLabel')}
                 </span>
-                <span style={{ fontWeight: 800, color: sessionData.readAloud ? '#4F46E5' : '#94A3B8' }}>
+                <span style={{ fontWeight: 900, color: sessionData.readAloud ? '#4F46E5' : '#94A3B8' }}>
                   {sessionData.readAloud ? `${readingWpm} ${t('wpmUnit')}` : 'Incomplete'}
                 </span>
               </div>
             </div>
 
-            <div style={{ marginTop: '0.85rem', background: isIncomplete ? '#F8FAFC' : isTypical ? '#ECFDF5' : '#EEF2FF', padding: '0.85rem', borderRadius: '14px', border: isIncomplete ? '1.5px solid #E2E8F0' : isTypical ? '1.5px solid #A7F3D0' : '1.5px solid #C7D2FE' }}>
-              <div style={{ fontSize: '0.78rem', fontWeight: 800, color: isIncomplete ? '#475569' : isTypical ? '#065F46' : '#4338CA', marginBottom: '0.25rem' }}>
+            <div style={{ marginTop: '1rem', background: isIncomplete ? '#F8FAFC' : isTypical ? '#ECFDF5' : '#EEF2FF', padding: '1rem', borderRadius: '18px', border: isIncomplete ? '1.5px solid #E2E8F0' : isTypical ? '1.5px solid #A7F3D0' : '1.5px solid #C7D2FE' }}>
+              <div style={{ fontSize: '0.85rem', fontWeight: 900, color: isIncomplete ? '#475569' : isTypical ? '#065F46' : '#4338CA', marginBottom: '0.35rem' }}>
                 {isIncomplete ? 'Screening Incomplete' : isTypical ? t('trackATitle') : t('trackBTitle')}
               </div>
-              <div style={{ fontSize: '0.75rem', color: isIncomplete ? '#64748B' : isTypical ? '#047857' : '#3730A3', lineHeight: 1.45 }}>
+              <div style={{ fontSize: '0.8rem', color: isIncomplete ? '#64748B' : isTypical ? '#047857' : '#3730A3', lineHeight: 1.5 }}>
                 {isIncomplete ? (
                   'Please restart the screening to get your full recommendation.'
                 ) : isTypical ? (
@@ -636,30 +716,24 @@ export default function ScreeningContainer() {
           </div>
 
           {/* Dual Concluding Action Buttons */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
             <button
               onClick={() => {
                 playPop();
                 setCurrentView('games');
               }}
+              className={isTypical ? 'btn-3d btn-3d-indigo' : 'btn-3d btn-3d-emerald'}
               style={{
                 width: '100%',
-                background: isTypical ? 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)' : 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
-                color: 'white',
-                border: 'none',
-                borderRadius: '9999px',
                 padding: '0.85rem',
-                fontSize: '0.95rem',
-                fontWeight: 800,
-                cursor: 'pointer',
+                fontSize: '1rem',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '0.5rem',
-                boxShadow: isTypical ? '0 4px 12px rgba(59, 130, 246, 0.3)' : '0 4px 12px rgba(16, 185, 129, 0.3)'
+                gap: '0.5rem'
               }}
             >
-              <Sparkles size={18} />
+              <Sparkles size={20} />
               <span>{isTypical ? t('launchTrackA') : t('launchTrackB')}</span>
             </button>
 
@@ -668,21 +742,15 @@ export default function ScreeningContainer() {
                 playPop();
                 setCurrentView('dashboard');
               }}
+              className="btn-3d btn-3d-amber"
               style={{
                 width: '100%',
-                background: '#4F46E5',
-                color: 'white',
-                border: 'none',
-                borderRadius: '9999px',
                 padding: '0.8rem',
                 fontSize: '0.95rem',
-                fontWeight: 800,
-                cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '0.5rem',
-                boxShadow: '0 4px 12px rgba(79, 70, 229, 0.25)'
+                gap: '0.5rem'
               }}
             >
               <Award size={18} />

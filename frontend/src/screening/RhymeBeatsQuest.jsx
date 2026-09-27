@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Volume2, CheckCircle, ArrowRight } from 'lucide-react';
+import { Volume2, CheckCircle, ArrowRight, Music, Sparkles } from 'lucide-react';
 import { useAudio } from '../context/AudioContext';
 import { useProfile } from '../context/ProfileContext';
 
@@ -207,7 +207,6 @@ export default function RhymeBeatsQuest({ onCompleteQuest }) {
       setSelectedOptId(null);
       setStatus('active');
     } else {
-      // Finalize Round 2 Metrics accurately based on child answers
       const totalPossible = questions.length;
       const correctTotal = Object.values(answers).filter(Boolean).length;
       const score = Math.round((correctTotal / totalPossible) * 100);
@@ -224,49 +223,63 @@ export default function RhymeBeatsQuest({ onCompleteQuest }) {
     <div
       className="glass-card"
       style={{
-        padding: '1.5rem',
-        borderRadius: '24px',
-        background: 'white',
-        border: '1.5px solid #E2E8F0',
+        padding: '1.75rem',
+        borderRadius: '28px',
+        background: '#FFFFFF',
+        border: '2px solid #BAE6FD',
+        boxShadow: '0 12px 32px rgba(2, 132, 199, 0.12)',
         display: 'flex',
         flexDirection: 'column',
-        gap: '1.25rem',
+        gap: '1.4rem',
         textAlign: 'center'
       }}
     >
       {/* Round Header & Audio Prompt */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#0284C7', background: '#E0F2FE', padding: '0.2rem 0.65rem', borderRadius: '9999px' }}>
+        <span
+          style={{
+            fontSize: '0.82rem',
+            fontWeight: 900,
+            color: '#0284C7',
+            background: '#E0F2FE',
+            padding: '0.3rem 0.85rem',
+            borderRadius: '9999px',
+            border: '1px solid #BAE6FD'
+          }}
+        >
           {isHindi ? `राउंड 2: तुकबंदी और ताल (${currentIdx + 1}/${questions.length})` : (isBengali ? `পর্ব ২: ছন্দ ও সুরের তাল (${currentIdx + 1}/${questions.length})` : `Round 2: Rhyme & Beats (${currentIdx + 1}/${questions.length})`)}
         </span>
         <button
           onClick={() => speakText(currentQ.audioPrompt, speechLang)}
           style={{
-            background: '#F8FAFC',
-            border: '1px solid #CBD5E1',
+            background: '#F0F9FF',
+            border: '1.5px solid #BAE6FD',
             borderRadius: '50%',
-            width: '32px',
-            height: '32px',
+            width: '36px',
+            height: '36px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            color: '#0284C7'
           }}
           title={isHindi ? 'सुनें' : (isBengali ? 'শুনুন' : 'Listen')}
         >
-          <Volume2 size={16} color="#0284C7" />
+          <Volume2 size={18} />
         </button>
       </div>
 
-      <div style={{ fontSize: '3.5rem', margin: '0.2rem 0' }}>{currentQ.emoji}</div>
+      <div style={{ fontSize: '3.8rem', margin: '0.2rem 0', filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.1))' }}>
+        {currentQ.emoji}
+      </div>
 
-      <h3 style={{ fontSize: '1.15rem', color: '#1E293B', margin: 0, fontWeight: 800 }}>
+      <h3 style={{ fontSize: '1.25rem', color: '#1E293B', margin: 0, fontWeight: 900, lineHeight: 1.4 }}>
         {currentQ.instruction}
       </h3>
 
-      {/* Mode 1: Rhyme Word Options */}
+      {/* Mode 1: Rhyme Word Options with 3D tactile buttons */}
       {currentQ.type === 'rhyme_match' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem', width: '100%' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.85rem', width: '100%' }}>
           {currentQ.options.map((opt) => {
             const isSelected = selectedOptId === opt.id;
             const isCorrect = opt.isCorrect;
@@ -275,13 +288,14 @@ export default function RhymeBeatsQuest({ onCompleteQuest }) {
               <button
                 key={opt.id}
                 onClick={() => handlePickRhyme(opt)}
+                className="quest-island-card"
                 style={{
-                  padding: '1rem 0.5rem',
-                  borderRadius: '18px',
+                  padding: '1.25rem 0.6rem',
+                  borderRadius: '22px',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
-                  gap: '0.35rem',
+                  gap: '0.45rem',
                   border: isSelected
                     ? isCorrect
                       ? '3px solid #10B981'
@@ -301,14 +315,14 @@ export default function RhymeBeatsQuest({ onCompleteQuest }) {
                   transform: isSelected ? 'scale(1.05)' : 'scale(1)',
                   boxShadow: isSelected
                     ? isCorrect
-                      ? '0 4px 12px rgba(16, 185, 129, 0.25)'
-                      : '0 4px 12px rgba(245, 158, 11, 0.25)'
-                    : 'none',
+                      ? '0 6px 16px rgba(16, 185, 129, 0.3)'
+                      : '0 6px 16px rgba(245, 158, 11, 0.3)'
+                    : '0 4px 10px rgba(0,0,0,0.03)',
                   transition: 'all 0.15s ease'
                 }}
               >
-                <span style={{ fontSize: '1.8rem' }}>{opt.emoji}</span>
-                <span style={{ fontSize: '1rem', fontWeight: 800, color: '#1E293B', fontFamily: isBengali ? 'var(--font-bengali)' : "'Lexend', sans-serif" }}>
+                <span style={{ fontSize: '2.2rem' }}>{opt.emoji}</span>
+                <span style={{ fontSize: '1.15rem', fontWeight: 900, color: '#1E293B', fontFamily: isBengali ? 'var(--font-bengali)' : "'Lexend', sans-serif" }}>
                   {opt.word}
                 </span>
               </button>
@@ -317,9 +331,9 @@ export default function RhymeBeatsQuest({ onCompleteQuest }) {
         </div>
       )}
 
-      {/* Mode 2: Syllable Clapping Beat Numbers */}
+      {/* Mode 2: Syllable Clapping Beat Numbers with 3D tactile pads */}
       {currentQ.type === 'syllable_beat' && (
-        <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', width: '100%' }}>
+        <div style={{ display: 'flex', gap: '0.9rem', justifyContent: 'center', width: '100%' }}>
           {currentQ.options.map((num) => {
             const isSelected = selectedOptId === num;
             const isCorrect = num === currentQ.syllableCount;
@@ -329,22 +343,22 @@ export default function RhymeBeatsQuest({ onCompleteQuest }) {
                 key={num}
                 onClick={() => handlePickSyllable(num)}
                 style={{
-                  width: '64px',
-                  height: '64px',
-                  borderRadius: '18px',
-                  fontSize: '1.6rem',
+                  width: '68px',
+                  height: '68px',
+                  borderRadius: '20px',
+                  fontSize: '1.8rem',
                   fontWeight: 900,
                   fontFamily: isBengali ? 'var(--font-bengali)' : "'Lexend', sans-serif",
                   border: isSelected
                     ? isCorrect
                       ? '3px solid #10B981'
                       : '3px solid #F59E0B'
-                    : '2px solid #E2E8F0',
+                    : '2px solid #CBD5E1',
                   background: isSelected
                     ? isCorrect
                       ? '#D1FAE5'
                       : '#FEF3C7'
-                    : '#F8FAFC',
+                    : '#FFFFFF',
                   color: isSelected
                     ? isCorrect
                       ? '#047857'
@@ -354,9 +368,9 @@ export default function RhymeBeatsQuest({ onCompleteQuest }) {
                   transform: isSelected ? 'scale(1.08)' : 'scale(1)',
                   boxShadow: isSelected
                     ? isCorrect
-                      ? '0 4px 12px rgba(16, 185, 129, 0.25)'
-                      : '0 4px 12px rgba(245, 158, 11, 0.25)'
-                    : 'none'
+                      ? '0 6px 16px rgba(16, 185, 129, 0.3)'
+                      : '0 6px 16px rgba(245, 158, 11, 0.3)'
+                    : '0 4px 8px rgba(0,0,0,0.06)'
                 }}
               >
                 {num}
@@ -366,27 +380,20 @@ export default function RhymeBeatsQuest({ onCompleteQuest }) {
         </div>
       )}
 
-      {/* Next Step Banner */}
+      {/* Next Step 3D Button */}
       {status === 'completed_step' && (
         <div style={{ marginTop: '0.5rem' }}>
           <button
             onClick={handleNextStep}
-            className="animate-pulse-glow"
+            className="btn-3d btn-3d-sky"
             style={{
               width: '100%',
-              background: '#0284C7',
-              color: 'white',
-              border: 'none',
-              borderRadius: '9999px',
-              padding: '0.75rem',
-              fontSize: '1rem',
-              fontWeight: 800,
-              cursor: 'pointer',
+              padding: '0.85rem',
+              fontSize: '1.05rem',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '0.4rem',
-              boxShadow: '0 4px 12px rgba(2, 132, 199, 0.3)'
+              gap: '0.45rem'
             }}
           >
             <span>{isBengali ? 'পরবর্তী ধাপে এগিয়ে যাও' : 'Continue to Next'}</span>

@@ -590,54 +590,66 @@ export default function MirrorLetterQuest({ onCompleteQuest }) {
     <div
       className="glass-card"
       style={{
-        padding: '1.5rem',
-        borderRadius: '24px',
-        background: 'white',
-        border: '1.5px solid #E2E8F0',
+        padding: '1.75rem',
+        borderRadius: '28px',
+        background: '#FFFFFF',
+        border: '2px solid #C7D2FE',
+        boxShadow: '0 12px 32px rgba(79, 70, 229, 0.12)',
         display: 'flex',
         flexDirection: 'column',
-        gap: '1.15rem',
+        gap: '1.3rem',
         textAlign: 'center'
       }}
     >
       {/* Question Header & Audio Prompt */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#4F46E5', background: '#EEF2FF', padding: '0.25rem 0.75rem', borderRadius: '9999px' }}>
+        <span
+          style={{
+            fontSize: '0.82rem',
+            fontWeight: 900,
+            color: '#4F46E5',
+            background: '#EEF2FF',
+            padding: '0.3rem 0.85rem',
+            borderRadius: '9999px',
+            border: '1px solid #C7D2FE'
+          }}
+        >
           {isHindi ? `राउंड 1: अक्षर और दृष्टि दिशा (${currentIdx + 1}/${questions.length})` : (isBengali ? `পর্ব ১: বর্ণ ও দৃষ্টিগত দিক (${currentIdx + 1}/${questions.length})` : `Round 1: Visual Orientation (${currentIdx + 1}/${questions.length})`)}
         </span>
         <button
           onClick={() => speakText(currentQ.audioPrompt, speechLang)}
           style={{
             background: '#F8FAFC',
-            border: '1px solid #CBD5E1',
+            border: '1.5px solid #CBD5E1',
             borderRadius: '50%',
-            width: '32px',
-            height: '32px',
+            width: '36px',
+            height: '36px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            color: '#4F46E5'
           }}
           title="Hear instruction"
         >
-          <Volume2 size={16} color="#4F46E5" />
+          <Volume2 size={18} />
         </button>
       </div>
 
       <div>
-        <h3 style={{ fontSize: '1.15rem', color: '#1E293B', margin: '0 0 0.25rem', fontWeight: 800 }}>
+        <h3 style={{ fontSize: '1.25rem', color: '#1E293B', margin: '0 0 0.35rem', fontWeight: 900, lineHeight: 1.4 }}>
           {currentQ.instruction}
         </h3>
         {currentQ.ruleText && (
-          <p style={{ fontSize: '0.82rem', color: '#4338CA', background: '#EEF2FF', padding: '0.3rem 0.8rem', borderRadius: '8px', display: 'inline-block', margin: '0.25rem 0 0', fontWeight: 700 }}>
+          <p style={{ fontSize: '0.85rem', color: '#4338CA', background: '#EEF2FF', padding: '0.4rem 0.9rem', borderRadius: '12px', display: 'inline-block', margin: '0.35rem 0 0', fontWeight: 800, border: '1px solid #C7D2FE' }}>
             💡 {currentQ.ruleText}
           </p>
         )}
       </div>
 
-      {/* Mode 1 & 2: Letter Grid Selection */}
+      {/* Mode 1 & 2: Letter Grid Selection with 3D tactile buttons */}
       {currentQ.type === 'pick_target' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem', maxWidth: '340px', margin: '0 auto', width: '100%' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.85rem', maxWidth: '360px', margin: '0 auto', width: '100%' }}>
           {currentQ.options.map((opt) => {
             const isPicked = selectedIds.has(opt.id);
             return (
@@ -645,17 +657,18 @@ export default function MirrorLetterQuest({ onCompleteQuest }) {
                 key={opt.id}
                 onClick={() => handlePickOption(opt)}
                 style={{
-                  height: '74px',
-                  borderRadius: '18px',
-                  fontSize: '2.2rem',
+                  height: '78px',
+                  borderRadius: '20px',
+                  fontSize: '2.4rem',
                   fontWeight: 900,
-                  fontFamily: "'Lexend', sans-serif",
-                  border: isPicked ? (opt.isTarget ? '3px solid #10B981' : '3px solid #F59E0B') : '2px solid #E2E8F0',
+                  fontFamily: isBengali ? 'var(--font-bengali)' : (isHindi ? 'var(--font-devanagari)' : "'Lexend', sans-serif"),
+                  border: isPicked ? (opt.isTarget ? '3.5px solid #10B981' : '3.5px solid #F59E0B') : '2px solid #E2E8F0',
                   background: isPicked ? (opt.isTarget ? '#D1FAE5' : '#FEF3C7') : '#F8FAFC',
                   color: isPicked ? (opt.isTarget ? '#047857' : '#B45309') : '#1E293B',
                   cursor: 'pointer',
+                  transform: isPicked ? 'scale(1.06)' : 'scale(1)',
                   transition: 'all 0.15s ease',
-                  boxShadow: isPicked ? (opt.isTarget ? '0 4px 12px rgba(16, 185, 129, 0.25)' : '0 4px 12px rgba(245, 158, 11, 0.25)') : 'none'
+                  boxShadow: isPicked ? (opt.isTarget ? '0 6px 16px rgba(16, 185, 129, 0.3)' : '0 6px 16px rgba(245, 158, 11, 0.3)') : '0 4px 8px rgba(0,0,0,0.03)'
                 }}
               >
                 {opt.char}
@@ -667,7 +680,7 @@ export default function MirrorLetterQuest({ onCompleteQuest }) {
 
       {/* Mode 3: Word Orientation Choice (was vs saw) */}
       {currentQ.type === 'word_orientation' && (
-        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', width: '100%' }}>
+        <div style={{ display: 'flex', gap: '1.25rem', justifyContent: 'center', width: '100%' }}>
           {currentQ.options.map((opt) => {
             const isPicked = selectedIds.has(opt.id);
             return (
@@ -676,17 +689,18 @@ export default function MirrorLetterQuest({ onCompleteQuest }) {
                 onClick={() => handlePickOption(opt)}
                 style={{
                   flex: 1,
-                  maxWidth: '160px',
-                  padding: '1.25rem 1rem',
-                  borderRadius: '18px',
-                  fontSize: '1.6rem',
+                  maxWidth: '170px',
+                  padding: '1.35rem 1rem',
+                  borderRadius: '22px',
+                  fontSize: '1.8rem',
                   fontWeight: 900,
-                  fontFamily: "'Lexend', sans-serif",
-                  border: isPicked ? (opt.isCorrect ? '3px solid #10B981' : '3px solid #F59E0B') : '2px solid #E2E8F0',
-                  background: isPicked ? (opt.isCorrect ? '#D1FAE5' : '#FEF3C7') : '#F8FAFC',
-                  color: isPicked ? (opt.isCorrect ? '#047857' : '#B45309') : '#1E293B',
+                  fontFamily: isBengali ? 'var(--font-bengali)' : (isHindi ? 'var(--font-devanagari)' : "'Lexend', sans-serif"),
+                  border: isPicked ? (opt.isTarget ? '3.5px solid #10B981' : '3.5px solid #F59E0B') : '2px solid #E2E8F0',
+                  background: isPicked ? (opt.isTarget ? '#D1FAE5' : '#FEF3C7') : '#F8FAFC',
+                  color: isPicked ? (opt.isTarget ? '#047857' : '#B45309') : '#1E293B',
                   cursor: 'pointer',
-                  boxShadow: isPicked ? (opt.isCorrect ? '0 4px 12px rgba(16, 185, 129, 0.25)' : '0 4px 12px rgba(245, 158, 11, 0.25)') : 'none'
+                  transform: isPicked ? 'scale(1.05)' : 'scale(1)',
+                  boxShadow: isPicked ? (opt.isTarget ? '0 6px 16px rgba(16, 185, 129, 0.3)' : '0 6px 16px rgba(245, 158, 11, 0.3)') : '0 4px 10px rgba(0,0,0,0.03)'
                 }}
               >
                 {opt.word}
@@ -698,27 +712,27 @@ export default function MirrorLetterQuest({ onCompleteQuest }) {
 
       {/* Mode 4 & 5: High-Precision Guided Direction Tracing */}
       {isTracing && (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.85rem' }}>
           {/* Tracing Controls Bar */}
-          <div style={{ display: 'flex', gap: '0.5rem', width: '100%', maxWidth: '260px', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', gap: '0.6rem', width: '100%', maxWidth: '280px', justifyContent: 'space-between' }}>
             <button
               onClick={handleDemonstration}
               disabled={isDemonstrating}
               style={{
                 background: '#EEF2FF',
                 color: '#4F46E5',
-                border: '1px solid #C7D2FE',
-                borderRadius: '12px',
-                padding: '0.4rem 0.75rem',
-                fontSize: '0.75rem',
+                border: '1.5px solid #C7D2FE',
+                borderRadius: '14px',
+                padding: '0.45rem 0.85rem',
+                fontSize: '0.8rem',
                 fontWeight: 800,
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.3rem',
+                gap: '0.35rem',
                 cursor: isDemonstrating ? 'not-allowed' : 'pointer'
               }}
             >
-              <Sparkles size={14} />
+              <Sparkles size={15} />
               <span>{isDemonstrating ? 'Showing...' : 'Show Me'}</span>
             </button>
 
@@ -728,18 +742,18 @@ export default function MirrorLetterQuest({ onCompleteQuest }) {
               style={{
                 background: '#F8FAFC',
                 color: '#64748B',
-                border: '1px solid #E2E8F0',
-                borderRadius: '12px',
-                padding: '0.4rem 0.75rem',
-                fontSize: '0.75rem',
+                border: '1.5px solid #E2E8F0',
+                borderRadius: '14px',
+                padding: '0.45rem 0.85rem',
+                fontSize: '0.8rem',
                 fontWeight: 700,
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.3rem',
+                gap: '0.35rem',
                 cursor: 'pointer'
               }}
             >
-              <RotateCcw size={14} />
+              <RotateCcw size={15} />
               <span>Clear</span>
             </button>
           </div>
@@ -748,10 +762,10 @@ export default function MirrorLetterQuest({ onCompleteQuest }) {
           <div
             style={{
               position: 'relative',
-              width: '260px',
-              height: '250px',
+              width: '280px',
+              height: '260px',
               background: '#F8FAFC',
-              borderRadius: '24px',
+              borderRadius: '26px',
               border: '2.5px dashed #CBD5E1',
               touchAction: 'none',
               overflow: 'hidden',
@@ -766,10 +780,10 @@ export default function MirrorLetterQuest({ onCompleteQuest }) {
                 top: '50%',
                 left: '50%',
                 transform: 'translate(-50%, -50%)',
-                fontSize: '180px',
+                fontSize: '190px',
                 fontWeight: 900,
                 color: 'rgba(203, 213, 225, 0.45)',
-                fontFamily: "'Lexend', sans-serif",
+                fontFamily: isBengali ? 'var(--font-bengali)' : (isHindi ? 'var(--font-devanagari)' : "'Lexend', sans-serif"),
                 lineHeight: 1,
                 pointerEvents: 'none',
                 zIndex: 0
@@ -789,13 +803,13 @@ export default function MirrorLetterQuest({ onCompleteQuest }) {
                     left: `${dot.x}px`,
                     top: `${dot.y}px`,
                     transform: 'translate(-50%, -50%)',
-                    width: '26px',
-                    height: '26px',
+                    width: '28px',
+                    height: '28px',
                     borderRadius: '50%',
                     background: isHit ? '#10B981' : '#F59E0B',
-                    border: '2px solid white',
-                    boxShadow: isHit ? '0 0 10px rgba(16, 185, 129, 0.6)' : '0 2px 6px rgba(0,0,0,0.15)',
-                    fontSize: '0.7rem',
+                    border: '2.5px solid white',
+                    boxShadow: isHit ? '0 0 12px rgba(16, 185, 129, 0.7)' : '0 2px 8px rgba(0,0,0,0.18)',
+                    fontSize: '0.75rem',
                     color: 'white',
                     fontWeight: 900,
                     display: 'flex',
@@ -804,7 +818,7 @@ export default function MirrorLetterQuest({ onCompleteQuest }) {
                     zIndex: 2,
                     pointerEvents: 'none',
                     transition: 'all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                    scale: isHit ? '1.15' : '1'
+                    transformOrigin: 'center center'
                   }}
                 >
                   {isHit ? '✓' : dot.label || dot.id}
@@ -815,8 +829,8 @@ export default function MirrorLetterQuest({ onCompleteQuest }) {
             {/* Live Interactive Tracing Canvas */}
             <canvas
               ref={canvasRef}
-              width={260}
-              height={250}
+              width={280}
+              height={260}
               onMouseDown={startTracing}
               onMouseMove={drawTracing}
               onMouseUp={stopTracing}
@@ -837,15 +851,15 @@ export default function MirrorLetterQuest({ onCompleteQuest }) {
           </div>
 
           {feedbackError && (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', color: '#DC2626', background: '#FEE2E2', border: '1.5px solid #FCA5A5', padding: '0.45rem 0.75rem', borderRadius: '12px', fontWeight: '700', fontSize: '0.82rem', maxWidth: '260px', width: '100%', boxShadow: '0 2px 8px rgba(220, 38, 38, 0.15)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', color: '#DC2626', background: '#FEE2E2', border: '1.5px solid #FCA5A5', padding: '0.5rem 0.85rem', borderRadius: '14px', fontWeight: '800', fontSize: '0.84rem', maxWidth: '280px', width: '100%', boxShadow: '0 2px 8px rgba(220, 38, 38, 0.15)' }}>
               <AlertCircle size={16} color="#DC2626" />
               <span>{feedbackError}</span>
             </div>
           )}
 
           {/* Adherence Progress Bar */}
-          <div style={{ width: '100%', maxWidth: '260px', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <div style={{ flex: 1, height: '8px', background: '#E2E8F0', borderRadius: '9999px', overflow: 'hidden' }}>
+          <div style={{ width: '100%', maxWidth: '280px', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <div style={{ flex: 1, height: '10px', background: '#E2E8F0', borderRadius: '9999px', overflow: 'hidden' }}>
               <div
                 style={{
                   height: '100%',
@@ -855,7 +869,7 @@ export default function MirrorLetterQuest({ onCompleteQuest }) {
                 }}
               />
             </div>
-            <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#64748B' }}>
+            <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#64748B' }}>
               {tracingCollected.size}/{currentQ.dots?.length} dots
             </span>
           </div>
@@ -871,9 +885,9 @@ export default function MirrorLetterQuest({ onCompleteQuest }) {
                 background: '#FEF3C7',
                 color: '#B45309',
                 border: '1.5px solid #FCD34D',
-                borderRadius: '12px',
-                padding: '0.45rem 0.9rem',
-                fontSize: '0.82rem',
+                borderRadius: '14px',
+                padding: '0.5rem 1rem',
+                fontSize: '0.85rem',
                 fontWeight: 800,
                 cursor: 'pointer',
                 display: 'flex',
@@ -883,33 +897,26 @@ export default function MirrorLetterQuest({ onCompleteQuest }) {
               }}
             >
               <span>{isBengali ? 'পরবর্তী ধাপে যান' : (isHindi ? 'आगे बढ़ें' : 'Continue to next')}</span>
-              <ArrowRight size={14} />
+              <ArrowRight size={15} />
             </button>
           )}
         </div>
       )}
 
-      {/* Next Step / Complete Banner */}
+      {/* Next Step 3D Button */}
       {status === 'completed_step' && (
-        <div style={{ marginTop: '0.25rem' }}>
+        <div style={{ marginTop: '0.35rem' }}>
           <button
             onClick={handleNextStep}
-            className="animate-pulse-glow"
+            className="btn-3d btn-3d-indigo"
             style={{
               width: '100%',
-              background: '#4F46E5',
-              color: 'white',
-              border: 'none',
-              borderRadius: '9999px',
-              padding: '0.8rem',
-              fontSize: '1rem',
-              fontWeight: 800,
-              cursor: 'pointer',
+              padding: '0.85rem',
+              fontSize: '1.05rem',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '0.4rem',
-              boxShadow: '0 4px 14px rgba(79, 70, 229, 0.3)'
+              gap: '0.45rem'
             }}
           >
             <span>{isBengali ? 'পরবর্তী ধাপে যাও' : 'Continue'}</span>

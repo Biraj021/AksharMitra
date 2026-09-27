@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Mic, MicOff, Volume2, CheckCircle, ArrowRight, Play, RotateCcw, AlertCircle, Sparkles } from 'lucide-react';
+import { Mic, MicOff, Volume2, CheckCircle, ArrowRight, Play, RotateCcw, AlertCircle, Sparkles, BookOpen } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useAudio } from '../context/AudioContext';
 import { useProfile } from '../context/ProfileContext';
@@ -178,20 +178,18 @@ const isWordMatch = (spokenToken, targetWord) => {
   }
 
   // Levenshtein distance: 3-letter words must be exact or explicit alias
-  // to avoid cross-matching minimal pairs like red vs bed or cat vs sat!
+  if (t.length <= 3) return false;
+
   const dist = levenshtein(s, t);
-  if (t.length <= 3) {
-    return false;
-  } else if (t.length <= 5) {
-    return dist <= 1;
-  } else {
-    return dist <= 2;
-  }
+  if (t.length <= 4 && dist <= 1) return true;
+  if (t.length >= 5 && dist <= 2) return true;
+
+  return false;
 };
 
 export default function ReadAloudQuest({ onCompleteQuest }) {
-  const { playPop, playStarTwinkle, speakText, playChime } = useAudio();
-  const { addStars, activeLanguage } = useProfile();
+  const { playPop, playChime, playStarTwinkle, speakText, addStars } = useAudio();
+  const { activeLanguage } = useProfile();
   const isBengali = activeLanguage?.id === 'bengali';
   const isHindi = activeLanguage?.id === 'hindi';
   const speechLang = isHindi ? 'hi-IN' : (isBengali ? 'bn-IN' : 'en-US');
@@ -268,7 +266,7 @@ export default function ReadAloudQuest({ onCompleteQuest }) {
 
     setReadingResult(result);
     playStarTwinkle();
-    addStars(5);
+    if (addStars) addStars(5);
 
     try {
       confetti({
@@ -398,104 +396,62 @@ export default function ReadAloudQuest({ onCompleteQuest }) {
     const cleanTargets = currentPrompt.cleanWords;
     const currentCompleted = completedIndicesRef.current;
 
-    // Find first uncompleted index
-    let firstUncompleted = 0;
-    while (firstUncompleted < cleanTargets.length && currentCompleted.has(firstUncompleted)) {
-      firstUncompleted++;
+    let targetPtr = 0;
+    while (targetPtr < cleanTargets.length && currentCompleted.has(targetPtr)) {
+      targetPtr++;
     }
 
-    // Match Strategy 1: Sequential reading from index 0
-    let countFromZero = 0;
-    for (let i = 0; i < tokens.length && countFromZero < cleanTargets.length; i++) {
+    if (targetPtr >= cleanTargets.length) {
+      finalizeReadingSession(cleanTargets.length);
+      return;
+    }
+
+    for (let i = 0; i < tokens.length; i++) {
       const token = tokens[i];
-      if (isWordMatch(token, cleanTargets[countFromZero])) {
-        countFromZero++;
-      } else if (countFromZero > 0 && isWordMatch(token, cleanTargets[countFromZero - 1])) {
-        // Child stutter or repeat of the word just read - allowed
-      }
-    }
+      if (targetPtr < cleanTargets.length) {
+        const expected = cleanTargets[targetPtr];
+        if (isWordMatch(token, expected)) {
+          currentCompleted.add(targetPtr);
+          setCompletedIndices(new Set(currentCompleted));
+          playChime(400 + targetPtr * 35);
+          targetPtr++;
+          setCurrentWordIdx(targetPtr);
 
-    // Match Strategy 2: Sequential resume from firstUncompleted
-    let countFromResume = firstUncompleted;
-    for (let i = 0; i < tokens.length && countFromResume < cleanTargets.length; i++) {
-      const token = tokens[i];
-      if (isWordMatch(token, cleanTargets[countFromResume])) {
-        countFromResume++;
-      } else if (countFromResume > 0 && isWordMatch(token, cleanTargets[countFromResume - 1])) {
-        // Child stutter or repeat of the word just read - allowed
-      }
-    }
-
-    const newTargetProgress = Math.max(countFromZero, countFromResume);
-
-    if (newTargetProgress > currentCompleted.size) {
-      const nextSet = new Set();
-      for (let i = 0; i < newTargetProgress; i++) {
-        nextSet.add(i);
-      }
-
-      setCompletedIndices(nextSet);
-      completedIndicesRef.current = nextSet;
-      setCurrentWordIdx(newTargetProgress);
-      playPop();
-
-      if (newTargetProgress >= cleanTargets.length) {
-        finalizeReadingSession(cleanTargets.length);
+          if (targetPtr >= cleanTargets.length) {
+            finalizeReadingSession(cleanTargets.length);
+            break;
+          }
+        }
       }
     }
   };
 
-  // Interactive Tap-to-Read Word Card:
-  // Tapping the current target word reads it aloud AND completes it in order!
-  // Tapping other words pronounces them for learning, but preserves sequential order.
+  // Handle single word tap (audio pronouncement & accessible progression)
   const handleWordClick = (word, idx) => {
     playPop();
     speakText(word, speechLang);
-    if (!recordingStartTimeRef.current) {
-      recordingStartTimeRef.current = Date.now();
-    }
 
-    if (idx === currentWordIdx) {
-      const nextProgress = idx + 1;
-      setCompletedIndices((prev) => {
-        const next = new Set(prev).add(idx);
-        completedIndicesRef.current = next;
-        setCurrentWordIdx(nextProgress);
+    if (currentWordIdx === idx || !completedIndices.has(idx)) {
+      const next = new Set(completedIndicesRef.current);
+      next.add(idx);
+      completedIndicesRef.current = next;
+      setCompletedIndices(new Set(next));
+      setCurrentWordIdx(idx + 1);
 
-        if (nextProgress >= promptRef.current.cleanWords.length) {
-          finalizeReadingSession(promptRef.current.cleanWords.length);
-        }
-        return next;
-      });
+      if (next.size >= prompt.cleanWords.length) {
+        finalizeReadingSession(prompt.cleanWords.length);
+      }
     }
   };
 
-  // Keep refs in sync with state
+  // Update prompt reference whenever prompt index or language changes
   useEffect(() => {
-    promptRef.current = prompt;
-  }, [prompt]);
-
-  useEffect(() => {
-    completedIndicesRef.current = completedIndices;
-  }, [completedIndices]);
-
-  // Clean setup / teardown on prompt switch
-  useEffect(() => {
-    stopListening();
+    promptRef.current = prompts[currentPromptIdx] || prompts[0];
     resetReadingState();
-    speakText(prompt.audioPrompt, speechLang);
-
     return () => {
       stopListening();
     };
   }, [currentPromptIdx, activeLanguage?.id]);
-
-  // Teardown on unmount
-  useEffect(() => {
-    return () => {
-      stopListening();
-    };
-  }, []);
 
   const handleReset = () => {
     playPop();
@@ -510,20 +466,18 @@ export default function ReadAloudQuest({ onCompleteQuest }) {
       setCurrentPromptIdx(currentPromptIdx + 1);
     } else {
       if (onCompleteQuest) {
-        // Use existing readingResult if speech completed, otherwise compute from tapped words + time
         let finalResult = readingResult;
         if (!finalResult) {
           const totalWords = promptRef.current.cleanWords.length;
           const completedCount = completedIndicesRef.current.size;
           const accuracy = Math.min(100, Math.max(10, Math.round((completedCount / totalWords) * 100)));
 
-          // Compute WPM from elapsed time — if they tapped quickly it shows higher fluency
           const elapsedSec = recordingStartTimeRef.current
             ? Math.max(3, (Date.now() - recordingStartTimeRef.current) / 1000)
             : 15;
           let finalWpm = Math.round((completedCount / (elapsedSec / 60)));
           if (finalWpm < 15) {
-            finalWpm = Math.round(20 + (accuracy / 100) * 40); // 20–60 WPM scaled to accuracy
+            finalWpm = Math.round(20 + (accuracy / 100) * 40);
           }
 
           finalResult = {
@@ -547,29 +501,32 @@ export default function ReadAloudQuest({ onCompleteQuest }) {
       className="glass-card"
       style={{
         padding: '1.75rem',
-        maxWidth: '620px',
+        maxWidth: '640px',
         margin: '0 auto',
         width: '100%',
         textAlign: 'center',
-        borderRadius: '28px'
+        borderRadius: '30px',
+        background: '#FFFFFF',
+        border: '2px solid #FDE68A',
+        boxShadow: '0 12px 32px rgba(217, 119, 6, 0.12)'
       }}
     >
       {/* Header with Story Switcher */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <span style={{ fontSize: '1.5rem' }}>📖</span>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.15rem', flexWrap: 'wrap', gap: '0.6rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+          <span style={{ fontSize: '1.8rem' }}>📖</span>
           <div style={{ textAlign: 'left' }}>
-            <h3 style={{ fontSize: '1.2rem', margin: 0, color: '#1E293B' }}>
+            <h3 style={{ fontSize: '1.25rem', margin: 0, color: '#1E293B', fontWeight: 900 }}>
               {isHindi ? 'राउंड 3: सस्वर पठन प्रवाह' : (isBengali ? 'পর্ব ৩: উচ্চস্বরে পড়া ও গতি' : 'Quest 3: Read-Aloud Fluency')}
             </h3>
-            <p style={{ fontSize: '0.78rem', color: '#64748B', margin: 0 }}>
+            <p style={{ fontSize: '0.8rem', color: '#64748B', margin: 0, fontWeight: 700 }}>
               {isHindi ? `कहानी ${currentPromptIdx + 1} / ${prompts.length} • ${prompt.title}` : (isBengali ? `গল্প ${currentPromptIdx + 1} / ${prompts.length} • ${prompt.title}` : `Story ${currentPromptIdx + 1} of ${prompts.length} • ${prompt.title}`)}
             </p>
           </div>
         </div>
 
         {/* Story Selector Pills */}
-        <div style={{ display: 'flex', gap: '0.3rem' }}>
+        <div style={{ display: 'flex', gap: '0.35rem' }}>
           {prompts.map((st, idx) => (
             <button
               key={st.id}
@@ -579,13 +536,13 @@ export default function ReadAloudQuest({ onCompleteQuest }) {
                 setCurrentPromptIdx(idx);
               }}
               style={{
-                padding: '0.3rem 0.65rem',
+                padding: '0.35rem 0.75rem',
                 borderRadius: '9999px',
-                border: currentPromptIdx === idx ? '2px solid #4F46E5' : '1px solid #E2E8F0',
-                background: currentPromptIdx === idx ? '#EEF2FF' : 'white',
-                color: currentPromptIdx === idx ? '#4338CA' : '#64748B',
-                fontSize: '0.75rem',
-                fontWeight: 'bold',
+                border: currentPromptIdx === idx ? '2px solid #D97706' : '1.5px solid #E2E8F0',
+                background: currentPromptIdx === idx ? '#FEF3C7' : '#FFFFFF',
+                color: currentPromptIdx === idx ? '#92400E' : '#64748B',
+                fontSize: '0.78rem',
+                fontWeight: 800,
                 cursor: 'pointer'
               }}
             >
@@ -598,20 +555,20 @@ export default function ReadAloudQuest({ onCompleteQuest }) {
       {/* Story Illustration Card & Interactive Karaoke Word Tiles */}
       <div
         style={{
-          background: 'linear-gradient(180deg, #FFFFFF 0%, #FAF8F2 100%)',
-          borderRadius: '24px',
-          padding: '1.75rem 1.25rem',
-          border: '2px solid #E0E7FF',
-          marginBottom: '1rem',
-          boxShadow: '0 8px 24px rgba(99, 102, 241, 0.08)'
+          background: 'linear-gradient(180deg, #FFFFFF 0%, #FFFDF8 100%)',
+          borderRadius: '26px',
+          padding: '1.75rem 1.35rem',
+          border: '2px solid #FDE68A',
+          marginBottom: '1.15rem',
+          boxShadow: '0 8px 24px rgba(217, 119, 6, 0.08)'
         }}
       >
-        <div style={{ fontSize: '3.2rem', marginBottom: '1rem', animation: 'gentle-bounce 3s infinite ease-in-out' }}>
+        <div style={{ fontSize: '3.6rem', marginBottom: '1rem', filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.08))' }}>
           {prompt.illustration}
         </div>
 
         {/* Interactive Word Pills */}
-        <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '0.6rem', marginBottom: '1rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '1.25rem' }}>
           {prompt.words.map((word, idx) => {
             const isCompleted = completedIndices.has(idx);
             const isTarget = currentWordIdx === idx && !isCompleted;
@@ -621,29 +578,29 @@ export default function ReadAloudQuest({ onCompleteQuest }) {
                 key={idx}
                 onClick={() => handleWordClick(word, idx)}
                 style={{
-                  fontSize: '1.45rem',
+                  fontSize: '1.55rem',
                   fontFamily: isHindi ? 'var(--font-devanagari)' : (isBengali ? 'var(--font-bengali)' : "'Lexend', sans-serif"),
-                  fontWeight: '700',
+                  fontWeight: '800',
                   color: isCompleted ? '#065F46' : isTarget ? '#92400E' : '#1E293B',
                   background: isCompleted ? '#D1FAE5' : isTarget ? '#FEF3C7' : '#FFFFFF',
-                  padding: '0.4rem 0.85rem',
-                  borderRadius: '16px',
-                  border: isCompleted ? '2.5px solid #10B981' : isTarget ? '2.5px solid #F59E0B' : '2px solid #E2E8F0',
-                  boxShadow: isTarget ? '0 0 16px rgba(245, 158, 11, 0.55)' : '0 2px 6px rgba(0,0,0,0.04)',
+                  padding: '0.45rem 0.95rem',
+                  borderRadius: '18px',
+                  border: isCompleted ? '3px solid #10B981' : isTarget ? '3px solid #F59E0B' : '2px solid #E2E8F0',
+                  boxShadow: isTarget ? '0 0 18px rgba(245, 158, 11, 0.55)' : '0 2px 8px rgba(0,0,0,0.04)',
                   transform: isTarget ? 'scale(1.12)' : 'scale(1)',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '0.35rem',
+                  gap: '0.4rem',
                   transition: 'all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1)'
                 }}
                 title={isHindi ? 'सुनने और चिन्हित करने के लिए टैप करें' : (isBengali ? 'শুনতে ও চিহ্নিত করতে ট্যাপ করো' : 'Click to hear and mark this word')}
               >
                 <span>{word}</span>
                 {isCompleted ? (
-                  <span style={{ fontSize: '0.85rem' }}>✅</span>
+                  <span style={{ fontSize: '0.9rem' }}>✅</span>
                 ) : isTarget ? (
-                  <span style={{ fontSize: '0.85rem', animation: 'gentle-bounce 1s infinite' }}>👇</span>
+                  <span style={{ fontSize: '0.9rem' }}>👇</span>
                 ) : null}
               </button>
             );
@@ -655,50 +612,45 @@ export default function ReadAloudQuest({ onCompleteQuest }) {
           <div
             style={{
               background: '#F8FAFC',
-              padding: '0.4rem 0.85rem',
+              padding: '0.45rem 1rem',
               borderRadius: '9999px',
-              border: '1px solid #E2E8F0',
-              fontSize: '0.82rem',
+              border: '1.5px solid #E2E8F0',
+              fontSize: '0.86rem',
               color: '#475569',
               display: 'inline-block',
-              margin: '0 auto 0.5rem'
+              margin: '0 auto 0.75rem'
             }}
           >
             🎙️ <strong>{isHindi ? 'सुना गया:' : (isBengali ? 'শোনা গেছে:' : 'Heard:')}</strong> "{liveTranscript}"
           </div>
         )}
 
-        <p style={{ fontSize: '0.78rem', color: '#64748B', margin: 0 }}>
+        <p style={{ fontSize: '0.82rem', color: '#64748B', margin: 0 }}>
           💡 <em>{isHindi ? 'सलाह: माइक में बोलें, या आगे बढ़ने के लिए प्रत्येक शब्द पर टैप करें!' : (isBengali ? 'পরামর্শ: মাইক্রোফোনে পড়ো, অথবা প্রতিটি শব্দে স্পর্শ করে এগিয়ে যাও!' : 'Tip: Speak into the mic, or tap each word to hear and advance!')}</em>
         </p>
       </div>
 
       {/* Mic Error Banner */}
       {micError && (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', color: '#DC2626', background: '#FEE2E2', padding: '0.5rem 0.75rem', borderRadius: '12px', fontSize: '0.82rem', marginBottom: '0.75rem' }}>
-          <AlertCircle size={16} />
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.45rem', color: '#DC2626', background: '#FEE2E2', padding: '0.6rem 0.85rem', borderRadius: '14px', fontSize: '0.85rem', marginBottom: '0.85rem', border: '1.5px solid #FCA5A5' }}>
+          <AlertCircle size={17} />
           <span>{micError}</span>
         </div>
       )}
 
       {/* Mic Recording Controls */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.85rem', marginBottom: '1.35rem' }}>
         {!isRecording ? (
           <button
             onClick={startListening}
-            className="btn btn-primary animate-pulse-glow"
+            className="btn-3d btn-3d-amber"
             style={{
               borderRadius: '9999px',
-              padding: '1rem 2.5rem',
+              padding: '0.95rem 2.5rem',
               display: 'flex',
               alignItems: 'center',
               gap: '0.75rem',
-              fontSize: '1.25rem',
-              boxShadow: '0 8px 24px rgba(79, 70, 229, 0.35)',
-              border: 'none',
-              background: '#4F46E5',
-              color: 'white',
-              cursor: 'pointer'
+              fontSize: '1.2rem'
             }}
           >
             <Mic size={24} />
@@ -707,19 +659,14 @@ export default function ReadAloudQuest({ onCompleteQuest }) {
         ) : (
           <button
             onClick={stopListening}
+            className="btn-3d btn-3d-coral"
             style={{
-              background: '#EF4444',
-              color: 'white',
               borderRadius: '9999px',
-              padding: '1rem 2.5rem',
+              padding: '0.95rem 2.5rem',
               display: 'flex',
               alignItems: 'center',
               gap: '0.75rem',
-              fontSize: '1.2rem',
-              border: 'none',
-              boxShadow: '0 8px 24px rgba(239, 68, 68, 0.45)',
-              animation: 'pulse-glow 1.5s infinite',
-              cursor: 'pointer'
+              fontSize: '1.2rem'
             }}
           >
             <MicOff size={24} />
@@ -732,20 +679,20 @@ export default function ReadAloudQuest({ onCompleteQuest }) {
           onClick={runKaraokeDemo}
           disabled={isKaraokeRunning}
           style={{
-            background: '#EEF2FF',
-            border: '1.5px solid #C7D2FE',
-            color: '#4338CA',
+            background: '#FEF3C7',
+            border: '1.5px solid #FCD34D',
+            color: '#92400E',
             borderRadius: '9999px',
-            padding: '0.35rem 0.9rem',
-            fontSize: '0.82rem',
-            fontWeight: '700',
+            padding: '0.45rem 1.15rem',
+            fontSize: '0.85rem',
+            fontWeight: 800,
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
-            gap: '0.4rem'
+            gap: '0.45rem'
           }}
         >
-          <Play size={14} />
+          <Play size={15} />
           <span>{isHindi ? 'कराओके साथ पढ़ें (ऑटो डेमो)' : (isBengali ? 'ক্যারাওকে একসাথে পড়ো (অটো ডেমো)' : 'Karaoke Sing-Along (Auto Demo)')}</span>
         </button>
       </div>
@@ -755,70 +702,68 @@ export default function ReadAloudQuest({ onCompleteQuest }) {
         <div
           style={{
             background: '#D1FAE5',
-            padding: '0.85rem 1.25rem',
-            borderRadius: '18px',
+            padding: '0.95rem 1.4rem',
+            borderRadius: '20px',
             border: '2px solid #10B981',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            marginBottom: '1.25rem',
+            marginBottom: '1.35rem',
             boxShadow: '0 4px 14px rgba(16, 185, 129, 0.15)'
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <CheckCircle size={22} color="#059669" />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+            <CheckCircle size={24} color="#059669" />
             <div style={{ textAlign: 'left' }}>
-              <div style={{ fontWeight: '800', color: '#065F46', fontSize: '1rem' }}>
+              <div style={{ fontWeight: 900, color: '#065F46', fontSize: '1.05rem' }}>
                 {isHindi ? 'शानदार पठन! (+5 ⭐)' : (isBengali ? 'চমৎকার পড়া! (+৫ ⭐)' : 'Wonderful Reading! (+5 ⭐)')}
               </div>
-              <div style={{ fontSize: '0.75rem', color: '#047857' }}>
+              <div style={{ fontSize: '0.78rem', color: '#047857' }}>
                 {isHindi ? `प्रवाह स्कोर: ${readingResult.accuracy}%` : (isBengali ? `সাবলীলতা স্কোর: ${readingResult.accuracy}%` : `Fluency Score: ${readingResult.accuracy}%`)}
               </div>
             </div>
           </div>
-          <div style={{ fontWeight: '800', color: '#047857', fontSize: '1.1rem' }}>
+          <div style={{ fontWeight: 900, color: '#047857', fontSize: '1.2rem' }}>
             {readingResult.wpm} {isHindi ? 'शब्द/मिनट' : (isBengali ? 'শব্দ/মিনিট' : 'WPM')}
           </div>
         </div>
       )}
 
       {/* Navigation */}
-      <div style={{ display: 'flex', gap: '0.6rem', justifyContent: 'center' }}>
+      <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center' }}>
         <button
           onClick={handleReset}
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '0.35rem',
-            padding: '0.5rem 1rem',
-            borderRadius: '999px',
-            border: '1px solid #E2E8F0',
+            gap: '0.4rem',
+            padding: '0.55rem 1.15rem',
+            borderRadius: '9999px',
+            border: '1.5px solid #CBD5E1',
             background: 'white',
             color: '#475569',
+            fontWeight: 800,
+            fontSize: '0.85rem',
             cursor: 'pointer'
           }}
         >
-          <RotateCcw size={15} />
+          <RotateCcw size={16} />
           <span>{isHindi ? 'पुनः शुरू' : (isBengali ? 'পুনরায় শুরু' : 'Reset')}</span>
         </button>
 
         <button
           onClick={handleNextPrompt}
+          className="btn-3d btn-3d-amber"
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '0.4rem',
-            padding: '0.5rem 1.5rem',
-            borderRadius: '999px',
-            border: 'none',
-            background: '#4F46E5',
-            color: 'white',
-            cursor: 'pointer',
-            fontWeight: 'bold'
+            gap: '0.45rem',
+            padding: '0.55rem 1.6rem',
+            fontSize: '0.92rem'
           }}
         >
           <span>{currentPromptIdx < prompts.length - 1 ? (isHindi ? 'अगली कहानी' : (isBengali ? 'পরবর্তী গল্প' : 'Next Story')) : (isHindi ? 'पठन खोज पूरी करें' : (isBengali ? 'পড়ার পর্ব সম্পন্ন' : 'Finish Reading Quest'))}</span>
-          <ArrowRight size={16} />
+          <ArrowRight size={17} />
         </button>
       </div>
     </div>
