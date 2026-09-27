@@ -185,15 +185,15 @@ export function validateTracingAttempt({
     }
   } else {
     const collectedRatio = collectedDotIds.size / totalDots;
-    if (collectedRatio < 0.70) {
+    if (collectedRatio < 0.50) {
       let onPathPoints = 0;
       for (const pt of allDrawnPoints) {
-        if (minDistanceToTargetSegments(pt, guideDots) <= 30) {
+        if (minDistanceToTargetSegments(pt, guideDots) <= 42) {
           onPathPoints++;
         }
       }
       const partialAdherence = onPathPoints / allDrawnPoints.length;
-      const isPartialValid = partialAdherence >= 0.65;
+      const isPartialValid = partialAdherence >= 0.50;
 
       return {
         isValid: false,
@@ -201,15 +201,15 @@ export function validateTracingAttempt({
         reason: isPartialValid ? 'in_progress' : 'low_coverage',
         score: Math.round(collectedRatio * 100),
         feedback: {
-          en: isPartialValid ? "Keep going! Continue tracing the guide line." : "Touch all the guide dots from start to end!",
-          hi: isPartialValid ? "आगे बढ़ते रहें! रेखा का पालन करते रहें।" : "शुरुआत से अंत तक सभी बिंदुओं को छुएं!",
-          bn: isPartialValid ? "চালিয়ে যাও! রেখা ধরে বাকিটা আঁকো।" : "শুরু থেকে শেষ পর্যন্ত সব বিন্দু স্পর্শ করো!"
+          en: isPartialValid ? "Keep going! Continue tracing the guide line." : "Touch the guide dots from start to end!",
+          hi: isPartialValid ? "आगे बढ़ते रहें! रेखा का पालन करते रहें।" : "शुरुआत से अंत तक बिंदुओं को छुएं!",
+          bn: isPartialValid ? "চালিয়ে যাও! রেখা ধরে বাকিটা আঁকো।" : "শুরু থেকে শেষ পর্যন্ত বিন্দু স্পর্শ করো!"
         }
       };
     }
   }
 
-  // 2. Bounding Box & Aspect Ratio Constraints (Prevents 'Z' on 'i'/'l')
+  // 2. Bounding Box & Aspect Ratio Constraints (Prevents random wide scribbles)
   const mainDots = (targetConfig.char === 'i' || targetConfig.char === 'j')
     ? guideDots.filter(d => d.id !== targetConfig.dotId)
     : guideDots;
@@ -242,8 +242,9 @@ export function validateTracingAttempt({
     const drawnHeight = drawnMaxY - drawnMinY;
 
     // For vertical letters ('i', 'j', 'l', '1', stem of 't'), targetWidth is <= 25px
+    // Generous 75px child motor tolerance to allow natural wobble
     if (targetWidth <= 25 && targetHeight >= 60) {
-      if (drawnWidth > 45) {
+      if (drawnWidth > 75) {
         return {
           isValid: false,
           reason: 'wrong_shape_width',
@@ -259,7 +260,7 @@ export function validateTracingAttempt({
 
     // For horizontal lines, targetHeight is <= 25px
     if (targetHeight <= 25 && targetWidth >= 60) {
-      if (drawnHeight > 45) {
+      if (drawnHeight > 75) {
         return {
           isValid: false,
           reason: 'wrong_shape_height',
@@ -282,7 +283,7 @@ export function validateTracingAttempt({
       totalDx += Math.abs(mainDrawnPoints[i].x - mainDrawnPoints[i - 1].x);
       totalDy += Math.abs(mainDrawnPoints[i].y - mainDrawnPoints[i - 1].y);
     }
-    if (totalDx > totalDy * 0.95) {
+    if (totalDx > totalDy * 1.5) {
       return {
         isValid: false,
         reason: 'directional_error',
@@ -296,17 +297,17 @@ export function validateTracingAttempt({
     }
   }
 
-  // 4. Start Point Correctness Check (Tolerance: 40px)
+  // 4. Start Point Correctness Check (Child-friendly tolerance: 65px)
   const firstStroke = drawnStrokes[0];
   const firstStrokeStart = firstStroke[0];
-  const allowedStartDots = mainDots.slice(0, Math.min(2, mainDots.length));
+  const allowedStartDots = mainDots.slice(0, Math.min(3, mainDots.length));
   let minStartDist = Infinity;
   for (const d of allowedStartDots) {
     const dist = Math.hypot(firstStrokeStart.x - d.x, firstStrokeStart.y - d.y);
     if (dist < minStartDist) minStartDist = dist;
   }
 
-  if (minStartDist > 35) {
+  if (minStartDist > 65) {
     return {
       isValid: false,
       reason: 'wrong_start',
@@ -319,24 +320,24 @@ export function validateTracingAttempt({
     };
   }
 
-  // 5. Strict Path Adherence (Max Off-Path Distance: 18px)
+  // 5. Forgiving Path Adherence (Comfortable 40px envelope for child motor skills)
   let onPathCount = 0;
   for (const pt of allDrawnPoints) {
     const dist = minDistanceToTargetSegments(pt, guideDots);
-    if (dist <= 18) {
+    if (dist <= 40) {
       onPathCount++;
     }
   }
   const adherenceRatio = onPathCount / allDrawnPoints.length;
 
-  if (adherenceRatio < 0.75) {
+  if (adherenceRatio < 0.55) {
     return {
       isValid: false,
       reason: 'off_path_scribble',
       score: Math.round(adherenceRatio * 100),
       feedback: {
-        en: "Follow the exact letter shape! Stay directly on the letter path.",
-        hi: "अक्षर के सही आकार का पालन करें! रेखा के ठीक ऊपर रहें।",
+        en: "Follow the letter shape! Stay on the guide dots.",
+        hi: "अक्षर के सही आकार का पालन करें! रेखा के ऊपर रहें।",
         bn: "বর্ণের সঠিক আকৃতি ধরে আঁকো! রেখার ওপর দিয়ে আঁকো।"
       }
     };
@@ -345,7 +346,7 @@ export function validateTracingAttempt({
   // 6. Minimum & Maximum Path Length Ratio (Requires actual line tracing over letter shape)
   const totalDrawnLength = calculateStrokesLength(drawnStrokes);
   const targetLength = calculateTargetPathLength(mainDots);
-  const minRequiredLength = Math.min(80, targetLength * 0.40);
+  const minRequiredLength = Math.min(45, targetLength * 0.25);
 
   if (totalDrawnLength < minRequiredLength) {
     return {
@@ -362,7 +363,8 @@ export function validateTracingAttempt({
 
   const lengthRatio = totalDrawnLength / Math.max(1, targetLength);
 
-  if (lengthRatio > 1.65) {
+  // Allow up to 3.0x target length for gentle re-tracing / hesitations before flagging scribble
+  if (lengthRatio > 3.0) {
     return {
       isValid: false,
       reason: 'excessive_scribble',
@@ -375,19 +377,26 @@ export function validateTracingAttempt({
     };
   }
 
-  // 7. Visited Checkpoint Order Check
-  if (visitedDotSequence.length >= 3) {
+  // 7. Visited Checkpoint Order Check (deduplicate micro-wobbles between adjacent dots)
+  if (visitedDotSequence.length >= 4) {
+    const deduplicatedSeq = [];
+    for (let i = 0; i < visitedDotSequence.length; i++) {
+      if (i === 0 || visitedDotSequence[i] !== visitedDotSequence[i - 1]) {
+        deduplicatedSeq.push(visitedDotSequence[i]);
+      }
+    }
+
     let reversals = 0;
-    for (let i = 1; i < visitedDotSequence.length; i++) {
-      const prevId = Number(visitedDotSequence[i - 1]);
-      const currId = Number(visitedDotSequence[i]);
+    for (let i = 1; i < deduplicatedSeq.length; i++) {
+      const prevId = Number(deduplicatedSeq[i - 1]);
+      const currId = Number(deduplicatedSeq[i]);
       if (!isNaN(prevId) && !isNaN(currId)) {
-        if (currId < prevId - 1) {
+        if (currId < prevId - 2) {
           reversals++;
         }
       }
     }
-    if (reversals >= 2) {
+    if (reversals >= 3) {
       return {
         isValid: false,
         reason: 'wrong_order',

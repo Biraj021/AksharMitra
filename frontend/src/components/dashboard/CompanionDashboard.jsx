@@ -1,23 +1,164 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Award, CheckCircle, AlertTriangle, Printer, Sparkles, BookOpen, Volume2, Shield, Zap, Target, Mic, Music, Flame, Star, MessageSquare, Calendar, ArrowRight, Check, X } from 'lucide-react';
+import { ArrowLeft, Award, CheckCircle, AlertTriangle, Printer, Sparkles, BookOpen, Volume2, Shield, Zap, Target, Mic, MessageSquare, Calendar, ArrowRight, Check, X, Users, Smartphone, Copy } from 'lucide-react';
 import { useProfile, getAvatarEmoji } from '../../context/ProfileContext';
 import { useAudio } from '../../context/AudioContext';
 import ParentObservationModal from './ParentObservationModal';
 import { hasParentFeedbackData } from '@ai/parentFeedbackModel';
 import { getChildRecommendation, CHILD_ACTIVITY_METADATA } from '@ai/adaptiveLearningStrategy';
 import { getRecentCalendarDays, formatDateKey } from '@backend/streakUtils';
+import { getStoredGlobalLearners, getTeacherLinkedStudents, getTeacherLinkedStudentsRemote } from '@database/services/learnerService';
+import { isSupabaseConfigured } from '@database/lib/supabaseClient';
 
 export default function CompanionDashboard() {
-  const { activeProfile, setCurrentView, activeLanguage, t, updateParentFeedback, calculateLearningProfile, setShowStreakModal } = useProfile();
-  const { playPop, playStarTwinkle, speakText } = useAudio();
-  const [viewMode, setViewMode] = useState('educator'); // 'kid' | 'educator'
+  const {
+    currentUser,
+    userRole,
+    profilesList,
+    activeProfile,
+    setActiveProfile,
+    currentView,
+    setCurrentView,
+    activeLanguage,
+    t,
+    updateParentFeedback,
+    calculateLearningProfile,
+    linkStudentByKidCode,
+    createStudentProfile
+  } = useProfile();
+  const { playPop, playStarTwinkle } = useAudio();
+  
+  // 'roster' | 'individual'
+  const [dashboardTab, setDashboardTab] = useState(activeProfile ? 'individual' : 'roster'); 
   const [showObservationModal, setShowObservationModal] = useState(false);
-  const [feedbackSaveToast, setFeedbackSaveToast] = useState(null); // { activityTitle, icon } | null
+  const [feedbackSaveToast, setFeedbackSaveToast] = useState(null);
+  const [copiedKidId, setCopiedKidId] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
 
+  // Link Student by Kid ID state
+  const [showLinkStudent, setShowLinkStudent] = useState(false);
+  const [linkKidCodeInput, setLinkKidCodeInput] = useState('');
+  const [linkError, setLinkError] = useState('');
+  const [linkSuccess, setLinkSuccess] = useState('');
+  const [isLinking, setIsLinking] = useState(false);
+
+  // Auto-listen to screening test completion events & storage changes
+  useEffect(() => {
+    const handleUpdate = () => {
+      setRefreshKey((k) => k + 1);
+    };
+    window.addEventListener('aksharmitra:screening_updated', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+
+    // If teacher is logged in, also asynchronously fetch remote linked students
+    const teacherId = currentUser?.id || 'demo_judge';
+    if (teacherId && isSupabaseConfigured()) {
+      getTeacherLinkedStudentsRemote(teacherId).then(() => {
+        setRefreshKey((k) => k + 1);
+      }).catch(() => {});
+    }
+
+    return () => {
+      window.removeEventListener('aksharmitra:screening_updated', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
+  }, [currentUser]);
+
+  // Comprehensive roster of learners: profilesList + linked students + active student + global cache
+  const rosterLearners = React.useMemo(() => {
+    const list = [...profilesList];
+    const teacherId = currentUser?.id || 'demo_judge';
+
+    // 1. Merge linked students for this teacher
+    try {
+      const linked = getTeacherLinkedStudents(teacherId);
+      for (const st of linked) {
+        const idx = list.findIndex(
+          (p) =>
+            p.id === st.id ||
+            (p.kidCode && st.kidCode && p.kidCode.toUpperCase() === st.kidCode.toUpperCase())
+        );
+        if (idx >= 0) {
+          const isComp = Boolean(list[idx].screeningCompleted || st.screeningCompleted);
+          list[idx] = {
+            ...list[idx],
+            ...st,
+            isLinked: true,
+            screeningCompleted: isComp,
+            screeningMetrics: st.screeningMetrics || list[idx].screeningMetrics || null,
+            riskLevel: (isComp && (st.riskLevel || list[idx].riskLevel))
+              ? (st.riskLevel && st.riskLevel !== 'typical' ? st.riskLevel : (list[idx].riskLevel && list[idx].riskLevel !== 'typical' ? list[idx].riskLevel : (st.riskLevel || list[idx].riskLevel || 'typical')))
+              : 'typical',
+            learningPathway: st.learningPathway || list[idx].learningPathway || null
+          };
+        } else {
+          list.push(st);
+        }
+      }
+    } catch (e) {}
+
+    // 2. Merge local active student if present
+    try {
+      const activeRaw = localStorage.getItem('aksharmitra_active_student_profile');
+      if (activeRaw) {
+        const parsed = JSON.parse(activeRaw);
+        if (parsed?.id) {
+          const idx = list.findIndex(
+            (p) =>
+              p.id === parsed.id ||
+              (p.kidCode && parsed.kidCode && p.kidCode.toUpperCase() === parsed.kidCode.toUpperCase())
+          );
+          if (idx >= 0) {
+            const isComp = Boolean(list[idx].screeningCompleted || parsed.screeningCompleted);
+            list[idx] = {
+              ...list[idx],
+              ...parsed,
+              screeningCompleted: isComp,
+              screeningMetrics: parsed.screeningMetrics || list[idx].screeningMetrics || null
+            };
+          } else {
+            list.push(parsed);
+          }
+        }
+      }
+    } catch (e) {}
+
+    // 3. Merge global learners (ensures completed screening metrics are always fresh)
+    try {
+      const globalList = getStoredGlobalLearners();
+      for (const g of globalList) {
+        const idx = list.findIndex(
+          (p) =>
+            p.id === g.id ||
+            (p.kidCode && g.kidCode && p.kidCode.toUpperCase() === g.kidCode.toUpperCase())
+        );
+        if (idx >= 0) {
+          const isComp = Boolean(list[idx].screeningCompleted || g.screeningCompleted);
+          list[idx] = {
+            ...list[idx],
+            ...g,
+            screeningCompleted: isComp,
+            screeningMetrics: g.screeningMetrics || list[idx].screeningMetrics || null,
+            riskLevel: (isComp && (g.riskLevel || list[idx].riskLevel))
+              ? (g.riskLevel && g.riskLevel !== 'typical' ? g.riskLevel : (list[idx].riskLevel && list[idx].riskLevel !== 'typical' ? list[idx].riskLevel : (g.riskLevel || list[idx].riskLevel || 'typical')))
+              : 'typical',
+            learningPathway: g.learningPathway || list[idx].learningPathway || null
+          };
+        } else if (g.screeningCompleted || g.isLinked) {
+          list.push(g);
+        }
+      }
+    } catch (e) {}
+
+    return list;
+  }, [profilesList, currentUser, refreshKey]);
 
   const handleBack = () => {
     playPop();
-    setCurrentView('landing');
+    if (userRole === 'student') {
+      setCurrentView('games');
+    } else {
+      setDashboardTab('roster');
+    }
   };
 
   const handlePrint = () => {
@@ -25,10 +166,287 @@ export default function CompanionDashboard() {
     window.print();
   };
 
-  const profile = activeProfile;
+  const handleLinkStudentSubmit = async (e) => {
+    e.preventDefault();
+    setLinkError('');
+    setLinkSuccess('');
+    const code = linkKidCodeInput.trim().toUpperCase();
+    if (!code) {
+      setLinkError('Please enter a Kid ID (e.g. AM-1001)');
+      return;
+    }
+
+    setIsLinking(true);
+    try {
+      const student = await linkStudentByKidCode(code);
+      playStarTwinkle();
+      setRefreshKey((k) => k + 1);
+      setLinkSuccess(`Successfully linked ${student.name} (${student.kidCode})!`);
+      setLinkKidCodeInput('');
+      setTimeout(() => setLinkSuccess(''), 4000);
+    } catch (err) {
+      playPop();
+      setLinkError(err.message || 'Could not find student with that Kid ID.');
+    } finally {
+      setIsLinking(false);
+    }
+  };
+
   const isBengali = activeLanguage?.id === 'bengali';
   const isHindi = activeLanguage?.id === 'hindi';
   const speechLang = isHindi ? 'hi-IN' : (isBengali ? 'bn-IN' : 'en-US');
+
+  // Roster View Component
+  if (dashboardTab === 'roster') {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', maxWidth: '840px', margin: '0 auto', padding: '1rem 0' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
+          <div>
+            <h2 style={{ fontSize: '1.75rem', fontWeight: 900, color: '#1E293B', margin: '0 0 0.25rem' }}>
+              <Users size={24} style={{ marginRight: '8px', verticalAlign: 'middle', color: '#4F46E5' }} />
+              Educator Roster
+            </h2>
+            <p style={{ margin: 0, color: '#64748B', fontSize: '0.9rem' }}>
+              Institutional diagnostic monitoring, phonological metrics & student linking.
+            </p>
+          </div>
+          <button
+            onClick={() => {
+              playPop();
+              setShowLinkStudent(!showLinkStudent);
+              setLinkError('');
+              setLinkSuccess('');
+            }}
+            className="btn btn-primary"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              borderRadius: '9999px',
+              padding: '0.65rem 1.35rem',
+              background: 'linear-gradient(135deg, #4F46E5 0%, #3730A3 100%)',
+              fontWeight: 800,
+              boxShadow: '0 4px 12px rgba(79, 70, 229, 0.25)'
+            }}
+          >
+            <span>🔗</span>
+            <span>Link Student by Kid ID</span>
+          </button>
+        </div>
+
+        {/* Link Student by ID Panel */}
+        {showLinkStudent && (
+          <div
+            style={{
+              background: '#FFFFFF',
+              border: '2px solid #C7D2FE',
+              borderRadius: '24px',
+              padding: '1.5rem',
+              boxShadow: '0 10px 25px -5px rgba(79, 70, 229, 0.1)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1rem'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <div
+                  style={{
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '12px',
+                    background: '#EEF2FF',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '1.4rem'
+                  }}
+                >
+                  🔗
+                </div>
+                <div>
+                  <h4 style={{ margin: 0, color: '#1E293B', fontSize: '1.1rem', fontWeight: 800 }}>
+                    Link a Student Device
+                  </h4>
+                  <p style={{ margin: 0, color: '#64748B', fontSize: '0.85rem' }}>
+                    Type the Kid ID displayed on the child's screen or student pass to sync their data here.
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowLinkStudent(false)}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94A3B8' }}
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <form onSubmit={handleLinkStudentSubmit} style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+              <input
+                type="text"
+                value={linkKidCodeInput}
+                onChange={(e) => setLinkKidCodeInput(e.target.value.toUpperCase())}
+                placeholder="Enter Kid ID (e.g. AM-1001, AM-1002, AM-XXXX)"
+                style={{
+                  flex: 1,
+                  minWidth: '240px',
+                  padding: '0.75rem 1rem',
+                  fontSize: '1rem',
+                  fontWeight: 800,
+                  letterSpacing: '0.05em',
+                  borderRadius: '14px',
+                  border: '2px solid #CBD5E1',
+                  outline: 'none'
+                }}
+                onFocus={(e) => (e.target.style.borderColor = '#4F46E5')}
+                onBlur={(e) => (e.target.style.borderColor = '#CBD5E1')}
+              />
+              <button
+                type="submit"
+                disabled={isLinking}
+                className="btn btn-primary"
+                style={{
+                  padding: '0.75rem 1.5rem',
+                  borderRadius: '14px',
+                  background: 'linear-gradient(135deg, #16A34A 0%, #15803D 100%)',
+                  color: 'white',
+                  fontWeight: 800,
+                  border: 'none',
+                  cursor: isLinking ? 'not-allowed' : 'pointer'
+                }}
+              >
+                {isLinking ? 'Linking...' : 'Verify & Link'}
+              </button>
+            </form>
+
+            {linkError && (
+              <div
+                style={{
+                  padding: '0.65rem 1rem',
+                  borderRadius: '12px',
+                  background: '#FEF2F2',
+                  border: '1px solid #FECACA',
+                  color: '#DC2626',
+                  fontSize: '0.85rem',
+                  fontWeight: 600
+                }}
+              >
+                ⚠️ {linkError}
+              </div>
+            )}
+
+            {linkSuccess && (
+              <div
+                style={{
+                  padding: '0.65rem 1rem',
+                  borderRadius: '12px',
+                  background: '#F0FDF4',
+                  border: '1px solid #BBF7D0',
+                  color: '#16A34A',
+                  fontSize: '0.85rem',
+                  fontWeight: 700
+                }}
+              >
+                ✅ {linkSuccess}
+              </div>
+            )}
+
+            <div style={{ background: '#F8FAFC', padding: '0.75rem 1rem', borderRadius: '12px', fontSize: '0.8rem', color: '#64748B' }}>
+              💡 <strong>Quick Test Codes:</strong> Try linking <strong>AM-1001</strong> (Aarav - At-Risk Profile) or <strong>AM-1002</strong> (Priya - Typical Fluency).
+            </div>
+          </div>
+        )}
+
+        <div style={{ display: 'grid', gap: '1rem' }}>
+          {rosterLearners.length === 0 ? (
+            <div className="glass-card" style={{ padding: '3rem', textAlign: 'center', background: 'white' }}>
+              <span style={{ fontSize: '3rem' }}>🐣</span>
+              <h3>No Learners Yet</h3>
+              <p>Go to the profiles screen to add a new learner or link a student using their Kid ID.</p>
+            </div>
+          ) : (
+            rosterLearners.map(rawP => {
+              // Merge any fresher completed screening data from global cache or active storage
+              let p = rawP;
+              try {
+                const globalList = getStoredGlobalLearners();
+                const match = globalList.find(
+                  g =>
+                    (g.id && g.id === rawP.id) ||
+                    (g.kidCode && rawP.kidCode && g.kidCode.toUpperCase() === rawP.kidCode.toUpperCase())
+                );
+                if (match && (match.screeningCompleted || match.screeningMetrics)) {
+                  p = { ...rawP, ...match };
+                }
+              } catch (e) {}
+
+              const isCompleted = Boolean(p.screeningCompleted);
+              const isElevated = p.riskLevel && p.riskLevel !== 'typical';
+              const isExplorer = p.ageBand === '2-4';
+              
+              return (
+                <div key={p.id} onClick={() => {
+                  setActiveProfile(p);
+                  setDashboardTab('individual');
+                }} className="glass-card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1.25rem', background: 'white', borderRadius: '20px', cursor: 'pointer', transition: 'transform 0.15s ease' }} onMouseEnter={e => e.currentTarget.style.transform = 'translateX(4px)'} onMouseLeave={e => e.currentTarget.style.transform = 'translateX(0)'}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <div style={{ fontSize: '2rem', width: '56px', height: '56px', borderRadius: '16px', background: isExplorer ? '#ECFDF5' : '#F1F5F9', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      {getAvatarEmoji(p.avatarEmoji || p.avatar)}
+                    </div>
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                        <h4 style={{ margin: 0, fontSize: '1.1rem', color: '#1E293B', fontWeight: 800 }}>{p.name}</h4>
+                        {p.kidCode && (
+                          <span style={{ background: '#EEF2FF', color: '#4F46E5', padding: '0.15rem 0.5rem', borderRadius: '6px', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.04em' }}>
+                            🆔 {p.kidCode}
+                          </span>
+                        )}
+                        {p.isLinked && (
+                          <span style={{ background: '#F0FDF4', color: '#16A34A', padding: '0.15rem 0.5rem', borderRadius: '6px', fontSize: '0.7rem', fontWeight: 700 }}>
+                            🔗 Linked
+                          </span>
+                        )}
+                      </div>
+                      <div style={{ fontSize: '0.8rem', color: '#64748B', marginTop: '0.2rem' }}>{isExplorer ? 'Little Explorer (2-4)' : p.gradeLabel || 'Grade 2'}</div>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    {isExplorer ? (
+                       <span style={{ background: '#D1FAE5', color: '#065F46', padding: '0.3rem 0.8rem', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: 700 }}>Play Only</span>
+                    ) : !isCompleted ? (
+                       <span style={{ background: '#FEF3C7', color: '#92400E', padding: '0.3rem 0.8rem', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: 700 }}>Pending Screening</span>
+                    ) : isElevated ? (
+                       <span style={{ background: '#FEE2E2', color: '#991B1B', padding: '0.3rem 0.8rem', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: 700 }}>Elevated Risk</span>
+                    ) : (
+                       <span style={{ background: '#DCFCE7', color: '#166534', padding: '0.3rem 0.8rem', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: 700 }}>Typical</span>
+                    )}
+                    <ArrowRight size={18} color="#94A3B8" />
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // INDIVIDUAL VIEW
+  let profile = activeProfile;
+  if (profile) {
+    try {
+      const globalList = getStoredGlobalLearners();
+      const match = globalList.find(
+        g =>
+          (g.id && g.id === profile.id) ||
+          (g.kidCode && profile.kidCode && g.kidCode.toUpperCase() === profile.kidCode.toUpperCase())
+      );
+      if (match && (match.screeningCompleted || match.screeningMetrics)) {
+        profile = { ...profile, ...match };
+      }
+    } catch (e) {}
+  }
 
   if (!profile) {
     return (
@@ -39,8 +457,8 @@ export default function CompanionDashboard() {
           <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
             {t('noProfileDesc')}
           </p>
-          <button onClick={handleBack} className="btn btn-primary" style={{ padding: '0.65rem 1.5rem' }}>
-            {t('goToHome')}
+          <button onClick={() => setDashboardTab('roster')} className="btn btn-primary" style={{ padding: '0.65rem 1.5rem' }}>
+            View Roster
           </button>
         </div>
       </div>
@@ -69,15 +487,6 @@ export default function CompanionDashboard() {
     return { label: t('statusNotObserved'), bg: '#F1F5F9', color: '#64748B', border: '#E2E8F0', dot: '⚪' };
   };
 
-  const handleMitraCoachAudio = () => {
-    playPop();
-    const coachText = isElevated
-      ? t('mitraCoachDescElevated')
-      : t('mitraCoachDescTypical');
-    speakText(coachText, speechLang);
-  };
-
-
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', maxWidth: '780px', margin: '0 auto', width: '100%' }}>
       {/* Top Navigation & Mode Switcher Bar */}
@@ -88,470 +497,35 @@ export default function CompanionDashboard() {
           style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.85rem' }}
         >
           <ArrowLeft size={16} />
-          <span>{t('backToMain')}</span>
+          <span>{userRole === 'student' ? 'Back to Games' : 'Back to Roster'}</span>
         </button>
 
-        {/* Dual-View Mode Switcher Toggle */}
-        <div
+        {/* Export / Print Report */}
+        <button
+          onClick={handlePrint}
+          disabled={!isCompleted}
+          className="btn-secondary btn-pill"
           style={{
             display: 'flex',
-            background: '#F1F5F9',
-            padding: '4px',
-            borderRadius: '9999px',
-            border: '1px solid #E2E8F0'
+            alignItems: 'center',
+            gap: '0.4rem',
+            fontSize: '0.85rem',
+            borderColor: '#CBD5E1',
+            opacity: isCompleted ? 1 : 0.5,
+            cursor: isCompleted ? 'pointer' : 'not-allowed'
           }}
         >
-          <button
-            onClick={() => {
-              playPop();
-              setViewMode('kid');
-            }}
-            style={{
-              padding: '0.4rem 0.95rem',
-              borderRadius: '9999px',
-              border: 'none',
-              background: viewMode === 'kid' ? '#4F46E5' : 'transparent',
-              color: viewMode === 'kid' ? 'white' : '#64748B',
-              fontSize: '0.78rem',
-              fontWeight: 800,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.35rem',
-              transition: 'all 0.15s ease'
-            }}
-          >
-            <span>🧒</span>
-            <span>{t('viewModeKids')}</span>
-          </button>
-
-          <button
-            onClick={() => {
-              playPop();
-              setViewMode('educator');
-            }}
-            style={{
-              padding: '0.4rem 0.95rem',
-              borderRadius: '9999px',
-              border: 'none',
-              background: viewMode === 'educator' ? '#4F46E5' : 'transparent',
-              color: viewMode === 'educator' ? 'white' : '#64748B',
-              fontSize: '0.78rem',
-              fontWeight: 800,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.35rem',
-              transition: 'all 0.15s ease'
-            }}
-          >
-            <span>🎓</span>
-            <span>{t('viewModeEducator')}</span>
-          </button>
-        </div>
-
-        {viewMode === 'educator' && (
-          <button
-            onClick={handlePrint}
-            disabled={!isCompleted}
-            className="btn-secondary btn-pill"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.4rem',
-              fontSize: '0.85rem',
-              borderColor: '#CBD5E1',
-              opacity: isCompleted ? 1 : 0.5,
-              cursor: isCompleted ? 'pointer' : 'not-allowed'
-            }}
-          >
-            <Printer size={16} />
-            <span>{t('printReportPdf')}</span>
-          </button>
-        )}
+          <Printer size={16} />
+          <span>{t('printReportPdf')}</span>
+        </button>
       </div>
 
-      {/* ─────────────────────────────────────────────────────────────
-          KIDS VIEW: Superpowers, Star Vault & Cheerful Missions
-         ───────────────────────────────────────────────────────────── */}
-      {viewMode === 'kid' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          {/* Kids Hero Banner */}
-          <div
-            className="glass-card"
-            style={{
-              background: 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)',
-              color: 'white',
-              padding: '1.75rem',
-              borderRadius: '28px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              flexWrap: 'wrap',
-              gap: '1.25rem',
-              boxShadow: '0 12px 28px rgba(79, 70, 229, 0.25)'
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
-              <div
-                style={{
-                  fontSize: '3rem',
-                  width: '80px',
-                  height: '80px',
-                  borderRadius: '50%',
-                  background: 'rgba(255, 255, 255, 0.2)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  border: '3px solid rgba(255, 255, 255, 0.4)',
-                  boxShadow: '0 8px 16px rgba(0,0,0,0.1)'
-                }}
-              >
-                {getAvatarEmoji(profile.avatarEmoji || profile.avatar)}
-              </div>
 
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
-                  <h2 style={{ fontSize: '1.75rem', fontWeight: 900, margin: 0, color: 'white' }}>
-                    {profile.name}
-                  </h2>
-                  <span style={{ background: 'rgba(255, 255, 255, 0.25)', padding: '0.2rem 0.6rem', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: 800 }}>
-                    {profile.gradeLabel || 'Grade 2'}
-                  </span>
-                </div>
-                <p style={{ margin: 0, fontSize: '0.9rem', color: '#E0E7FF' }}>
-                  ⭐ {t('levelTitle')}: <strong>{isCompleted ? (isElevated ? 'Champion Explorer' : 'Master Reader') : 'Novice Explorer'}</strong>
-                </p>
-              </div>
-            </div>
-
-            {/* Quick Kid Metrics Counter */}
-            <div style={{ display: 'flex', gap: '0.75rem' }}>
-              <div style={{ background: 'rgba(255, 255, 255, 0.15)', padding: '0.6rem 1rem', borderRadius: '18px', textAlign: 'center' }}>
-                <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#FEF08A' }}>
-                  {profile.stars || 45} 🌟
-                </div>
-                <div style={{ fontSize: '0.7rem', color: '#E0E7FF' }}>{t('starVaultTitle')}</div>
-              </div>
-              <div
-                onClick={() => {
-                  playPop();
-                  if (setShowStreakModal) setShowStreakModal(true);
-                }}
-                style={{
-                  background: 'rgba(255, 255, 255, 0.18)',
-                  padding: '0.6rem 1rem',
-                  borderRadius: '18px',
-                  textAlign: 'center',
-                  cursor: 'pointer',
-                  border: '1.5px solid rgba(255, 255, 255, 0.3)',
-                  transition: 'transform 0.15s ease'
-                }}
-                title={isHindi ? 'दैनिक उपस्थिति कैलेंडर देखें' : (isBengali ? 'উপস্থিতির ক্যালেন্ডার দেখো' : 'View Attendance Calendar')}
-                onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-                onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-              >
-                <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#F87171' }}>
-                  {profile.streak || profile.streakDays || 2} 🔥
-                </div>
-                <div style={{ fontSize: '0.7rem', color: '#E0E7FF' }}>{isHindi ? 'लगातार दिन 📅' : (isBengali ? 'দিনের ধারা 📅' : 'Streak Days 📅')}</div>
-              </div>
-            </div>
-          </div>
-
-          {!isCompleted ? (
-            /* Kid Unscreened Prompt */
-            <div className="glass-card" style={{ padding: '2rem', textAlign: 'center', background: 'white', borderRadius: '24px' }}>
-              <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>🏝️</div>
-              <h3 style={{ fontSize: '1.3rem', fontWeight: 800, margin: '0 0 0.5rem' }}>{t('screeningNotCompletedTitle')}</h3>
-              <p style={{ fontSize: '0.88rem', color: '#64748B', maxWidth: '420px', margin: '0 auto 1.25rem' }}>
-                {profile.name} {t('screeningNotCompletedDesc')}
-              </p>
-              <button
-                onClick={() => {
-                  playPop();
-                  setCurrentView('screening');
-                }}
-                className="btn btn-primary animate-pulse-glow"
-                style={{ padding: '0.75rem 2rem', borderRadius: '9999px', fontSize: '1rem', fontWeight: 800 }}
-              >
-                <span>{t('startScreeningNow')}</span>
-              </button>
-            </div>
-          ) : (
-            <>
-              {/* 4 Superpower Badges Grid */}
-              <div>
-                <h3 style={{ fontSize: '1.2rem', fontWeight: 900, color: '#1E293B', margin: '0 0 0.25rem' }}>
-                  {t('mySuperpowersTitle')}
-                </h3>
-                <p style={{ fontSize: '0.82rem', color: '#64748B', margin: '0 0 1rem' }}>
-                  {t('mySuperpowersSubtitle')}
-                </p>
-
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '0.75rem' }}>
-                  {/* Superpower 1: Letter Vision */}
-                  <div style={{ background: '#EEF2FF', padding: '1rem', borderRadius: '20px', border: '2px solid #C7D2FE', textAlign: 'center' }}>
-                    <div style={{ fontSize: '2.2rem', marginBottom: '0.25rem' }}>🪞</div>
-                    <h4 style={{ fontSize: '0.92rem', fontWeight: 800, color: '#3730A3', margin: '0 0 0.2rem' }}>
-                      {t('powerEagleEye')}
-                    </h4>
-                    <span style={{ fontSize: '0.7rem', fontWeight: 800, padding: '0.2rem 0.55rem', borderRadius: '9999px', background: (metrics.reversalIndex || 0) <= 30 ? '#DCFCE7' : '#FEF3C7', color: (metrics.reversalIndex || 0) <= 30 ? '#166534' : '#B45309' }}>
-                      {(metrics.reversalIndex || 0) <= 30 ? (isHindi ? 'महारत हासिल ✅' : (isBengali ? 'দক্ষতা অর্জন ✅' : 'Mastered ✅')) : (isHindi ? 'अभ्यास जारी 🎯' : (isBengali ? 'অনুশীলন চলছে 🎯' : 'Training 🎯'))}
-                    </span>
-                    <p style={{ fontSize: '0.72rem', color: '#6366F1', marginTop: '0.4rem', margin: 0 }}>
-                      {t('powerEagleEyeDesc')}
-                    </p>
-                  </div>
-
-                  {/* Superpower 2: Rhythm Beats */}
-                  <div style={{ background: '#F0FDF4', padding: '1rem', borderRadius: '20px', border: '2px solid #BBF7D0', textAlign: 'center' }}>
-                    <div style={{ fontSize: '2.2rem', marginBottom: '0.25rem' }}>🥁</div>
-                    <h4 style={{ fontSize: '0.92rem', fontWeight: 800, color: '#166534', margin: '0 0 0.2rem' }}>
-                      {t('powerRhythmMaster')}
-                    </h4>
-                    <span style={{ fontSize: '0.7rem', fontWeight: 800, padding: '0.2rem 0.55rem', borderRadius: '9999px', background: (metrics.phonologicalScore || 0) >= 70 ? '#DCFCE7' : '#FEF3C7', color: (metrics.phonologicalScore || 0) >= 70 ? '#166534' : '#B45309' }}>
-                      {metrics.phonologicalScore || 80}% {isHindi ? 'स्कोर' : (isBengali ? 'স্কোর' : 'Score')}
-                    </span>
-                    <p style={{ fontSize: '0.72rem', color: '#16A34A', marginTop: '0.4rem', margin: 0 }}>
-                      {t('powerRhythmMasterDesc')}
-                    </p>
-                  </div>
-
-                  {/* Superpower 3: Story Speaker */}
-                  <div style={{ background: '#FFFBEB', padding: '1rem', borderRadius: '20px', border: '2px solid #FDE68A', textAlign: 'center' }}>
-                    <div style={{ fontSize: '2.2rem', marginBottom: '0.25rem' }}>🎙️</div>
-                    <h4 style={{ fontSize: '0.92rem', fontWeight: 800, color: '#92400E', margin: '0 0 0.2rem' }}>
-                      {t('powerStorySpeaker')}
-                    </h4>
-                    <span style={{ fontSize: '0.7rem', fontWeight: 800, padding: '0.2rem 0.55rem', borderRadius: '9999px', background: '#FEF3C7', color: '#92400E' }}>
-                      {metrics.wpm || 30} {isHindi ? 'शब्द/मिनट' : (isBengali ? 'শব্দ/মি' : 'WPM')}
-                    </span>
-                    <p style={{ fontSize: '0.72rem', color: '#D97706', marginTop: '0.4rem', margin: 0 }}>
-                      {t('powerStorySpeakerDesc')}
-                    </p>
-                  </div>
-
-                  {/* Superpower 4: Magic Pen */}
-                  <div style={{ background: '#FDF2F8', padding: '1rem', borderRadius: '20px', border: '2px solid #FBCFE8', textAlign: 'center' }}>
-                    <div style={{ fontSize: '2.2rem', marginBottom: '0.25rem' }}>✍️</div>
-                    <h4 style={{ fontSize: '0.92rem', fontWeight: 800, color: '#9D174D', margin: '0 0 0.2rem' }}>
-                      {t('powerMagicPen')}
-                    </h4>
-                    <span style={{ fontSize: '0.7rem', fontWeight: 800, padding: '0.2rem 0.55rem', borderRadius: '9999px', background: '#FCE7F3', color: '#9D174D' }}>
-                      {metrics.tracingAccuracy || 85}% {isHindi ? 'सटीक' : (isBengali ? 'নির্ভুল' : 'Accurate')}
-                    </span>
-                    <p style={{ fontSize: '0.72rem', color: '#DB2777', marginTop: '0.4rem', margin: 0 }}>
-                      {t('powerMagicPenDesc')}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Weekly Practice & Attendance Tracker Card */}
-              {(() => {
-                const attendedSet = new Set(profile.attendanceHistory || []);
-                const days = getRecentCalendarDays(7, activeLanguage?.id);
-                return (
-                  <div
-                    style={{
-                      background: 'white',
-                      borderRadius: '24px',
-                      padding: '1.25rem',
-                      border: '2px solid #FED7AA',
-                      boxShadow: '0 4px 14px rgba(249, 115, 22, 0.08)',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '0.85rem'
-                    }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <div style={{ width: '36px', height: '36px', borderRadius: '12px', background: '#FFEDD5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <Flame size={20} fill="#EA580C" color="#EA580C" />
-                        </div>
-                        <div>
-                          <h4 style={{ fontSize: '0.98rem', fontWeight: 900, color: '#1E293B', margin: 0 }}>
-                            {isHindi ? 'दैनिक उपस्थिति व अभ्यास का सिलसिला' : (isBengali ? 'দৈনিক উপস্থিতি ও অনুশীলনের ধারা' : 'Daily Attendance & Practice Streak')}
-                          </h4>
-                          <span style={{ fontSize: '0.75rem', color: '#64748B' }}>
-                            {profile.streak || 2} {isHindi ? 'दिनों का लगातार रिकॉर्ड' : (isBengali ? 'দিনের ধারাবাহিক রেকর্ড' : 'Consecutive Days Active')} 🔥
-                          </span>
-                        </div>
-                      </div>
-
-                      <button
-                        onClick={() => {
-                          playPop();
-                          if (setShowStreakModal) setShowStreakModal(true);
-                        }}
-                        style={{
-                          background: '#FFF7ED',
-                          border: '1.5px solid #FDBA74',
-                          color: '#C2410C',
-                          padding: '0.35rem 0.85rem',
-                          borderRadius: '9999px',
-                          fontSize: '0.78rem',
-                          fontWeight: 800,
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '0.35rem'
-                        }}
-                      >
-                        <Calendar size={14} />
-                        <span>{isHindi ? 'पूरा कैलेंडर देखें 📊' : (isBengali ? 'সম্পূর্ণ ক্যালেন্ডার দেখো 📊' : 'View Full Calendar 📊')}</span>
-                      </button>
-                    </div>
-
-                    {/* 7-Day Visual Strip */}
-                    <div style={{ display: 'flex', gap: '0.4rem', justifyContent: 'space-between' }}>
-                      {days.map((d) => {
-                        const isAttended = attendedSet.has(d.dateKey);
-                        return (
-                          <div
-                            key={d.dateKey}
-                            style={{
-                              flex: 1,
-                              display: 'flex',
-                              flexDirection: 'column',
-                              alignItems: 'center',
-                              padding: '0.5rem 0.2rem',
-                              borderRadius: '14px',
-                              background: isAttended ? '#DCFCE7' : (d.isToday ? '#FEF3C7' : '#F8FAFC'),
-                              border: isAttended ? '1.5px solid #86EFAC' : (d.isToday ? '1.5px solid #F59E0B' : '1px solid #E2E8F0')
-                            }}
-                          >
-                            <span style={{ fontSize: '0.68rem', fontWeight: 800, color: isAttended ? '#166534' : '#64748B' }}>
-                              {d.dayLabel}
-                            </span>
-                            <span style={{ fontSize: '0.85rem', fontWeight: 900, color: '#1E293B', margin: '2px 0' }}>
-                              {d.dayNumber}
-                            </span>
-                            <div style={{ fontSize: '0.85rem' }}>
-                              {isAttended ? '🔥' : (d.isToday ? '⏳' : '⚪')}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                );
-              })()}
-
-              {/* Mitra's Audio Coaching Note */}
-              <div
-                style={{
-                  background: 'white',
-                  borderRadius: '24px',
-                  padding: '1.25rem',
-                  border: '2px solid #E0E7FF',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '1rem',
-                  boxShadow: '0 4px 14px rgba(99, 102, 241, 0.08)'
-                }}
-              >
-                <div style={{ fontSize: '2.5rem', lineHeight: 1 }}>🦉</div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
-                    <h4 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#1E293B', margin: 0 }}>
-                      {t('mitraCoachTitle')}
-                    </h4>
-                    <button
-                      onClick={handleMitraCoachAudio}
-                      style={{
-                        background: '#EEF2FF',
-                        border: 'none',
-                        borderRadius: '50%',
-                        width: '32px',
-                        height: '32px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        cursor: 'pointer'
-                      }}
-                      title={t('listen')}
-                    >
-                      <Volume2 size={16} color="#4F46E5" />
-                    </button>
-                  </div>
-                  <p style={{ fontSize: '0.82rem', color: '#475569', lineHeight: 1.45, margin: 0 }}>
-                    {isElevated ? t('mitraCoachDescElevated') : t('mitraCoachDescTypical')}
-                  </p>
-                </div>
-              </div>
-
-              {/* Kid Mission Launcher Action Card */}
-              {(() => {
-                const kidRec = getChildRecommendation(profile, activeLanguage?.id);
-                return (
-                  <div
-                    style={{
-                      background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
-                      borderRadius: '24px',
-                      padding: '1.25rem 1.5rem',
-                      color: 'white',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      flexWrap: 'wrap',
-                      gap: '1rem',
-                      boxShadow: '0 8px 20px rgba(16, 185, 129, 0.25)'
-                    }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
-                      <span style={{ fontSize: '2rem' }}>{kidRec.icon || '🌟'}</span>
-                      <div>
-                        <div style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', color: '#A7F3D0', letterSpacing: '0.04em' }}>
-                          {isHindi ? '🌟 आज का विशेष मिशन' : (isBengali ? '🌟 আজকের বিশেষ মিশন' : '🌟 YOUR ADVENTURE MISSION')}
-                        </div>
-                        <h4 style={{ fontSize: '1.1rem', fontWeight: 900, margin: '0.1rem 0 0.2rem', color: 'white' }}>
-                          {kidRec.title}
-                        </h4>
-                        <p style={{ fontSize: '0.82rem', color: '#D1FAE5', margin: 0 }}>
-                          {kidRec.childPrompt}
-                        </p>
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={() => {
-                        playStarTwinkle();
-                        if (kidRec.activityId && kidRec.activityId !== 'games') {
-                          setCurrentView(kidRec.activityId);
-                        } else {
-                          setCurrentView('games');
-                        }
-                      }}
-                      className="animate-pulse-glow"
-                      style={{
-                        background: 'white',
-                        color: '#065F46',
-                        border: 'none',
-                        borderRadius: '9999px',
-                        padding: '0.65rem 1.4rem',
-                        fontSize: '0.88rem',
-                        fontWeight: 900,
-                        cursor: 'pointer',
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
-                      }}
-                    >
-                      {kidRec.buttonText || t('playMissionBtn')}
-                    </button>
-                  </div>
-                );
-              })()}
-            </>
-          )}
-        </div>
-      )}
 
       {/* ─────────────────────────────────────────────────────────────
-          JUDGES / EDUCATORS / PARENTS VIEW: 4-Axis Clinical IEP Vector
+          EDUCATOR DIAGNOSTIC & CLINICAL IEP REPORT
          ───────────────────────────────────────────────────────────── */}
-      {viewMode === 'educator' && (
-        <div className="glass-card" style={{ padding: '2rem 1.75rem', background: 'white', borderRadius: '24px' }}>
+      <div className="glass-card" style={{ padding: '2rem 1.75rem', background: 'white', borderRadius: '24px' }}>
           {/* Header with Avatar & Risk Badge */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', borderBottom: '2px solid #F1F5F9', paddingBottom: '1.25rem', marginBottom: '1.5rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', minWidth: 0 }}>
@@ -916,30 +890,27 @@ export default function CompanionDashboard() {
                 </div>
 
                 {learningProfile?.recommendedActivityId && learningProfile.recommendedActivityId !== 'screening' && (
-                  <button
-                    onClick={() => {
-                      playPop();
-                      setCurrentView(learningProfile.recommendedActivityId);
-                    }}
+                  <div
                     style={{
-                      background: '#10B981',
-                      color: 'white',
-                      border: 'none',
+                      background: '#DCFCE7',
+                      color: '#166534',
+                      border: '1px solid #86EFAC',
                       borderRadius: '9999px',
-                      padding: '0.45rem 1rem',
+                      padding: '0.35rem 0.85rem',
                       fontSize: '0.78rem',
-                      fontWeight: 700,
-                      cursor: 'pointer',
+                      fontWeight: 800,
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: '0.35rem',
-                      width: 'fit-content',
-                      boxShadow: '0 2px 6px rgba(16, 185, 129, 0.25)'
+                      width: 'fit-content'
                     }}
                   >
-                    <span>{t('playRecommendedPractice')}</span>
-                    <ArrowRight size={13} />
-                  </button>
+                    <span>🎯</span>
+                    <span>
+                      {isHindi ? 'अनुशंसित गतिविधि:' : (isBengali ? 'প্রস্তাবিত মডিউল:' : 'Assigned Activity:')}{' '}
+                      {learningProfile.recommendedActivityId.replace('-', ' ').toUpperCase()}
+                    </span>
+                  </div>
                 )}
               </div>
             </div>
@@ -1009,29 +980,62 @@ export default function CompanionDashboard() {
                 </div>
               </div>
 
-              <button
-                onClick={() => {
-                  playPop();
-                  setCurrentView('screening');
-                }}
+              <div
                 style={{
-                  background: 'linear-gradient(135deg, #4F46E5 0%, #3730A3 100%)',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '9999px',
-                  padding: '0.85rem 1.75rem',
-                  fontSize: '0.95rem',
-                  fontWeight: 800,
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 14px rgba(79, 70, 229, 0.35)',
-                  display: 'inline-flex',
+                  background: 'linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%)',
+                  border: '1.5px solid #C7D2FE',
+                  borderRadius: '16px',
+                  padding: '1.25rem',
+                  maxWidth: '520px',
+                  margin: '0 auto',
+                  display: 'flex',
+                  flexDirection: 'column',
                   alignItems: 'center',
-                  gap: '0.5rem'
+                  gap: '0.6rem'
                 }}
               >
-                <Sparkles size={18} />
-                <span>{t('startScreeningNow')}</span>
-              </button>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#3730A3' }}>
+                    {isHindi ? 'विद्यार्थी किड आईडी:' : (isBengali ? 'শিক্ষার্থী কিডের আইডি:' : 'Student Kid ID:')}
+                  </span>
+                  <span style={{ background: '#312E81', color: '#FEF08A', padding: '0.3rem 0.85rem', borderRadius: '8px', fontSize: '1.1rem', fontWeight: 900, letterSpacing: '0.06em' }}>
+                    {profile.kidCode || 'AM-???'}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      playPop();
+                      navigator.clipboard?.writeText(profile.kidCode || '');
+                      setCopiedKidId(true);
+                      setTimeout(() => setCopiedKidId(false), 2500);
+                    }}
+                    style={{
+                      background: copiedKidId ? '#16A34A' : '#4F46E5',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '9999px',
+                      padding: '0.35rem 0.85rem',
+                      fontSize: '0.78rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    {copiedKidId ? <Check size={14} /> : <Copy size={14} />}
+                    <span>{copiedKidId ? (isHindi ? 'कॉपी हो गया!' : (isBengali ? 'কপি হয়েছে!' : 'Copied!')) : (isHindi ? 'आईडी कॉपी करें' : (isBengali ? 'আইডি কপি করুন' : 'Copy Kid ID'))}</span>
+                  </button>
+                </div>
+                <p style={{ fontSize: '0.8rem', color: '#4338CA', margin: 0, textAlign: 'center', lineHeight: 1.4 }}>
+                  💡 {isHindi
+                    ? 'विद्यार्थी को अपने डिवाइस पर छात्र पोर्टल में इस किड आईडी से लॉगिन करने को कहें। स्क्रीनिंग पूर्ण होते ही डायग्नोस्टिक रिपोर्ट यहाँ प्रदर्शित होगी।'
+                    : (isBengali
+                    ? 'শিক্ষার্থীকে তাদের ডিভাইসে এই কিডের আইডি দিয়ে ছাত্র পোর্টালে লগইন করতে বলুন। স্ক্রীনিং সম্পূর্ণ হলে মূল্যায়ন রিপোর্ট এখানে দৃশ্যমান হবে।'
+                    : 'Instruct the student to log in on their device using this Kid ID to take the screening quest. Diagnostic vectors and IEP accommodations will automatically sync here.')}
+                </p>
+              </div>
             </div>
           ) : (
             <>
@@ -1164,7 +1168,6 @@ export default function CompanionDashboard() {
             </p>
           </div>
         </div>
-      )}
 
       {/* Parent Observation Modal Wizard */}
       <ParentObservationModal

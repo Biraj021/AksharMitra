@@ -12,7 +12,8 @@
     "./services/profile": "./src/services/learningProfileService.js",
     "./services/offline": "./src/services/offlineSyncService.js",
     "./services/parent": "./src/services/parentObservationService.js",
-    "./services/progress": "./src/services/progressService.js"
+    "./services/progress": "./src/services/progressService.js",
+    "./services/auth": "./src/services/authService.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.48.1"

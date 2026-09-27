@@ -294,7 +294,32 @@ export const TRANSLATIONS = {
     explorerDoTheyRhyme: "Do these rhyme?",
     explorerYes: "Yes!",
     explorerNo: "No",
-    explorerTapToHear: "Tap to hear!"
+    explorerTapToHear: "Tap to hear!",
+
+    // Auth & Multi-User Isolation
+    authTitle: "Parent & Educator Portal",
+    authSubtitle: "Sign in with your phone and password to manage your children's learning pathways",
+    authTabLogin: "Log In",
+    authTabRegister: "First Time? Create Account",
+    authPhoneLabel: "Mobile Phone Number",
+    authPhonePlaceholder: "10-digit mobile number",
+    authPasswordLabel: "Password",
+    authPasswordPlaceholder: "Enter your password (min 6 chars)",
+    authNameLabel: "Parent / Educator Name",
+    authNamePlaceholder: "e.g. Meera Sharma",
+    authConfirmPasswordLabel: "Confirm Password",
+    authConfirmPasswordPlaceholder: "Re-enter your password",
+    authLoginBtn: "Log In to AksharMitra",
+    authRegisterBtn: "Create Account & Start",
+    authSwitchToRegister: "New to AksharMitra? Create an account",
+    authSwitchToLogin: "Already have an account? Log in",
+    authDemoJudgeBtn: "⚡ Quick Demo Access (For Evaluators & Judges)",
+    authDemoJudgeSubtitle: "Explore pre-loaded benchmark learner profiles without phone sign-in",
+    authLogout: "Sign Out",
+    authSwitchAccount: "Switch Account",
+    authWelcomeBack: "Welcome back",
+    authParentAccount: "Parent Account",
+    authNoChildrenYet: "No children added yet! Add your first learner profile to start."
   },
 
 
@@ -591,7 +616,32 @@ export const TRANSLATIONS = {
     explorerDoTheyRhyme: "এরা কি ছন্দে মেলে?",
     explorerYes: "হ্যাঁ!",
     explorerNo: "না",
-    explorerTapToHear: "নাম শুনতে ট্যাপ করো!"
+    explorerTapToHear: "নাম শুনতে ট্যাপ করো!",
+
+    // Auth & Multi-User Isolation
+    authTitle: "অভিভাবক ও শিক্ষক প্রবেশদ্বার",
+    authSubtitle: "শিশুর পড়ার অগ্রগতি দেখতে ফোন ও পাসওয়ার্ড দিয়ে লগইন করুন",
+    authTabLogin: "লগইন",
+    authTabRegister: "প্রথমবার? অ্যাকাউন্ট তৈরি করুন",
+    authPhoneLabel: "মোবাইল ফোন নম্বর",
+    authPhonePlaceholder: "১০ সংখ্যার মোবাইল নম্বর",
+    authPasswordLabel: "পাসওয়ার্ড",
+    authPasswordPlaceholder: "পাসওয়ার্ড দিন (কমপক্ষে ৬ অক্ষর)",
+    authNameLabel: "অভিভাবক / শিক্ষকের নাম",
+    authNamePlaceholder: "যেমন: সুমিতা রায়",
+    authConfirmPasswordLabel: "পাসওয়ার্ড নিশ্চিত করুন",
+    authConfirmPasswordPlaceholder: "পুনরায় পাসওয়ার্ড দিন",
+    authLoginBtn: "অক্ষরমিত্রে লগইন করুন",
+    authRegisterBtn: "অ্যাকাউন্ট তৈরি করে শুরু করুন",
+    authSwitchToRegister: "নতুন ব্যবহারকারী? অ্যাকাউন্ট তৈরি করুন",
+    authSwitchToLogin: "ইতিমধ্যে অ্যাকাউন্ট আছে? লগইন করুন",
+    authDemoJudgeBtn: "⚡ দ্রুত ডেমো প্রবেশ (মূল্যায়নকারীদের জন্য)",
+    authDemoJudgeSubtitle: "ফোন নম্বর ছাড়াই পূর্বনির্ধারিত ডেমো প্রোফাইল পরখ করুন",
+    authLogout: "সাইন আউট",
+    authSwitchAccount: "অ্যাকাউন্ট পরিবর্তন করুন",
+    authWelcomeBack: "স্বাগতম",
+    authParentAccount: "অভিভাবক অ্যাকাউন্ট",
+    authNoChildrenYet: "এখনও কোনো শিশু যোগ করা হয়নি! শুরু করতে প্রথম প্রোফাইল যোগ করুন।"
   },
 
   hindi: {
@@ -887,7 +937,32 @@ export const TRANSLATIONS = {
     explorerDoTheyRhyme: "क्या इनकी तुक मिलती है?",
     explorerYes: "हाँ!",
     explorerNo: "नहीं",
-    explorerTapToHear: "नाम सुनने के लिए टैप करें!"
+    explorerTapToHear: "नाम सुनने के लिए टैप करें!",
+
+    // Auth & Multi-User Isolation
+    authTitle: "अभिभावक व शिक्षक पोर्टल",
+    authSubtitle: "बच्चों की सीखने की प्रगति देखने के लिए फोन और पासवर्ड से लॉगिन करें",
+    authTabLogin: "लॉग इन करें",
+    authTabRegister: "पहली बार आए हैं? खाता बनाएं",
+    authPhoneLabel: "मोबाइल फोन नंबर",
+    authPhonePlaceholder: "१० अंकों का मोबाइल नंबर",
+    authPasswordLabel: "पासवर्ड",
+    authPasswordPlaceholder: "पासवर्ड दर्ज करें (न्यूनतम ६ अक्षर)",
+    authNameLabel: "अभिभावक / शिक्षक का नाम",
+    authNamePlaceholder: "उदा. मीना शर्मा",
+    authConfirmPasswordLabel: "पासवर्ड की पुष्टि करें",
+    authConfirmPasswordPlaceholder: "पासवर्ड पुनः दर्ज करें",
+    authLoginBtn: "अक्षरमित्र में लॉग इन करें",
+    authRegisterBtn: "खाता बनाएं और शुरू करें",
+    authSwitchToRegister: "नए उपयोगकर्ता? नया खाता बनाएं",
+    authSwitchToLogin: "पहले से खाता है? लॉग इन करें",
+    authDemoJudgeBtn: "⚡ त्वरित डेमो प्रवेश (मूल्यांकनकर्ताओं के लिए)",
+    authDemoJudgeSubtitle: "फोन नंबर के बिना पहले से तैयार डेमो प्रोफाइल देखें",
+    authLogout: "साइन आउट",
+    authSwitchAccount: "खाता बदलें",
+    authWelcomeBack: "वापसी पर स्वागत है",
+    authParentAccount: "अभिभावक खाता",
+    authNoChildrenYet: "अभी तक कोई बच्चा नहीं जोड़ा गया! शुरू करने के लिए पहली प्रोफ़ाइल जोड़ें।"
   }
 
 };

@@ -259,6 +259,7 @@ export default function MirrorLetterQuest({ onCompleteQuest }) {
   const [currentIdx, setCurrentIdx] = useState(0);
   const [selectedIds, setSelectedIds] = useState(new Set());
   const [mistakesCount, setMistakesCount] = useState(0);
+  const [tracingAttempts, setTracingAttempts] = useState(0);
   const [tracingCollected, setTracingCollected] = useState(new Set());
   const [isTracingDrawing, setIsTracingDrawing] = useState(false);
   const [isDemonstrating, setIsDemonstrating] = useState(false);
@@ -283,28 +284,46 @@ export default function MirrorLetterQuest({ onCompleteQuest }) {
 
   const handlePickOption = (option) => {
     playPop();
-    if (selectedIds.has(option.id)) return;
 
-    if (option.isTarget) {
-      playChime(650);
-      const nextSet = new Set(selectedIds);
-      nextSet.add(option.id);
-      setSelectedIds(nextSet);
+    if (currentQ.type === 'word_orientation') {
+      // Single choice question: allow picking correct or wrong answer
+      setSelectedIds(new Set([option.id]));
+      setStatus('completed_step');
 
-      const neededCount = currentQ.targetCount || 1;
-      if (nextSet.size >= neededCount) {
-        setStatus('completed_step');
+      if (option.isTarget) {
+        playChime(650);
         playStarTwinkle();
+      } else {
+        playChime(320);
+        setMistakesCount((prev) => prev + 1);
+        const errVoice = isHindi
+          ? `आपने "${option.word}" चुना। ध्यान से देखें!`
+          : isBengali
+          ? `তুমি "${option.word}" বেছে নিয়েছো। সাবধানে লক্ষ্য করো!`
+          : `You selected "${option.word}". Look closely!`;
+        speakText(errVoice, speechLang);
       }
     } else {
-      playChime(320);
-      setMistakesCount((prev) => prev + 1);
-      const errVoice = isHindi
-        ? `यह ${option.char || option.word} है। ध्यान से ${currentQ.target || currentQ.targetWord} खोजें!`
-        : isBengali
-        ? `এটি হলো ${option.char || option.word}। সাবধানে ${currentQ.target || currentQ.targetWord} খুঁজে নাও!`
-        : `That is ${option.char || option.word}. Look closely for ${currentQ.target || currentQ.targetWord}!`;
-      speakText(errVoice, speechLang);
+      // pick_target: multi-select letter cards
+      const nextSet = new Set(selectedIds);
+      if (nextSet.has(option.id)) {
+        nextSet.delete(option.id);
+      } else {
+        nextSet.add(option.id);
+        if (option.isTarget) {
+          playChime(650);
+        } else {
+          playChime(320);
+          setMistakesCount((prev) => prev + 1);
+        }
+      }
+      setSelectedIds(nextSet);
+
+      if (nextSet.size >= 1) {
+        setStatus('completed_step');
+      } else {
+        setStatus('active');
+      }
     }
   };
 
@@ -330,13 +349,29 @@ export default function MirrorLetterQuest({ onCompleteQuest }) {
     };
   };
 
-  // Check collision with waypoints
-  const checkDotHit = (coords) => {
+  // Segment distance helper to prevent fast swipe skips
+  const distToSegment = (p, v, w) => {
+    const l2 = (v.x - w.x) ** 2 + (v.y - w.y) ** 2;
+    if (l2 === 0) return Math.hypot(p.x - v.x, p.y - v.y);
+    let t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
+    t = Math.max(0, Math.min(1, t));
+    return Math.hypot(p.x - (v.x + t * (w.x - v.x)), p.y - (v.y + t * (w.y - v.y)));
+  };
+
+  // Check collision with waypoints (generous 46px for children)
+  const checkDotHit = (coords, prevCoords) => {
     if (!currentQ.dots) return;
 
     currentQ.dots.forEach((dot) => {
-      const dist = Math.hypot(coords.x - dot.x, coords.y - dot.y);
-      if (dist < 36 && !tracingCollected.has(dot.id)) {
+      if (tracingCollected.has(dot.id)) return;
+      const dPoint = Math.hypot(coords.x - dot.x, coords.y - dot.y);
+      let dSeg = dPoint;
+      if (prevCoords) {
+        dSeg = distToSegment(dot, prevCoords, coords);
+      }
+      const dist = Math.min(dPoint, dSeg);
+
+      if (dist < 46) {
         visitedDotSequenceRef.current.push(dot.id);
         setTracingCollected((prev) => {
           const next = new Set(prev);
@@ -381,8 +416,11 @@ export default function MirrorLetterQuest({ onCompleteQuest }) {
     e.preventDefault();
 
     const coords = getCanvasCoords(e);
+    const pts = currentStrokeRef.current;
+    const prev = pts.length > 0 ? pts[pts.length - 1] : coords;
+
     currentStrokeRef.current.push(coords);
-    checkDotHit(coords);
+    checkDotHit(coords, prev);
 
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -434,6 +472,7 @@ export default function MirrorLetterQuest({ onCompleteQuest }) {
         setFeedbackError(errMsg);
         speakText(errMsg, speechLang);
         playPop();
+        setTracingAttempts((prev) => prev + 1);
       }
     }
   };
@@ -502,10 +541,23 @@ export default function MirrorLetterQuest({ onCompleteQuest }) {
       cumulativeTracingHitsRef.current += tracingCollected.size;
     }
 
+    if (currentQ.type === 'pick_target') {
+      const totalTargets = currentQ.options.filter((o) => o.isTarget).length;
+      let targetsPicked = 0;
+      currentQ.options.forEach((o) => {
+        if (selectedIds.has(o.id) && o.isTarget) targetsPicked++;
+      });
+      const missed = Math.max(0, totalTargets - targetsPicked);
+      if (missed > 0) {
+        setMistakesCount((prev) => prev + missed);
+      }
+    }
+
     if (currentIdx + 1 < questions.length) {
       setCurrentIdx((prev) => prev + 1);
       setSelectedIds(new Set());
       setTracingCollected(new Set());
+      setTracingAttempts(0);
       setStatus('active');
     } else {
       // Finalize Round 1 Metrics
@@ -598,12 +650,12 @@ export default function MirrorLetterQuest({ onCompleteQuest }) {
                   fontSize: '2.2rem',
                   fontWeight: 900,
                   fontFamily: "'Lexend', sans-serif",
-                  border: isPicked ? '3px solid #10B981' : '2px solid #E2E8F0',
-                  background: isPicked ? '#D1FAE5' : '#F8FAFC',
-                  color: isPicked ? '#047857' : '#1E293B',
+                  border: isPicked ? (opt.isTarget ? '3px solid #10B981' : '3px solid #F59E0B') : '2px solid #E2E8F0',
+                  background: isPicked ? (opt.isTarget ? '#D1FAE5' : '#FEF3C7') : '#F8FAFC',
+                  color: isPicked ? (opt.isTarget ? '#047857' : '#B45309') : '#1E293B',
                   cursor: 'pointer',
                   transition: 'all 0.15s ease',
-                  boxShadow: isPicked ? '0 4px 12px rgba(16, 185, 129, 0.25)' : 'none'
+                  boxShadow: isPicked ? (opt.isTarget ? '0 4px 12px rgba(16, 185, 129, 0.25)' : '0 4px 12px rgba(245, 158, 11, 0.25)') : 'none'
                 }}
               >
                 {opt.char}
@@ -630,11 +682,11 @@ export default function MirrorLetterQuest({ onCompleteQuest }) {
                   fontSize: '1.6rem',
                   fontWeight: 900,
                   fontFamily: "'Lexend', sans-serif",
-                  border: isPicked ? '3px solid #10B981' : '2px solid #E2E8F0',
-                  background: isPicked ? '#D1FAE5' : '#F8FAFC',
-                  color: isPicked ? '#047857' : '#1E293B',
+                  border: isPicked ? (opt.isCorrect ? '3px solid #10B981' : '3px solid #F59E0B') : '2px solid #E2E8F0',
+                  background: isPicked ? (opt.isCorrect ? '#D1FAE5' : '#FEF3C7') : '#F8FAFC',
+                  color: isPicked ? (opt.isCorrect ? '#047857' : '#B45309') : '#1E293B',
                   cursor: 'pointer',
-                  boxShadow: isPicked ? '0 4px 12px rgba(16, 185, 129, 0.25)' : 'none'
+                  boxShadow: isPicked ? (opt.isCorrect ? '0 4px 12px rgba(16, 185, 129, 0.25)' : '0 4px 12px rgba(245, 158, 11, 0.25)') : 'none'
                 }}
               >
                 {opt.word}
@@ -807,6 +859,33 @@ export default function MirrorLetterQuest({ onCompleteQuest }) {
               {tracingCollected.size}/{currentQ.dots?.length} dots
             </span>
           </div>
+
+          {/* Accessible Fallback if student struggles with motor precision */}
+          {tracingAttempts >= 2 && status !== 'completed_step' && (
+            <button
+              onClick={() => {
+                setMistakesCount((prev) => prev + 1);
+                setStatus('completed_step');
+              }}
+              style={{
+                background: '#FEF3C7',
+                color: '#B45309',
+                border: '1.5px solid #FCD34D',
+                borderRadius: '12px',
+                padding: '0.45rem 0.9rem',
+                fontSize: '0.82rem',
+                fontWeight: 800,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+                marginTop: '0.25rem'
+              }}
+            >
+              <span>{isBengali ? 'পরবর্তী ধাপে যান' : (isHindi ? 'आगे बढ़ें' : 'Continue to next')}</span>
+              <ArrowRight size={14} />
+            </button>
+          )}
         </div>
       )}
 

@@ -1,6 +1,7 @@
 export const DEMO_PROFILES = [
   {
     id: 'demo_aarav',
+    kidCode: 'AM-1001',
     name: 'Aarav',
     avatar: 'sheru',
     avatarEmoji: '🦁',
@@ -39,6 +40,7 @@ export const DEMO_PROFILES = [
   },
   {
     id: 'demo_priya',
+    kidCode: 'AM-1002',
     name: 'Priya',
     avatar: 'mayur',
     avatarEmoji: '🦚',

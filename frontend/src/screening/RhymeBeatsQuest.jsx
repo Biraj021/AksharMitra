@@ -166,7 +166,7 @@ export default function RhymeBeatsQuest({ onCompleteQuest }) {
 
   const [currentIdx, setCurrentIdx] = useState(0);
   const [selectedOptId, setSelectedOptId] = useState(null);
-  const [correctCount, setCorrectCount] = useState(0);
+  const [answers, setAnswers] = useState({}); // { [questionIdx]: boolean }
   const [status, setStatus] = useState('active'); // 'active' | 'completed_step'
 
   const currentQ = questions[currentIdx] || questions[0];
@@ -174,40 +174,30 @@ export default function RhymeBeatsQuest({ onCompleteQuest }) {
   const handlePickRhyme = (opt) => {
     playPop();
     setSelectedOptId(opt.id);
+    setStatus('completed_step');
 
     if (opt.isCorrect) {
       playChime(650);
-      setCorrectCount((prev) => prev + 1);
-      setStatus('completed_step');
       playStarTwinkle();
+      setAnswers((prev) => ({ ...prev, [currentIdx]: true }));
     } else {
       playChime(320);
-      const errMsg = isHindi
-        ? `"${opt.word}" शब्द "${currentQ.targetWord}" से तुकबंदी नहीं खाता। दोबारा प्रयास करें!`
-        : isBengali
-        ? `"${opt.word}" শব্দটি "${currentQ.targetWord}" এর সাথে ছন্দ মেলায় না। আবার চেষ্টা করো!`
-        : `${opt.word} does not rhyme with ${currentQ.targetWord}. Try another!`;
-      speakText(errMsg, speechLang);
+      setAnswers((prev) => ({ ...prev, [currentIdx]: false }));
     }
   };
 
   const handlePickSyllable = (count) => {
     playPop();
     setSelectedOptId(count);
+    setStatus('completed_step');
 
     if (count === currentQ.syllableCount) {
       playChime(650);
-      setCorrectCount((prev) => prev + 1);
-      setStatus('completed_step');
       playStarTwinkle();
+      setAnswers((prev) => ({ ...prev, [currentIdx]: true }));
     } else {
       playChime(320);
-      const errMsg = isHindi
-        ? `शब्दांश ताल को ध्यान से सुनें: ${currentQ.syllables}। पुनः प्रयास करें!`
-        : isBengali
-        ? `শব্দাংশের তালগুলো মনোযোগ দিয়ে শোনো: ${currentQ.syllables}। আবার চেষ্টা করো!`
-        : `Listen to the beats: ${currentQ.syllables}. Try again!`;
-      speakText(errMsg, speechLang);
+      setAnswers((prev) => ({ ...prev, [currentIdx]: false }));
     }
   };
 
@@ -217,9 +207,10 @@ export default function RhymeBeatsQuest({ onCompleteQuest }) {
       setSelectedOptId(null);
       setStatus('active');
     } else {
-      // Finalize Round 2 Metrics
+      // Finalize Round 2 Metrics accurately based on child answers
       const totalPossible = questions.length;
-      const score = Math.round((correctCount / totalPossible) * 100);
+      const correctTotal = Object.values(answers).filter(Boolean).length;
+      const score = Math.round((correctTotal / totalPossible) * 100);
 
       onCompleteQuest({
         questId: 'rhyme_beats',
@@ -291,9 +282,28 @@ export default function RhymeBeatsQuest({ onCompleteQuest }) {
                   flexDirection: 'column',
                   alignItems: 'center',
                   gap: '0.35rem',
-                  border: isSelected && isCorrect ? '3px solid #10B981' : '2px solid #E2E8F0',
-                  background: isSelected && isCorrect ? '#D1FAE5' : '#F8FAFC',
+                  border: isSelected
+                    ? isCorrect
+                      ? '3px solid #10B981'
+                      : '3px solid #F59E0B'
+                    : '2px solid #E2E8F0',
+                  background: isSelected
+                    ? isCorrect
+                      ? '#D1FAE5'
+                      : '#FEF3C7'
+                    : '#F8FAFC',
+                  color: isSelected
+                    ? isCorrect
+                      ? '#047857'
+                      : '#92400E'
+                    : '#1E293B',
                   cursor: 'pointer',
+                  transform: isSelected ? 'scale(1.05)' : 'scale(1)',
+                  boxShadow: isSelected
+                    ? isCorrect
+                      ? '0 4px 12px rgba(16, 185, 129, 0.25)'
+                      : '0 4px 12px rgba(245, 158, 11, 0.25)'
+                    : 'none',
                   transition: 'all 0.15s ease'
                 }}
               >
@@ -325,11 +335,28 @@ export default function RhymeBeatsQuest({ onCompleteQuest }) {
                   fontSize: '1.6rem',
                   fontWeight: 900,
                   fontFamily: isBengali ? 'var(--font-bengali)' : "'Lexend', sans-serif",
-                  border: isSelected && isCorrect ? '3px solid #10B981' : '2px solid #E2E8F0',
-                  background: isSelected && isCorrect ? '#D1FAE5' : '#F8FAFC',
-                  color: isSelected && isCorrect ? '#047857' : '#1E293B',
+                  border: isSelected
+                    ? isCorrect
+                      ? '3px solid #10B981'
+                      : '3px solid #F59E0B'
+                    : '2px solid #E2E8F0',
+                  background: isSelected
+                    ? isCorrect
+                      ? '#D1FAE5'
+                      : '#FEF3C7'
+                    : '#F8FAFC',
+                  color: isSelected
+                    ? isCorrect
+                      ? '#047857'
+                      : '#92400E'
+                    : '#1E293B',
                   cursor: 'pointer',
-                  boxShadow: isSelected && isCorrect ? '0 4px 12px rgba(16, 185, 129, 0.25)' : 'none'
+                  transform: isSelected ? 'scale(1.08)' : 'scale(1)',
+                  boxShadow: isSelected
+                    ? isCorrect
+                      ? '0 4px 12px rgba(16, 185, 129, 0.25)'
+                      : '0 4px 12px rgba(245, 158, 11, 0.25)'
+                    : 'none'
                 }}
               >
                 {num}

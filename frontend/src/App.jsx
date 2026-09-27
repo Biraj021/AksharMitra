@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
+
 import Header from './components/common/Header';
-import LoginPage from './components/auth/LoginPage';
+import AuthPage from './components/auth/AuthPage';
 import LandingHero from './components/landing/LandingHero';
 import ScreeningContainer from './components/screening/ScreeningContainer';
 import GamesHub from './games/GamesHub';
@@ -11,8 +13,6 @@ import SpellingTrapChallenge from './games/SpellingTrapChallenge';
 import AbcFillIn from './games/AbcFillIn';
 import LetterTracingQuest from './screening/LetterTracingQuest';
 import CompanionDashboard from './components/dashboard/CompanionDashboard';
-import PitchModal from './components/common/PitchModal';
-import ParentPinModal from './components/auth/ParentPinModal';
 import BottomNav from './components/common/BottomNav';
 import OnboardingModal from './components/auth/OnboardingModal';
 import ProfileSelectorModal from './components/auth/ProfileSelectorModal';
@@ -24,47 +24,138 @@ import ExplorerHome from './littleExplorer/ExplorerHome';
 import SoundMatchPlay from './littleExplorer/SoundMatchPlay';
 import RhymeParty from './littleExplorer/RhymeParty';
 import NameThatPicture from './littleExplorer/NameThatPicture';
+
 import { useProfile } from './context/ProfileContext';
 import { getAdaptiveLearningConfig } from '@ai/adaptiveLearningStrategy';
 
 export default function App() {
+  const { activeLanguage } = useProfile();
+  
+  return (
+    <div
+      className={`app-container ${activeLanguage?.id === 'hindi' ? 'lang-hindi' : (activeLanguage?.id === 'bengali' ? 'lang-bengali' : 'lang-english')}`}
+      lang={activeLanguage?.id === 'hindi' ? 'hi' : (activeLanguage?.id === 'bengali' ? 'bn' : 'en')}
+      style={{ minHeight: '100vh', background: '#F8FAFC' }}
+    >
+      <AppRouter />
+    </div>
+  );
+}
+
+function AppRouter() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const {
+    currentUser,
+    userRole,
     currentView,
     setCurrentView,
-    activeLanguage,
     activeProfile,
     showStreakModal,
     setShowStreakModal,
     showEditProfileModal,
     setShowEditProfileModal
   } = useProfile();
+
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showProfileSelector, setShowProfileSelector] = useState(false);
 
-  // Little Explorer mode check (ages 2-4)
+  // Structural Routing Sync: Strict Window Separation
+  useEffect(() => {
+    const isAuthRoute = location.pathname === '/auth';
+    const isDashboardRoute = location.pathname.startsWith('/dashboard');
+    const isPlayRoute = location.pathname.startsWith('/play');
+
+    if (!currentUser && !activeProfile) {
+      if (!isAuthRoute) navigate('/auth', { replace: true });
+    } else if (userRole === 'teacher' || currentUser?.role === 'teacher') {
+      if (!isDashboardRoute) navigate('/dashboard', { replace: true });
+    } else if (userRole === 'student') {
+      if (!isPlayRoute) navigate('/play', { replace: true });
+    }
+  }, [currentUser, userRole, activeProfile, location.pathname, navigate]);
+
+  // Sync back from URL to state
+  useEffect(() => {
+    if (location.pathname === '/dashboard' && currentView !== 'dashboard') {
+      setCurrentView('dashboard');
+    }
+  }, [location.pathname, currentView, setCurrentView]);
+
+  return (
+    <>
+      <Routes>
+        <Route path="/auth" element={<AuthPage />} />
+        
+        <Route path="/dashboard" element={
+          <>
+            <Header />
+            <main className="main-content" style={{ paddingBottom: '75px' }}>
+              <CompanionDashboard />
+            </main>
+          </>
+        } />
+
+        <Route path="/play/*" element={
+          <PlayEnvironment 
+            showOnboarding={showOnboarding} 
+            setShowOnboarding={setShowOnboarding}
+            setShowProfileSelector={setShowProfileSelector}
+          />
+        } />
+        
+        <Route path="*" element={<Navigate to={userRole === 'teacher' ? "/dashboard" : (activeProfile ? "/play" : "/auth")} replace />} />
+      </Routes>
+
+      {/* Student Global Modals */}
+      {userRole === 'student' && (
+        <>
+          <OnboardingModal
+            isOpen={showOnboarding}
+            onClose={() => setShowOnboarding(false)}
+          />
+          <ProfileSelectorModal
+            isOpen={showProfileSelector}
+            onClose={() => setShowProfileSelector(false)}
+            onAddNew={() => {
+              setShowProfileSelector(false);
+              setShowOnboarding(true);
+            }}
+          />
+        </>
+      )}
+      <DyslexiaSettingsModal />
+      <ReadingRuler />
+      <StreakCalendarModal
+        isOpen={showStreakModal}
+        onClose={() => setShowStreakModal(false)}
+      />
+      <EditProfileModal
+        isOpen={showEditProfileModal}
+        onClose={() => setShowEditProfileModal(false)}
+      />
+    </>
+  );
+}
+
+function PlayEnvironment({ showOnboarding, setShowOnboarding, setShowProfileSelector }) {
+  const {
+    activeProfile,
+    currentView,
+    setCurrentView,
+    activeLanguage
+  } = useProfile();
+
   const isLittleExplorer = activeProfile?.ageBand === '2-4';
-
-  // Stable key: changing language resets game session cleanly
   const langKey = activeLanguage?.id || 'english';
-
-  // Mandatory gating: 5-7 readers must complete screening quest first (never for Little Explorers)
-  const isScreeningGated = !isLittleExplorer && activeProfile && !activeProfile.screeningCompleted && currentView !== 'login';
-
-  // Compute deterministic adaptive learning parameters from active profile
+  const isScreeningGated = !isLittleExplorer && activeProfile && !activeProfile.screeningCompleted && currentView !== 'login' && currentView !== 'picker';
   const adaptiveConfig = getAdaptiveLearningConfig(activeProfile);
 
   return (
-    <div
-      className={`app-container ${activeLanguage?.id === 'hindi' ? 'lang-hindi' : (activeLanguage?.id === 'bengali' ? 'lang-bengali' : 'lang-english')}`}
-      lang={activeLanguage?.id === 'hindi' ? 'hi' : (activeLanguage?.id === 'bengali' ? 'bn' : 'en')}
-      style={{ paddingBottom: isLittleExplorer ? '20px' : '75px', minHeight: '100vh' }}
-    >
-      {/* Universal Header */}
+    <>
       <Header onOpenProfileSelector={() => setShowProfileSelector(true)} />
-
-      {/* Main Dynamic Viewport */}
-      <main className="main-content">
-        {(currentView === 'login' || !activeProfile) && <LoginPage />}
+      
+      <main className="main-content" style={{ paddingBottom: isLittleExplorer ? '20px' : '75px' }}>
         {isScreeningGated && <ScreeningContainer key={`screening-${langKey}`} />}
 
         {/* ── Little Explorer Mode (Ages 2-4) ── */}
@@ -91,7 +182,9 @@ export default function App() {
         {!isLittleExplorer && !isScreeningGated && activeProfile && currentView === 'screening' && (
           <ScreeningContainer key={`screening-${langKey}`} />
         )}
-        {!isLittleExplorer && !isScreeningGated && activeProfile && currentView === 'dashboard' && <CompanionDashboard />}
+        {!isLittleExplorer && !isScreeningGated && activeProfile && currentView === 'dashboard' && (
+          <CompanionDashboard />
+        )}
         {!isLittleExplorer && !isScreeningGated && activeProfile && currentView === 'games' && <GamesHub onSelectGame={(gameId) => setCurrentView(gameId)} />}
         {!isLittleExplorer && !isScreeningGated && activeProfile && currentView === 'word-snapper' && (
           <WordSnapper key={`ws-${langKey}`} onBack={() => setCurrentView('games')} adaptiveConfig={adaptiveConfig} />
@@ -113,36 +206,7 @@ export default function App() {
         )}
       </main>
 
-      {/* Modals & Wizards */}
-      <OnboardingModal
-        isOpen={showOnboarding}
-        onClose={() => setShowOnboarding(false)}
-      />
-
-      <ProfileSelectorModal
-        isOpen={showProfileSelector}
-        onClose={() => setShowProfileSelector(false)}
-        onAddNew={() => {
-          setShowProfileSelector(false);
-          setShowOnboarding(true);
-        }}
-      />
-
-      <PitchModal />
-      <ParentPinModal />
-      <DyslexiaSettingsModal />
-      <ReadingRuler />
-      <StreakCalendarModal
-        isOpen={showStreakModal}
-        onClose={() => setShowStreakModal(false)}
-      />
-      <EditProfileModal
-        isOpen={showEditProfileModal}
-        onClose={() => setShowEditProfileModal(false)}
-      />
-
-      {/* Sticky Bottom Navigation Bar (5-7 Readers Only) */}
-      {!isLittleExplorer && <BottomNav />}
-    </div>
+      {!isLittleExplorer && activeProfile && <BottomNav />}
+    </>
   );
 }

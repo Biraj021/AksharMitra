@@ -1,10 +1,20 @@
 import React from 'react';
-import { X, UserPlus, Star, ArrowRight, LogOut, CheckCircle } from 'lucide-react';
+import { X, UserPlus, Star, ArrowRight, LogOut, CheckCircle, User } from 'lucide-react';
 import { useProfile, getAvatarEmoji } from '../../context/ProfileContext';
 import { useAudio } from '../../context/AudioContext';
 
 export default function ProfileSelectorModal({ isOpen, onClose, onAddNew }) {
-  const { activeProfile, profilesList, switchProfile, logoutProfile, setCurrentView, setShowEditProfileModal, t } = useProfile();
+  const {
+    currentUser,
+    logoutUser,
+    activeProfile,
+    profilesList,
+    switchProfile,
+    logoutProfile,
+    setCurrentView,
+    setShowEditProfileModal,
+    t
+  } = useProfile();
   const { playPop, playStarTwinkle } = useAudio();
 
   if (!isOpen) return null;
@@ -15,10 +25,16 @@ export default function ProfileSelectorModal({ isOpen, onClose, onAddNew }) {
     onClose();
   };
 
-  const handleLogout = () => {
+  const handleSwitchChild = () => {
     playPop();
     onClose();
     logoutProfile();
+  };
+
+  const handleSignOutAccount = () => {
+    playPop();
+    onClose();
+    logoutUser();
   };
 
   return (
@@ -52,6 +68,69 @@ export default function ProfileSelectorModal({ isOpen, onClose, onAddNew }) {
             <X size={18} />
           </button>
         </div>
+
+        {/* Parent Account Badge */}
+        {currentUser && (
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              background: '#F8FAFC',
+              border: '1.5px solid #E2E8F0',
+              borderRadius: '16px',
+              padding: '0.6rem 0.85rem',
+              marginBottom: '1rem'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <div
+                style={{
+                  width: '28px',
+                  height: '28px',
+                  borderRadius: '50%',
+                  background: '#EEF2FF',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#4F46E5'
+                }}
+              >
+                <User size={15} />
+              </div>
+              <div>
+                <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#1E293B' }}>
+                  {currentUser.name}
+                </div>
+                {currentUser.phone && (
+                  <div style={{ fontSize: '0.72rem', color: '#64748B' }}>
+                    +91 {currentUser.phone}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleSignOutAccount}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#DC2626',
+                fontWeight: 700,
+                fontSize: '0.76rem',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.25rem',
+                padding: '0.2rem 0.4rem'
+              }}
+            >
+              <LogOut size={13} />
+              <span>{t('authLogout') || 'Sign Out'}</span>
+            </button>
+          </div>
+        )}
 
         {/* Profile List */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.25rem', maxHeight: '300px', overflowY: 'auto' }}>
@@ -143,7 +222,7 @@ export default function ProfileSelectorModal({ isOpen, onClose, onAddNew }) {
           </button>
 
           <button
-            onClick={handleLogout}
+            onClick={handleSwitchChild}
             style={{
               width: '100%',
               padding: '0.65rem',
@@ -161,7 +240,7 @@ export default function ProfileSelectorModal({ isOpen, onClose, onAddNew }) {
             }}
           >
             <LogOut size={16} />
-            <span>{t('logoutSwitch')}</span>
+            <span>{t('switchStudent') || 'Switch Learner'}</span>
           </button>
         </div>
       </div>

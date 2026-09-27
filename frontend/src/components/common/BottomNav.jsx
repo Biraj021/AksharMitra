@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Compass, BookOpen, BarChart3, Lock } from 'lucide-react';
+import { Home, Compass, BookOpen, Lock } from 'lucide-react';
 import { useProfile } from '../../context/ProfileContext';
 import { useAudio } from '../../context/AudioContext';
 
@@ -15,8 +15,7 @@ export default function BottomNav() {
   const navItems = [
     { id: 'landing', label: t('home'), icon: Home, matchViews: ['landing'], locked: !isScreeningDone },
     { id: 'screening', label: t('screening'), icon: Compass, matchViews: ['screening'], locked: false },
-    { id: 'games', label: t('learning'), icon: BookOpen, matchViews: ['games', 'word-snapper', 'letter-hunter', 'spelling-clinic', 'spelling-traps', 'abc-fill-in'], locked: !isScreeningDone },
-    { id: 'dashboard', label: t('insights'), icon: BarChart3, matchViews: ['dashboard'], locked: !isScreeningDone }
+    { id: 'games', label: t('learning'), icon: BookOpen, matchViews: ['games', 'word-snapper', 'letter-hunter', 'spelling-clinic', 'spelling-traps', 'abc-fill-in'], locked: !isScreeningDone }
   ];
 
   const handleNav = (item) => {
@@ -29,6 +28,7 @@ export default function BottomNav() {
       setCurrentView('screening');
       return;
     }
+    
     setCurrentView(item.id);
   };
 

@@ -1102,31 +1102,48 @@ export default function LetterTracingQuest({ onCompleteQuest, onBack, adaptiveCo
     ctx.fill();
   };
 
+  // Segment distance helper to prevent fast swipe skips
+  const distToSegment = (p, v, w) => {
+    const l2 = (v.x - w.x) ** 2 + (v.y - w.y) ** 2;
+    if (l2 === 0) return Math.hypot(p.x - v.x, p.y - v.y);
+    let t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
+    t = Math.max(0, Math.min(1, t));
+    return Math.hypot(p.x - (v.x + t * (w.x - v.x)), p.y - (v.y + t * (w.y - v.y)));
+  };
+
   const draw = (e) => {
     if (!isDrawing || isDemonstrating || tracingStatus === 'success') return;
     e.preventDefault();
     const coords = getCanvasCoords(e);
+    const pts = currentStrokeRef.current;
+    const prev = pts.length > 0 ? pts[pts.length - 1] : coords;
+
     currentStrokeRef.current.push(coords);
-    checkDotCollisions(coords);
+    checkDotCollisions(coords, prev);
     spawnParticles(coords.x, coords.y, 2);
 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     setStrokeStyle(ctx);
 
-    const pts = currentStrokeRef.current;
-    const prev = pts[Math.max(0, pts.length - 2)];
     ctx.beginPath();
     ctx.moveTo(prev.x, prev.y);
     ctx.lineTo(coords.x, coords.y);
     ctx.stroke();
   };
 
-  // Magnetic touch hit radius (22px)
-  const checkDotCollisions = (coords) => {
+  // Magnetic touch hit radius (generous 44px for smooth child interaction)
+  const checkDotCollisions = (coords, prevCoords) => {
     currentTarget.guideDots.forEach((dot) => {
-      const dist = Math.hypot(coords.x - dot.x, coords.y - dot.y);
-      if (dist < 22 && !collectedDotIds.has(dot.id)) {
+      if (collectedDotIds.has(dot.id)) return;
+      const dPoint = Math.hypot(coords.x - dot.x, coords.y - dot.y);
+      let dSeg = dPoint;
+      if (prevCoords) {
+        dSeg = distToSegment(dot, prevCoords, coords);
+      }
+      const dist = Math.min(dPoint, dSeg);
+
+      if (dist < 44) {
         visitedDotSequenceRef.current.push(dot.id);
         setCollectedDotIds((prev) => {
           const next = new Set(prev);
@@ -1182,13 +1199,13 @@ export default function LetterTracingQuest({ onCompleteQuest, onBack, adaptiveCo
     setDrawnStrokes(remainingStrokes);
     redrawCanvas(remainingStrokes);
 
-    // Recompute collected dots from remaining strokes
+    // Recompute collected dots from remaining strokes (generous 44px)
     const newCollected = new Set();
     const newVisited = [];
     const allPts = remainingStrokes.flat();
 
     currentTarget.guideDots.forEach((dot) => {
-      const touched = allPts.some(pt => Math.hypot(pt.x - dot.x, pt.y - dot.y) < 22);
+      const touched = allPts.some(pt => Math.hypot(pt.x - dot.x, pt.y - dot.y) < 44);
       if (touched) {
         newCollected.add(dot.id);
         newVisited.push(dot.id);

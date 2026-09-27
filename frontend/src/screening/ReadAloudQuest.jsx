@@ -148,39 +148,41 @@ const isWordMatch = (spokenToken, targetWord) => {
   // Exact match
   if (s === t) return true;
 
-  // Child speech phonetic aliases & Web Speech approximations
+  // Child speech phonetic aliases & Web Speech approximations (strictly no reversals!)
   const aliases = {
-    a: ['uh', 'ah', 'ay', 'an', '8', 'ey'],
+    a: ['uh', 'ah', 'ay'],
     the: ['da', 'dee', 'th', 'tha', 'de'],
-    to: ['two', 'too', '2', 'tu'],
-    dog: ['dark', 'doc', 'duck', 'doggie', 'god'],
+    to: ['two', 'too', 'tu'],
+    dog: ['dark', 'doc', 'duck', 'doggie'],
     sat: ['set', 'sad', 'seat', 'sit'],
-    on: ['un', 'an', 'in', 'one'],
-    red: ['read', 'rad', 'rid'],
-    bed: ['bad', 'bet', 'head', 'fed'],
-    cat: ['cut', 'cap', 'kat', 'chat'],
-    saw: ['see', 'seen', 'so', 'sah', 'was'],
+    on: ['un', 'an'],
+    red: ['rad', 'rid'],
+    bed: ['bet', 'head', 'fed'],
+    cat: ['kat', 'chat'],
+    saw: ['see', 'seen', 'so', 'sah'],
     star: ['start', 'stars', 'tar', 'stor'],
     bright: ['bite', 'right', 'brite', 'bride'],
-    birds: ['bird', 'buds', 'words', 'burds'],
-    sing: ['singing', 'sang', 'song', 'sin'],
+    birds: ['bird', 'buds', 'burds'],
+    sing: ['singing', 'sang', 'song'],
     tree: ['three', 'free', 'tre'],
-    tall: ['toll', 'all', 'tal', 'call'],
-    green: ['grin', 'grain', 'grene', 'jean']
+    tall: ['toll', 'tal'],
+    green: ['grin', 'grain', 'grene']
   };
 
   if (aliases[t] && aliases[t].includes(s)) return true;
 
-  // Substring/stem match (e.g. "birds" vs "bird", "sing" vs "singing")
-  if ((s.startsWith(t) || t.startsWith(s)) && Math.abs(s.length - t.length) <= 3) {
-    return true;
+  // Plurals and inflection (only for words >= 3 chars, e.g. "birds" vs "bird")
+  if (t.length >= 3) {
+    if (s === t + 's' || s === t + 'ing' || s === t + 'ed') return true;
+    if (t.endsWith('s') && s === t.slice(0, -1)) return true;
   }
 
-  // Levenshtein distance tolerance
+  // Levenshtein distance: 3-letter words must be exact or explicit alias
+  // to avoid cross-matching minimal pairs like red vs bed or cat vs sat!
   const dist = levenshtein(s, t);
-  if (t.length <= 2) {
-    return dist === 0;
-  } else if (t.length <= 4) {
+  if (t.length <= 3) {
+    return false;
+  } else if (t.length <= 5) {
     return dist <= 1;
   } else {
     return dist <= 2;
@@ -402,64 +404,50 @@ export default function ReadAloudQuest({ onCompleteQuest }) {
       firstUncompleted++;
     }
 
-    // Match Strategy 1: Match from index 0
-    let matchFromZero = new Set(currentCompleted);
-    let ptrZ = 0;
-    for (const token of tokens) {
-      while (ptrZ < cleanTargets.length && !isWordMatch(token, cleanTargets[ptrZ])) {
-        if (matchFromZero.has(ptrZ)) {
-          ptrZ++;
-        } else {
-          break;
-        }
-      }
-      if (ptrZ < cleanTargets.length && (isWordMatch(token, cleanTargets[ptrZ]) || cleanTargets[ptrZ].includes(token) || token.includes(cleanTargets[ptrZ]))) {
-        matchFromZero.add(ptrZ);
-        ptrZ++;
+    // Match Strategy 1: Sequential reading from index 0
+    let countFromZero = 0;
+    for (let i = 0; i < tokens.length && countFromZero < cleanTargets.length; i++) {
+      const token = tokens[i];
+      if (isWordMatch(token, cleanTargets[countFromZero])) {
+        countFromZero++;
+      } else if (countFromZero > 0 && isWordMatch(token, cleanTargets[countFromZero - 1])) {
+        // Child stutter or repeat of the word just read - allowed
       }
     }
 
-    // Match Strategy 2: Match from first uncompleted index
-    let matchFromUncompleted = new Set(currentCompleted);
-    let ptrU = firstUncompleted;
-    for (const token of tokens) {
-      while (ptrU < cleanTargets.length && !isWordMatch(token, cleanTargets[ptrU])) {
-        if (matchFromUncompleted.has(ptrU)) {
-          ptrU++;
-        } else {
-          break;
-        }
-      }
-      if (ptrU < cleanTargets.length && (isWordMatch(token, cleanTargets[ptrU]) || cleanTargets[ptrU].includes(token) || token.includes(cleanTargets[ptrU]))) {
-        matchFromUncompleted.add(ptrU);
-        ptrU++;
+    // Match Strategy 2: Sequential resume from firstUncompleted
+    let countFromResume = firstUncompleted;
+    for (let i = 0; i < tokens.length && countFromResume < cleanTargets.length; i++) {
+      const token = tokens[i];
+      if (isWordMatch(token, cleanTargets[countFromResume])) {
+        countFromResume++;
+      } else if (countFromResume > 0 && isWordMatch(token, cleanTargets[countFromResume - 1])) {
+        // Child stutter or repeat of the word just read - allowed
       }
     }
 
-    const bestSet = matchFromZero.size >= matchFromUncompleted.size ? matchFromZero : matchFromUncompleted;
+    const newTargetProgress = Math.max(countFromZero, countFromResume);
 
-    if (bestSet.size > currentCompleted.size) {
-      setCompletedIndices(new Set(bestSet));
-      completedIndicesRef.current = bestSet;
-
-      // Find next target word to highlight in yellow
-      let nextTarget = cleanTargets.length;
-      for (let i = 0; i < cleanTargets.length; i++) {
-        if (!bestSet.has(i)) {
-          nextTarget = i;
-          break;
-        }
+    if (newTargetProgress > currentCompleted.size) {
+      const nextSet = new Set();
+      for (let i = 0; i < newTargetProgress; i++) {
+        nextSet.add(i);
       }
-      setCurrentWordIdx(nextTarget);
+
+      setCompletedIndices(nextSet);
+      completedIndicesRef.current = nextSet;
+      setCurrentWordIdx(newTargetProgress);
       playPop();
 
-      if (bestSet.size >= cleanTargets.length) {
+      if (newTargetProgress >= cleanTargets.length) {
         finalizeReadingSession(cleanTargets.length);
       }
     }
   };
 
-  // Interactive Tap-to-Read Word Card
+  // Interactive Tap-to-Read Word Card:
+  // Tapping the current target word reads it aloud AND completes it in order!
+  // Tapping other words pronounces them for learning, but preserves sequential order.
   const handleWordClick = (word, idx) => {
     playPop();
     speakText(word, speechLang);
@@ -467,25 +455,19 @@ export default function ReadAloudQuest({ onCompleteQuest }) {
       recordingStartTimeRef.current = Date.now();
     }
 
-    setCompletedIndices((prev) => {
-      const next = new Set(prev).add(idx);
-      completedIndicesRef.current = next;
+    if (idx === currentWordIdx) {
+      const nextProgress = idx + 1;
+      setCompletedIndices((prev) => {
+        const next = new Set(prev).add(idx);
+        completedIndicesRef.current = next;
+        setCurrentWordIdx(nextProgress);
 
-      const cleanTargets = promptRef.current.cleanWords;
-      let nextTarget = cleanTargets.length;
-      for (let i = 0; i < cleanTargets.length; i++) {
-        if (!next.has(i)) {
-          nextTarget = i;
-          break;
+        if (nextProgress >= promptRef.current.cleanWords.length) {
+          finalizeReadingSession(promptRef.current.cleanWords.length);
         }
-      }
-      setCurrentWordIdx(nextTarget);
-
-      if (next.size >= cleanTargets.length) {
-        finalizeReadingSession(cleanTargets.length);
-      }
-      return next;
-    });
+        return next;
+      });
+    }
   };
 
   // Keep refs in sync with state

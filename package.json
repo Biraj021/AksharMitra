@@ -13,5 +13,5 @@
     "build": "npm run build --workspace=frontend",
     "preview": "npm run preview --workspace=frontend"
   },
-  "description": "AksharMitra monorepo — frontend, AI, database, and backend packages"
+  "description": "AksharMitra monorepo - frontend, AI, database, and backend packages"
 }

@@ -8,7 +8,7 @@ import { useProfile } from '../../context/ProfileContext';
 import { useAudio } from '../../context/AudioContext';
 
 export default function ScreeningContainer() {
-  const { activeProfile, setActiveProfile, setCurrentView, activeLanguage, t } = useProfile();
+  const { activeProfile, setActiveProfile, saveScreeningResults, setCurrentView, activeLanguage, t } = useProfile();
   const { playPop, playStarTwinkle, speakText } = useAudio();
   const isBengali = activeLanguage?.id === 'bengali';
 
@@ -150,7 +150,11 @@ export default function ScreeningContainer() {
           dateCompleted: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
         }
       };
-      setActiveProfile(updated);
+      if (saveScreeningResults) {
+        saveScreeningResults(updated);
+      } else {
+        setActiveProfile(updated);
+      }
     }
 
     speakText(

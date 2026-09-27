@@ -6,4 +6,5 @@ export * from "./services/learningProfileService.js";
 export * from "./services/offlineSyncService.js";
 export * from "./services/parentObservationService.js";
 export * from "./services/progressService.js";
+export * from "./services/authService.js";
 

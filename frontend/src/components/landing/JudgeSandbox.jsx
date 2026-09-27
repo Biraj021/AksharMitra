@@ -5,7 +5,7 @@ import { useAudio } from '../../context/AudioContext';
 import { DEMO_PROFILES } from '@backend/data/demoProfiles';
 
 export default function JudgeSandbox() {
-  const { loadDemoProfile, setShowPitchModal, setShowParentModal, setCurrentView } = useProfile();
+  const { loadDemoProfile, setCurrentView } = useProfile();
   const { playStarTwinkle, playPop } = useAudio();
 
   const handleLaunchAarav = () => {
@@ -47,28 +47,6 @@ export default function JudgeSandbox() {
             </p>
           </div>
         </div>
-        <button
-          onClick={() => {
-            playPop();
-            setShowPitchModal(true);
-          }}
-          style={{
-            background: 'rgba(255, 255, 255, 0.15)',
-            color: 'white',
-            border: '1px solid rgba(255, 255, 255, 0.3)',
-            borderRadius: '9999px',
-            padding: '0.35rem 0.75rem',
-            fontSize: '0.75rem',
-            fontWeight: '600',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.3rem'
-          }}
-        >
-          <Sparkles size={14} color="#FDE047" />
-          <span>Why AksharMitra?</span>
-        </button>
       </div>
 
       {/* Preset Action Grid */}
