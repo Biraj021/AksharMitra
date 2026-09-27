@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useRef } from 'r
 import { SUPPORTED_LANGUAGES } from '@backend/data/languages';
 import { DEMO_PROFILES } from '@backend/data/demoProfiles';
 import { TRANSLATIONS, getTranslation } from '@backend/data/translations';
-import { calculateLearningProfile } from '@ai/crossSignalIntelligence';
+import { calculateLearningProfile, calculatePracticeImprovement } from '@ai/crossSignalIntelligence';
 import { calculateStreakStats, formatDateKey, getRelativeDemoAttendance } from '@backend/streakUtils';
 
 // Data access & Auth services
@@ -914,6 +914,19 @@ export function ProfileProvider({ children }) {
       lastActivityDate: new Date().toISOString()
     };
 
+    const newAttempt = {
+      activityId,
+      timestamp: new Date().toISOString(),
+      metrics: metricUpdates,
+      starsEarned
+    };
+
+    const prevPracticeHistory = Array.isArray(activeProfile.practiceHistory) ? activeProfile.practiceHistory : [];
+    const updatedPracticeHistory = [...prevPracticeHistory, newAttempt];
+
+    // Compute quantitative progress delta comparing baseline screening/previous metrics with current attempt
+    const improvementDelta = calculatePracticeImprovement(existingMetrics, metricUpdates, activityId);
+
     const todayKey = formatDateKey();
     const prevHistory = Array.isArray(activeProfile.attendanceHistory) ? activeProfile.attendanceHistory : [];
     const updatedHistory = prevHistory.includes(todayKey) ? prevHistory : [...prevHistory, todayKey];
@@ -924,10 +937,18 @@ export function ProfileProvider({ children }) {
       stars: (activeProfile.stars || 0) + starsEarned,
       streak: streakStats.currentStreak,
       attendanceHistory: updatedHistory,
-      screeningMetrics: updatedMetrics
+      screeningMetrics: updatedMetrics,
+      practiceHistory: updatedPracticeHistory,
+      latestImprovementDelta: improvementDelta
     };
+
     updated.learningProfile = calculateLearningProfile(updated);
     setActiveProfile(updated);
+
+    // Persist to local storage for instant offline / reload persistence
+    try {
+      localStorage.setItem('aksharmitra_active_student_profile', JSON.stringify(updated));
+    } catch (e) {}
 
     // Asynchronously persist to Supabase
     if (!isDemoProfile(activeProfile.id)) {

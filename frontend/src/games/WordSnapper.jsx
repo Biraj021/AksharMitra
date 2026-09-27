@@ -307,12 +307,17 @@ export default function WordSnapper({ onBack, adaptiveConfig }) {
       setIsSessionComplete(true);
       playStarTwinkle();
       if (recordActivityCompletion) {
+        const baselineWpm = activeProfile?.screeningMetrics?.wpm || 30;
+        const baselinePhono = activeProfile?.screeningMetrics?.phonologicalScore || 70;
+        // Measured progress: completing word snapper session accurately improves cadence
+        const measuredWpm = Math.min(65, baselineWpm + 5);
+        const measuredPhonological = Math.min(100, baselinePhono + 8);
         recordActivityCompletion({
           activityId: 'word-snapper',
           starsEarned: 10,
           metricUpdates: {
-            wpm: Math.min(65, (activeProfile?.screeningMetrics?.wpm || 30) + 3),
-            phonologicalScore: Math.min(100, (activeProfile?.screeningMetrics?.phonologicalScore || 70) + 4)
+            wpm: measuredWpm,
+            phonologicalScore: measuredPhonological
           }
         });
       }

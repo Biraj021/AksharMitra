@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Award, CheckCircle, AlertTriangle, Printer, Sparkles, BookOpen, Volume2, Shield, Zap, Target, Mic, MessageSquare, Calendar, ArrowRight, Check, X, Users, Smartphone, Copy } from 'lucide-react';
+import { ArrowLeft, Award, CheckCircle, AlertTriangle, Printer, Sparkles, BookOpen, Volume2, Shield, Zap, Target, Mic, MessageSquare, Calendar, ArrowRight, Check, X, Users, Smartphone, Copy, TrendingUp } from 'lucide-react';
 import { useProfile, getAvatarEmoji } from '../../context/ProfileContext';
 import { useAudio } from '../../context/AudioContext';
 import ParentObservationModal from './ParentObservationModal';
@@ -971,6 +971,42 @@ export default function CompanionDashboard() {
                     </div>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {/* Closed-Loop Telemetry Delta Progress Card */}
+            {(learningProfile?.beforeVsAfterComparison?.hasImprovementData || profile?.latestImprovementDelta?.hasData) && (
+              <div style={{
+                background: 'linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%)',
+                borderRadius: '14px',
+                padding: '0.85rem 1rem',
+                border: '1px solid #86EFAC',
+                marginTop: '0.65rem'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.35rem' }}>
+                  <div style={{ fontSize: '0.78rem', fontWeight: 800, color: '#065F46', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                    <TrendingUp size={15} color="#059669" />
+                    <span>Closed-Loop Practice Telemetry (Before vs After)</span>
+                  </div>
+                  <span style={{ background: '#059669', color: 'white', fontSize: '0.62rem', fontWeight: 800, padding: '0.1rem 0.45rem', borderRadius: '9999px', textTransform: 'uppercase' }}>
+                    Real Telemetry Delta
+                  </span>
+                </div>
+                <p style={{ fontSize: '0.8rem', color: '#047857', fontWeight: 700, margin: '0 0 0.45rem', lineHeight: 1.4 }}>
+                  {learningProfile?.beforeVsAfterComparison?.summary || profile?.latestImprovementDelta?.summary}
+                </p>
+                {(learningProfile?.beforeVsAfterComparison?.deltas || profile?.latestImprovementDelta?.deltas) && (
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                    {(learningProfile?.beforeVsAfterComparison?.deltas || profile?.latestImprovementDelta?.deltas).map((d, idx) => (
+                      <div key={idx} style={{ background: 'white', border: '1px solid #A7F3D0', borderRadius: '8px', padding: '0.3rem 0.6rem', fontSize: '0.72rem' }}>
+                        <span style={{ color: '#475569', fontWeight: 600 }}>{d.label}: </span>
+                        <strong style={{ color: '#059669' }}>
+                          {d.before}{d.unit} → {d.after}{d.unit} ({d.delta > 0 ? `+${d.delta}` : d.delta} {d.unit})
+                        </strong>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </div>

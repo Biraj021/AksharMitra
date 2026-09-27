@@ -40,6 +40,127 @@ export function calculateWeightedTriangulationScore(screeningScore, telemetrySco
 }
 
 /**
+ * Calculates real practice improvement deltas (Before vs After) using percentage-point
+ * and quantitative unit comparisons.
+ */
+export function calculatePracticeImprovement(baselineMetrics = {}, recentMetrics = {}, activityId = '') {
+  if (!recentMetrics || Object.keys(recentMetrics).length === 0) {
+    return {
+      hasData: false,
+      summary: 'No recent practice metrics recorded yet.',
+      deltas: []
+    };
+  }
+
+  const deltas = [];
+  let summary = '';
+
+  // 1. Tracing Accuracy (Percentage Points)
+  if (recentMetrics.tracingAccuracy !== undefined && baselineMetrics.tracingAccuracy !== undefined) {
+    const before = Math.round(Number(baselineMetrics.tracingAccuracy));
+    const after = Math.round(Number(recentMetrics.tracingAccuracy));
+    const diff = after - before;
+    const sign = diff > 0 ? '+' : '';
+    deltas.push({
+      metric: 'tracingAccuracy',
+      label: 'Letter Tracing Accuracy',
+      before,
+      after,
+      delta: diff,
+      unit: '%',
+      formatted: `Tracing accuracy: ${before}% → ${after}% (${sign}${diff} percentage points)`
+    });
+
+    if (diff > 0) {
+      summary = `Letter Tracing accuracy improved by ${sign}${diff} percentage points (${before}% → ${after}%).`;
+    } else if (diff === 0) {
+      summary = `Letter Tracing accuracy maintained steady at ${after}%.`;
+    } else {
+      summary = `Letter Tracing accuracy measured at ${after}% in recent session (${before}% baseline).`;
+    }
+  }
+
+  // 2. Reading Cadence (WPM)
+  if (recentMetrics.wpm !== undefined && baselineMetrics.wpm !== undefined) {
+    const before = Math.round(Number(baselineMetrics.wpm));
+    const after = Math.round(Number(recentMetrics.wpm));
+    const diff = after - before;
+    const sign = diff > 0 ? '+' : '';
+    deltas.push({
+      metric: 'wpm',
+      label: 'Reading Speed',
+      before,
+      after,
+      delta: diff,
+      unit: 'WPM',
+      formatted: `Reading speed: ${before} WPM → ${after} WPM (${sign}${diff} WPM)`
+    });
+
+    if (!summary) {
+      if (diff > 0) {
+        summary = `Reading speed improved by ${sign}${diff} WPM (${before} → ${after} WPM).`;
+      } else if (diff === 0) {
+        summary = `Reading cadence maintained at ${after} WPM.`;
+      } else {
+        summary = `Recent reading speed measured at ${after} WPM (${before} WPM baseline).`;
+      }
+    }
+  }
+
+  // 3. Phonological Score (Percentage Points)
+  if (recentMetrics.phonologicalScore !== undefined && baselineMetrics.phonologicalScore !== undefined) {
+    const before = Math.round(Number(baselineMetrics.phonologicalScore));
+    const after = Math.round(Number(recentMetrics.phonologicalScore));
+    const diff = after - before;
+    const sign = diff > 0 ? '+' : '';
+    deltas.push({
+      metric: 'phonologicalScore',
+      label: 'Phonological Sound Mastery',
+      before,
+      after,
+      delta: diff,
+      unit: '%',
+      formatted: `Phonological score: ${before}% → ${after}% (${sign}${diff} percentage points)`
+    });
+  }
+
+  // 4. Letter Reversal Index (Percentage Points Reduction)
+  if (recentMetrics.reversalIndex !== undefined && baselineMetrics.reversalIndex !== undefined) {
+    const before = Math.round(Number(baselineMetrics.reversalIndex));
+    const after = Math.round(Number(recentMetrics.reversalIndex));
+    const reduction = before - after;
+    const sign = reduction > 0 ? '-' : '+';
+    deltas.push({
+      metric: 'reversalIndex',
+      label: 'Spatial Letter Reversal Rate',
+      before,
+      after,
+      delta: -reduction,
+      unit: '%',
+      formatted: `Reversal confusion rate: ${before}% → ${after}% (${sign}${Math.abs(reduction)} percentage points)`
+    });
+
+    if (!summary && reduction > 0) {
+      summary = `Letter reversal confusion reduced by -${reduction} percentage points (${before}% → ${after}%).`;
+    }
+  }
+
+  if (!summary && deltas.length > 0) {
+    summary = deltas[0].formatted;
+  } else if (!summary) {
+    summary = `Completed practice session for ${activityId || 'activity'}.`;
+  }
+
+  return {
+    hasData: true,
+    activityId,
+    timestamp: new Date().toISOString(),
+    summary,
+    deltas
+  };
+}
+
+/**
  * Converts raw parent feedback answers into structured observation signals.
  * Unanswered questions remain null. Never fabricates values or treats null as zero.
  */
@@ -266,6 +387,22 @@ export function calculateLearningProfile(profile) {
     appActivity: [],
     parentObservation: []
   };
+
+  // Process closed-loop telemetry progress from practice history
+  let latestImprovementDelta = profile.latestImprovementDelta || null;
+  const history = Array.isArray(profile.practiceHistory) ? profile.practiceHistory : [];
+  if (!latestImprovementDelta && history.length > 0) {
+    const latestAttempt = history[history.length - 1];
+    latestImprovementDelta = calculatePracticeImprovement(
+      profile.screeningMetrics || {},
+      latestAttempt.metrics || {},
+      latestAttempt.activityId
+    );
+  }
+
+  if (latestImprovementDelta && latestImprovementDelta.hasData && latestImprovementDelta.summary) {
+    evidence.appActivity.push(`📈 Telemetry Progress: ${latestImprovementDelta.summary}`);
+  }
 
   // Compile app evidence
   if (hasAppActivity) {
@@ -550,6 +687,12 @@ export function calculateLearningProfile(profile) {
     confidence: confidence || weightedConfidence,
     weightedTriangulationScore: weightedConfidence,
     triangulationWeights: SIGNAL_WEIGHTS,
+    latestImprovementDelta,
+    beforeVsAfterComparison: latestImprovementDelta ? {
+      hasImprovementData: Boolean(latestImprovementDelta.hasData),
+      summary: latestImprovementDelta.summary || '',
+      deltas: latestImprovementDelta.deltas || []
+    } : { hasImprovementData: false, summary: '', deltas: [] },
     updatedAt: new Date().toISOString()
   };
 }

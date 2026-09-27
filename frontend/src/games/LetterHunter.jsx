@@ -225,17 +225,17 @@ export default function LetterHunter({ onBack, adaptiveConfig }) {
 
       playStarTwinkle();
       if (recordActivityCompletion) {
-        const totalAttempts = session.totalFoundCount + session.totalMistakes || 1;
-        const accuracyRate = Math.round((session.totalFoundCount / totalAttempts) * 100);
-        const currentReversal = activeProfile?.screeningMetrics?.reversalIndex || 60;
-        const updatedReversal = Math.max(10, Math.round(currentReversal * 0.85));
+        const totalAttempts = (session.totalFoundCount || 0) + (session.totalMistakes || 0) || 1;
+        const accuracyRate = Math.round(((session.totalFoundCount || 1) / totalAttempts) * 100);
+        // Direct mathematical measurement: Reversal error rate is inverse of identification accuracy
+        const measuredReversalRate = Math.max(10, Math.min(85, Math.round(100 - accuracyRate)));
 
         recordActivityCompletion({
           activityId: 'letter-hunter',
-          starsEarned: session.starsEarned,
+          starsEarned: session.starsEarned || 5,
           metricUpdates: {
-            reversalIndex: updatedReversal,
-            lastLetterHunterAccuracy: accuracyRate
+            reversalIndex: measuredReversalRate,
+            letterHunterAccuracy: accuracyRate
           }
         });
       }

@@ -1,11 +1,3 @@
-import { pipeline, env } from '@xenova/transformers';
-
-// Configure transformers.js for in-browser client execution
-if (env) {
-  env.allowLocalModels = false;
-  env.useBrowserCache = true;
-}
-
 let miniLMExtractor = null;
 let isModelLoading = false;
 
@@ -24,6 +16,11 @@ export async function getMiniLMExtractor() {
 
   try {
     isModelLoading = true;
+    const { pipeline, env } = await import('@xenova/transformers');
+    if (env) {
+      env.allowLocalModels = false;
+      env.useBrowserCache = true;
+    }
     miniLMExtractor = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2', {
       quantized: true
     });

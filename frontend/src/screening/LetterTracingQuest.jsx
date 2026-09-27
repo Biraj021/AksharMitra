@@ -3,7 +3,7 @@ import { RotateCcw, CheckCircle, Sparkles, ArrowRight, Volume2, PlayCircle, Star
 import confetti from 'canvas-confetti';
 import { useAudio } from '../context/AudioContext';
 import { useProfile } from '../context/ProfileContext';
-import { validateTracingAttempt } from '@ai/tracingValidation';
+import { validateTracingAttempt, getLetterDefinition } from '@ai/tracingValidation';
 
 const ALL_LETTERS = 'abcdefghijklmnopqrstuvwxyz'.split('');
 const DYSLEXIA_FOCUS_PAIRS = ['b', 'd', 'p', 'q', 'm', 'w', 's', 'z', 'n', 'u', 'i', 'j', 't', 'x'];
@@ -622,13 +622,14 @@ const ACCURATE_LETTER_PATHS = {
   e: {
     instruction: "Trace 'e'! Go across the middle, curve over the top, and around!",
     audioText: "Trace letter e! Across the middle, over and around!",
+    svgPath: "M 95 155 L 180 155 C 180 95 95 95 95 160 C 95 225 185 225 185 195",
     guideDots: [
-      { id: 1, x: 100, y: 175, label: '1' },
-      { id: 2, x: 175, y: 175 },
-      { id: 3, x: 140, y: 120, label: '2' },
-      { id: 4, x: 90, y: 170 },
-      { id: 5, x: 140, y: 225 },
-      { id: 6, x: 175, y: 210, label: '3' }
+      { id: 1, x: 95, y: 155, label: '1' },
+      { id: 2, x: 180, y: 155, label: '2' },
+      { id: 3, x: 140, y: 105, label: '3' },
+      { id: 4, x: 95, y: 160, label: '4' },
+      { id: 5, x: 140, y: 220, label: '5' },
+      { id: 6, x: 185, y: 195, label: '6' }
     ]
   },
   f: {
@@ -885,10 +886,22 @@ const ACCURATE_LETTER_PATHS = {
 
 const generateSvgPathFromDots = (dots) => {
   if (!dots || dots.length === 0) return '';
+  if (dots.length === 1) return `M ${dots[0].x} ${dots[0].y}`;
+  if (dots.length === 2) return `M ${dots[0].x} ${dots[0].y} L ${dots[1].x} ${dots[1].y}`;
+
   let path = `M ${dots[0].x} ${dots[0].y}`;
-  for (let i = 1; i < dots.length; i++) {
-    path += ` L ${dots[i].x} ${dots[i].y}`;
+  for (let i = 0; i < dots.length - 1; i++) {
+    const curr = dots[i];
+    const next = dots[i + 1];
+    const midX = (curr.x + next.x) / 2;
+    const midY = (curr.y + next.y) / 2;
+    if (i === 0) {
+      path += ` L ${midX.toFixed(1)} ${midY.toFixed(1)}`;
+    } else {
+      path += ` Q ${curr.x} ${curr.y} ${midX.toFixed(1)} ${midY.toFixed(1)}`;
+    }
   }
+  path += ` L ${dots[dots.length - 1].x} ${dots[dots.length - 1].y}`;
   return path;
 };
 
@@ -944,12 +957,12 @@ export default function LetterTracingQuest({ onCompleteQuest, onBack, adaptiveCo
     }
   }, [langId]);
 
-  const currentTarget = getLetterConfig(selectedLetter);
+  const letterDef = getLetterDefinition(selectedLetter, langId, letterCase);
 
   useEffect(() => {
-    speakText(currentTarget.audioText, speechLang);
+    speakText(letterDef.audioText, speechLang);
     resetCanvas();
-  }, [selectedLetter, langId]);
+  }, [selectedLetter, langId, letterCase]);
 
   // Particle animation loop
   useEffect(() => {
@@ -1132,28 +1145,9 @@ export default function LetterTracingQuest({ onCompleteQuest, onBack, adaptiveCo
     ctx.stroke();
   };
 
-  // Magnetic touch hit radius (generous 44px for smooth child interaction)
-  const checkDotCollisions = (coords, prevCoords) => {
-    currentTarget.guideDots.forEach((dot) => {
-      if (collectedDotIds.has(dot.id)) return;
-      const dPoint = Math.hypot(coords.x - dot.x, coords.y - dot.y);
-      let dSeg = dPoint;
-      if (prevCoords) {
-        dSeg = distToSegment(dot, prevCoords, coords);
-      }
-      const dist = Math.min(dPoint, dSeg);
-
-      if (dist < 44) {
-        visitedDotSequenceRef.current.push(dot.id);
-        setCollectedDotIds((prev) => {
-          const next = new Set(prev);
-          next.add(dot.id);
-          return next;
-        });
-        spawnParticles(dot.x, dot.y, 12, true);
-        playPop();
-      }
-    });
+  // Particle effects on stroke touch
+  const checkDotCollisions = (coords) => {
+    spawnParticles(coords.x, coords.y, 2);
   };
 
   const stopDrawing = () => {
@@ -1165,21 +1159,21 @@ export default function LetterTracingQuest({ onCompleteQuest, onBack, adaptiveCo
       setDrawnStrokes(newStrokes);
       redrawCanvas(newStrokes);
 
-      // Perform validation
+      // Perform letter-aware stroke validation
       const validation = validateTracingAttempt({
         drawnStrokes: newStrokes,
-        guideDots: currentTarget.guideDots,
-        collectedDotIds: collectedDotIds,
-        visitedDotSequence: visitedDotSequenceRef.current,
-        targetConfig: currentTarget
+        letter: selectedLetter,
+        language: langId,
+        letterCase: letterCase,
+        letterDefinition: letterDef
       });
 
       if (validation.isValid) {
         setFeedbackError(null);
-        triggerSuccess();
+        triggerSuccess(validation.score || 92);
       } else if (validation.isInProgress) {
         setFeedbackError(null);
-        setTracingStatus(validation.reason || 'in_progress');
+        setTracingStatus('in_progress');
       } else {
         if (validation.reason !== 'no_strokes' && validation.reason !== 'too_short') {
           const langKey = isHindi ? 'hi' : (isBengali ? 'bn' : 'en');
@@ -1198,36 +1192,21 @@ export default function LetterTracingQuest({ onCompleteQuest, onBack, adaptiveCo
     const remainingStrokes = drawnStrokes.slice(0, -1);
     setDrawnStrokes(remainingStrokes);
     redrawCanvas(remainingStrokes);
-
-    // Recompute collected dots from remaining strokes (generous 44px)
-    const newCollected = new Set();
-    const newVisited = [];
-    const allPts = remainingStrokes.flat();
-
-    currentTarget.guideDots.forEach((dot) => {
-      const touched = allPts.some(pt => Math.hypot(pt.x - dot.x, pt.y - dot.y) < 44);
-      if (touched) {
-        newCollected.add(dot.id);
-        newVisited.push(dot.id);
-      }
-    });
-
-    setCollectedDotIds(newCollected);
-    visitedDotSequenceRef.current = newVisited;
     setTracingStatus('idle');
     setFeedbackError(null);
   };
 
-  const triggerSuccess = () => {
+  const triggerSuccess = (score = 92) => {
     if (tracingStatus === 'success') return;
     setTracingStatus('success');
     playStarTwinkle();
     if (recordActivityCompletion) {
+      const measuredAccuracy = Math.round(score);
       recordActivityCompletion({
         activityId: 'letter-tracing',
         starsEarned: 5,
         metricUpdates: {
-          tracingAccuracy: Math.min(98, (activeProfile?.screeningMetrics?.tracingAccuracy || 70) + 5)
+          tracingAccuracy: measuredAccuracy
         }
       });
     } else {
@@ -1243,7 +1222,7 @@ export default function LetterTracingQuest({ onCompleteQuest, onBack, adaptiveCo
     } catch (err) {}
   };
 
-  // Show Me Auto Demonstration Animation
+  // Show Me Auto Demonstration Animation using Dense Stroke Sampling
   const handleDemonstration = () => {
     if (isDemonstrating) return;
     resetCanvas();
@@ -1251,35 +1230,36 @@ export default function LetterTracingQuest({ onCompleteQuest, onBack, adaptiveCo
     speakText(`Watch Mitra draw letter ${selectedLetter}!`);
 
     const canvas = canvasRef.current;
+    if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    const dots = currentTarget.guideDots;
+    const allPoints = letterDef.strokes.flatMap(s => s.sampledPoints || []);
     let index = 0;
 
     const interval = setInterval(() => {
-      if (index < dots.length) {
-        const dot = dots[index];
-        setStrokeStyle(ctx, index * 5);
-        spawnParticles(dot.x, dot.y, 8, true);
+      if (index < allPoints.length) {
+        const pt = allPoints[index];
+        setStrokeStyle(ctx);
+        spawnParticles(pt.x, pt.y, 4, true);
 
-        if (index === 0 || (currentTarget.multiStroke && (dot.label?.includes('Cross') || dot.label?.includes('Dot') || dot.label?.includes('In')))) {
+        if (index === 0) {
           ctx.beginPath();
-          ctx.arc(dot.x, dot.y, 8, 0, Math.PI * 2);
+          ctx.arc(pt.x, pt.y, 8, 0, Math.PI * 2);
           ctx.fillStyle = '#F59E0B';
           ctx.fill();
           ctx.beginPath();
-          ctx.moveTo(dot.x, dot.y);
+          ctx.moveTo(pt.x, pt.y);
         } else {
-          ctx.lineTo(dot.x, dot.y);
+          ctx.lineTo(pt.x, pt.y);
           ctx.stroke();
         }
-        playChime(450 + index * 35);
+        playChime(450 + (index % 10) * 20);
         index++;
       } else {
         clearInterval(interval);
         setIsDemonstrating(false);
         speakText('Your turn now! Give it a try!');
       }
-    }, 380);
+    }, 45);
   };
 
   const resetCanvas = () => {
@@ -1306,9 +1286,6 @@ export default function LetterTracingQuest({ onCompleteQuest, onBack, adaptiveCo
   const letterList = (langId === 'english' && letterCase === 'upper')
     ? rawList.map(ch => ch.toUpperCase())
     : rawList;
-
-  const totalGuideDots = currentTarget.guideDots.length;
-  const collectedCount = collectedDotIds.size;
 
   return (
     <div
@@ -1501,7 +1478,7 @@ export default function LetterTracingQuest({ onCompleteQuest, onBack, adaptiveCo
         }}
       >
         <div style={{ fontSize: '0.88rem', fontWeight: '700', color: '#92400E', textAlign: 'left' }}>
-          {currentTarget.instruction}
+          {letterDef.instructions[Math.min(drawnStrokes.length, letterDef.instructions.length - 1)] || letterDef.instructions[0]}
         </div>
 
         <div style={{ display: 'flex', gap: '0.35rem', alignItems: 'center' }}>
@@ -1529,7 +1506,7 @@ export default function LetterTracingQuest({ onCompleteQuest, onBack, adaptiveCo
           </button>
 
           <button
-            onClick={() => speakText(currentTarget.audioText)}
+            onClick={() => speakText(letterDef.audioText, speechLang)}
             style={{
               background: 'white',
               border: 'none',
@@ -1564,7 +1541,7 @@ export default function LetterTracingQuest({ onCompleteQuest, onBack, adaptiveCo
           touchAction: 'none'
         }}
       >
-        {/* Letter Background Template (100% Aligned SVG Path) */}
+        {/* Letter Background Template (Single Clean SVG Target Path - No Duplicate Text Layer) */}
         <svg
           style={{
             position: 'absolute',
@@ -1576,65 +1553,35 @@ export default function LetterTracingQuest({ onCompleteQuest, onBack, adaptiveCo
           }}
           viewBox="0 0 280 280"
         >
-          {/* Outer Thick Light Grey Stroke (32px width) - Gives clear visible letter body */}
+          {/* Single Clean Target Letter SVG Path Outline */}
           <path
-            d={currentTarget.svgPath || generateSvgPathFromDots(currentTarget.guideDots)}
+            d={letterDef.svgPath}
             fill="none"
-            stroke="#E2E8F0"
-            strokeWidth="32"
+            stroke="#EEF2FF"
+            strokeWidth="30"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
-          {/* Dashed Center Guide Line (3px width) - Shows target path through dots */}
           <path
-            d={currentTarget.svgPath || generateSvgPathFromDots(currentTarget.guideDots)}
+            d={letterDef.svgPath}
             fill="none"
-            stroke="#CBD5E1"
+            stroke="#E0E7FF"
+            strokeWidth="22"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+
+          {/* Dashed Center Guide Line */}
+          <path
+            d={letterDef.svgPath}
+            fill="none"
+            stroke="#818CF8"
             strokeWidth="3"
             strokeDasharray="6 6"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
         </svg>
-
-
-
-        {/* Magnetic Guide Dots */}
-        {currentTarget.guideDots.map((dot) => {
-          const isCollected = collectedDotIds.has(dot.id);
-          const isPulsing = (tracingStatus === 'need_dot' && dot.label?.includes('Dot')) ||
-                            (tracingStatus === 'need_cross' && dot.label?.includes('Cross')) ||
-                            (tracingStatus === 'in_progress' && !isCollected);
-          return (
-            <div
-              key={dot.id}
-              style={{
-                position: 'absolute',
-                left: `${dot.x}px`,
-                top: `${dot.y}px`,
-                transform: 'translate(-50%, -50%)',
-                width: dot.label ? (dot.label.length > 3 ? '44px' : '26px') : '16px',
-                height: dot.label ? '24px' : '16px',
-                borderRadius: '9999px',
-                background: isCollected ? '#10B981' : isPulsing ? '#F59E0B' : dot.label ? '#F59E0B' : '#818CF8',
-                border: isCollected ? '2.5px solid #D1FAE5' : isPulsing ? '2.5px solid #FEF3C7' : '2px solid white',
-                boxShadow: isCollected ? '0 0 14px #10B981' : isPulsing ? '0 0 16px #F59E0B' : '0 2px 6px rgba(0,0,0,0.15)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'white',
-                fontSize: '10px',
-                fontWeight: 'bold',
-                pointerEvents: 'none',
-                zIndex: 5,
-                animation: isPulsing ? 'gentle-bounce 1.5s infinite' : 'none',
-                transition: 'all 0.2s ease'
-              }}
-            >
-              {isCollected ? '✓' : dot.label || ''}
-            </div>
-          );
-        })}
 
         {/* Particle Canvas Layer */}
         <canvas
@@ -1670,31 +1617,17 @@ export default function LetterTracingQuest({ onCompleteQuest, onBack, adaptiveCo
         />
       </div>
 
-      {/* Progress & Dot Counter Bar */}
+      {/* Progress & Handwriting Stroke Counter Bar */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', maxWidth: '280px', margin: '0 auto 0.75rem', fontSize: '0.8rem', fontWeight: '800', color: '#475569' }}>
-        <span>Dots Completed: {collectedCount} / {totalGuideDots}</span>
-        <span>Strokes: {drawnStrokes.length}</span>
+        <span>Tracing Progress: Stroke {Math.min(drawnStrokes.length + (tracingStatus === 'success' ? 0 : 1), letterDef.strokeCount)} of {letterDef.strokeCount}</span>
+        <span>Total Strokes: {drawnStrokes.length}</span>
       </div>
 
       {/* Guided Helper / Status Feedback */}
-      {tracingStatus === 'need_dot' && (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', color: '#B45309', background: '#FEF3C7', padding: '0.45rem 0.75rem', borderRadius: '12px', fontWeight: '700', fontSize: '0.9rem', marginBottom: '0.75rem' }}>
-          <AlertCircle size={18} color="#D97706" />
-          <span>Almost done! Now tap the dot on top! 👆</span>
-        </div>
-      )}
-
-      {tracingStatus === 'need_cross' && (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', color: '#4338CA', background: '#EEF2FF', padding: '0.45rem 0.75rem', borderRadius: '12px', fontWeight: '700', fontSize: '0.9rem', marginBottom: '0.75rem' }}>
-          <AlertCircle size={18} color="#4F46E5" />
-          <span>Great line! Now draw the crossbar across! ➔</span>
-        </div>
-      )}
-
       {tracingStatus === 'in_progress' && !feedbackError && (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', color: '#1E40AF', background: '#DBEAFE', padding: '0.45rem 0.75rem', borderRadius: '12px', fontWeight: '700', fontSize: '0.9rem', marginBottom: '0.75rem' }}>
           <Sparkles size={18} color="#2563EB" />
-          <span>Keep going! Trace along the letter shape!</span>
+          <span>{letterDef.instructions[Math.min(drawnStrokes.length, letterDef.instructions.length - 1)] || "Keep going! Trace along the letter shape!"}</span>
         </div>
       )}
 
@@ -1708,7 +1641,7 @@ export default function LetterTracingQuest({ onCompleteQuest, onBack, adaptiveCo
       {tracingStatus === 'success' && (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', color: '#059669', fontWeight: '700', fontSize: '1rem', marginBottom: '0.75rem' }}>
           <CheckCircle size={20} color="#10B981" />
-          <span>Wonderful Tracing! Perfect Letter Overlap! +5 Stars</span>
+          <span>Wonderful Tracing! Perfect Letter Shape! +5 Stars</span>
         </div>
       )}
 

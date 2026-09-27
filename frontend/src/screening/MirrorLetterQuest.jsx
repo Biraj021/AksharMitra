@@ -371,7 +371,7 @@ export default function MirrorLetterQuest({ onCompleteQuest }) {
       }
       const dist = Math.min(dPoint, dSeg);
 
-      if (dist < 46) {
+      if (dist < 22) {
         visitedDotSequenceRef.current.push(dot.id);
         setTracingCollected((prev) => {
           const next = new Set(prev);

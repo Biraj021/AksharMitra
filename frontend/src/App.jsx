@@ -168,13 +168,13 @@ function PlayEnvironment({ showOnboarding, setShowOnboarding, setShowProfileSele
 
   const isLittleExplorer = currentLearner?.ageBand === '2-4';
   const langKey = activeLanguage?.id || 'english';
-  const isScreeningGated = !isLittleExplorer && !currentLearner.screeningCompleted;
+  const isScreeningGated = !isLittleExplorer && currentLearner && !currentLearner.screeningCompleted && currentView === 'screening';
   const adaptiveConfig = getAdaptiveLearningConfig(currentLearner);
 
   // Fallback view: Default to Home Clubhouse ('landing')
   const effectiveView = currentView && currentView !== 'login' && currentView !== 'picker'
     ? currentView
-    : (isScreeningGated ? 'screening' : 'landing');
+    : 'landing';
 
   return (
     <>
