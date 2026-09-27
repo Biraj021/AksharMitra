@@ -67,12 +67,12 @@ function AppRouter() {
     const isDashboardRoute = location.pathname.startsWith('/dashboard');
     const isPlayRoute = location.pathname.startsWith('/play');
 
-    if (!currentUser && !activeProfile) {
-      if (!isAuthRoute) navigate('/auth', { replace: true });
-    } else if (userRole === 'teacher' || currentUser?.role === 'teacher') {
+    if (userRole === 'teacher' || currentUser?.role === 'teacher') {
       if (!isDashboardRoute) navigate('/dashboard', { replace: true });
-    } else if (userRole === 'student') {
+    } else if (activeProfile) {
       if (!isPlayRoute) navigate('/play', { replace: true });
+    } else {
+      if (!isAuthRoute) navigate('/auth', { replace: true });
     }
   }, [currentUser, userRole, activeProfile, location.pathname, navigate]);
 
@@ -147,63 +147,80 @@ function PlayEnvironment({ showOnboarding, setShowOnboarding, setShowProfileSele
     activeLanguage
   } = useProfile();
 
+  // If no student profile is active, redirect to auth / student portal
+  if (!activeProfile) {
+    return <Navigate to="/auth" replace />;
+  }
+
   const isLittleExplorer = activeProfile?.ageBand === '2-4';
   const langKey = activeLanguage?.id || 'english';
-  const isScreeningGated = !isLittleExplorer && activeProfile && !activeProfile.screeningCompleted && currentView !== 'login' && currentView !== 'picker';
+  const isScreeningGated = !isLittleExplorer && !activeProfile.screeningCompleted;
   const adaptiveConfig = getAdaptiveLearningConfig(activeProfile);
+
+  // Fallback view if currentView is missing or undefined
+  const effectiveView = currentView && currentView !== 'login' && currentView !== 'picker'
+    ? currentView
+    : (isScreeningGated ? 'screening' : 'games');
 
   return (
     <>
       <Header onOpenProfileSelector={() => setShowProfileSelector(true)} />
       
       <main className="main-content" style={{ paddingBottom: isLittleExplorer ? '20px' : '75px' }}>
-        {isScreeningGated && <ScreeningContainer key={`screening-${langKey}`} />}
-
-        {/* ── Little Explorer Mode (Ages 2-4) ── */}
-        {isLittleExplorer && activeProfile && (currentView === 'landing' || currentView === 'games' || currentView === 'dashboard' || currentView === 'screening') && (
-          <ExplorerHome onSelectActivity={(actId) => setCurrentView(actId)} />
-        )}
-        {isLittleExplorer && activeProfile && currentView === 'sound-match' && (
-          <SoundMatchPlay onBack={() => setCurrentView('landing')} />
-        )}
-        {isLittleExplorer && activeProfile && currentView === 'rhyme-party' && (
-          <RhymeParty onBack={() => setCurrentView('landing')} />
-        )}
-        {isLittleExplorer && activeProfile && currentView === 'name-picture' && (
-          <NameThatPicture onBack={() => setCurrentView('landing')} />
-        )}
-
-        {/* ── 5-7 Reader Flow ── */}
-        {!isLittleExplorer && !isScreeningGated && activeProfile && currentView === 'landing' && (
-          <LandingHero
-            onStartOnboarding={() => setShowOnboarding(true)}
-            onOpenProfileSelector={() => setShowProfileSelector(true)}
-          />
-        )}
-        {!isLittleExplorer && !isScreeningGated && activeProfile && currentView === 'screening' && (
+        {/* ── Screening Gated for Unscreened Students ── */}
+        {isScreeningGated ? (
           <ScreeningContainer key={`screening-${langKey}`} />
-        )}
-        {!isLittleExplorer && !isScreeningGated && activeProfile && currentView === 'dashboard' && (
-          <CompanionDashboard />
-        )}
-        {!isLittleExplorer && !isScreeningGated && activeProfile && currentView === 'games' && <GamesHub onSelectGame={(gameId) => setCurrentView(gameId)} />}
-        {!isLittleExplorer && !isScreeningGated && activeProfile && currentView === 'word-snapper' && (
-          <WordSnapper key={`ws-${langKey}`} onBack={() => setCurrentView('games')} adaptiveConfig={adaptiveConfig} />
-        )}
-        {!isLittleExplorer && !isScreeningGated && activeProfile && currentView === 'letter-hunter' && (
-          <LetterHunter key={`lh-${langKey}`} onBack={() => setCurrentView('games')} adaptiveConfig={adaptiveConfig} />
-        )}
-        {!isLittleExplorer && !isScreeningGated && activeProfile && currentView === 'spelling-clinic' && (
-          <SpellingClinic key={`sc-${langKey}`} onBack={() => setCurrentView('games')} adaptiveConfig={adaptiveConfig} />
-        )}
-        {!isLittleExplorer && !isScreeningGated && activeProfile && currentView === 'spelling-traps' && (
-          <SpellingTrapChallenge key={`st-${langKey}`} onBack={() => setCurrentView('games')} adaptiveConfig={adaptiveConfig} />
-        )}
-        {!isLittleExplorer && !isScreeningGated && activeProfile && currentView === 'abc-fill-in' && (
-          <AbcFillIn key={`af-${langKey}`} onBack={() => setCurrentView('games')} adaptiveConfig={adaptiveConfig} />
-        )}
-        {!isLittleExplorer && !isScreeningGated && activeProfile && currentView === 'letter-tracing' && (
-          <LetterTracingQuest key={`lt-${langKey}`} onBack={() => setCurrentView('games')} adaptiveConfig={adaptiveConfig} />
+        ) : (
+          <>
+            {/* ── Little Explorer Mode (Ages 2-4) ── */}
+            {isLittleExplorer && (effectiveView === 'landing' || effectiveView === 'games' || effectiveView === 'dashboard' || effectiveView === 'screening') && (
+              <ExplorerHome onSelectActivity={(actId) => setCurrentView(actId)} />
+            )}
+            {isLittleExplorer && effectiveView === 'sound-match' && (
+              <SoundMatchPlay onBack={() => setCurrentView('landing')} />
+            )}
+            {isLittleExplorer && effectiveView === 'rhyme-party' && (
+              <RhymeParty onBack={() => setCurrentView('landing')} />
+            )}
+            {isLittleExplorer && effectiveView === 'name-picture' && (
+              <NameThatPicture onBack={() => setCurrentView('landing')} />
+            )}
+
+            {/* ── 5-7 Reader Flow (Games, Quests, Trail Map & Dashboard) ── */}
+            {!isLittleExplorer && effectiveView === 'landing' && (
+              <LandingHero
+                onStartOnboarding={() => setShowOnboarding(true)}
+                onOpenProfileSelector={() => setShowProfileSelector(true)}
+              />
+            )}
+            {!isLittleExplorer && effectiveView === 'games' && (
+              <GamesHub onSelectGame={(gameId) => setCurrentView(gameId)} />
+            )}
+            {!isLittleExplorer && effectiveView === 'word-snapper' && (
+              <WordSnapper key={`ws-${langKey}`} onBack={() => setCurrentView('games')} adaptiveConfig={adaptiveConfig} />
+            )}
+            {!isLittleExplorer && effectiveView === 'letter-hunter' && (
+              <LetterHunter key={`lh-${langKey}`} onBack={() => setCurrentView('games')} adaptiveConfig={adaptiveConfig} />
+            )}
+            {!isLittleExplorer && effectiveView === 'spelling-clinic' && (
+              <SpellingClinic key={`sc-${langKey}`} onBack={() => setCurrentView('games')} adaptiveConfig={adaptiveConfig} />
+            )}
+            {!isLittleExplorer && effectiveView === 'spelling-traps' && (
+              <SpellingTrapChallenge key={`st-${langKey}`} onBack={() => setCurrentView('games')} adaptiveConfig={adaptiveConfig} />
+            )}
+            {!isLittleExplorer && effectiveView === 'abc-fill-in' && (
+              <AbcFillIn key={`af-${langKey}`} onBack={() => setCurrentView('games')} adaptiveConfig={adaptiveConfig} />
+            )}
+            {!isLittleExplorer && effectiveView === 'letter-tracing' && (
+              <LetterTracingQuest key={`lt-${langKey}`} onBack={() => setCurrentView('games')} adaptiveConfig={adaptiveConfig} />
+            )}
+            {!isLittleExplorer && effectiveView === 'dashboard' && (
+              <CompanionDashboard />
+            )}
+            {!isLittleExplorer && effectiveView === 'screening' && (
+              <ScreeningContainer key={`screening-${langKey}`} />
+            )}
+          </>
         )}
       </main>
 
