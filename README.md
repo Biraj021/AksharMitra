@@ -1,26 +1,153 @@
-# ✨ AksharMitra (अक्षर मित्र)
+# ✨ AksharMitra (अक्षर मित्र / অক্ষর মিত্র)
 
-> **Gamified, Non-Stigmatizing Early Dyslexia Risk-Screening & Adaptive Multilingual Phonics Learning Companion**  
-> *Built for Hacksynthesis UEM 30-Hour Hackathon*
+<div align="center">
+
+```
+   ___     _        _                 __  __ _ _             
+  / _ \   | |      | |               |  \/  (_) |            
+ / /_\ \  | | _____| |__   __ _ _ __ | \  / |_| |_ _ __ __ _ 
+ |  _  |  | |/ / __| '_ \ / _` | '__|| |\/| | | __| '__/ _` |
+ | | | |  |   <\__ \ | | | (_| | |   | |  | | | |_| | | (_| |
+ \_| |_/  |_|\_\___/_| |_|\__,_|_|   |_|  |_|_|\__|_|  \__,_|
+```
+
+[![React](https://img.shields.io/badge/React-19.0-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-6.0-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
+[![PWA](https://img.shields.io/badge/PWA-Installable-5A0FC8?style=for-the-badge&logo=pwa&logoColor=white)](https://web.dev/progressive-web-apps/)
+[![Accessibility](https://img.shields.io/badge/Accessibility-WCAG_AAA-10B981?style=for-the-badge&logo=w3c&logoColor=white)](https://www.w3.org/WAI/)
+[![Languages](https://img.shields.io/badge/Languages-EN%20%7C%20HI%20%7C%20BN-F59E0B?style=for-the-badge)](https://github.com/Biraj021/AksharMitra)
+
+### 🌟 *Gamified, Non-Stigmatizing Early Dyslexia Risk-Screening & Adaptive Phonics Quest Universe*
+**Designed for neurodiverse young learners, classrooms, and parents.**
+
+[🚀 Live Demo](https://akshar-mitra-17wqhq5jn-biraj021s-projects.vercel.app) • [📖 Monorepo](#-monorepo-structure) • [🎮 Game Modules](#-game-modules--adventure-islands) • [🧪 Screening Suite](#-3-step-non-stigmatizing-screening-quest) • [🛠️ Setup](#-quick-start)
+
+</div>
+
+---
+
+## 🌈 The Vision
+
+Over **10–15% of children** worldwide experience dyslexia or phonological processing differences. In multilingual nations, early screening is often delayed until Grade 3 or 4, typically delivered via stressful clinical assessment sheets that induce math and reading anxiety in children.
+
+**AksharMitra** re-imagines early literacy diagnostics as an **immersive 3D quest universe**:
+- 🏰 **Joyful, Non-Clinical Screening**: Embedded into interactive story quests with **Mitra the Wise Owl**.
+- 🍬 **Tactile 3D Candy Letter Physics**: Physical button depressions, glossy finishes, and acoustic phoneme feedback designed for children with sensory and graphomotor needs.
+- 🌐 **True Multilingual Trilingualism**: Native phonics and letter reversal detection across **English**, **Bengali (বাংলা)**, and **Hindi (हिन्दी)**.
+- 👩‍🏫 **Educator Diagnostics Cockpit**: Live student rosters, diagnostic flags, and 1-click Kid Code linking for teachers and reading specialists.
+- ⚡ **Zero-Latency Offline-First**: Instant sub-50ms hydration with local caching and asynchronous Supabase cloud sync.
+
+---
+
+## 🗺️ 3D Adventure Islands & Game Modules
+
+AksharMitra features an **S-Curve winding 3D Adventure Trail Map** with distinct biomes, animated player pins, and sensory game mechanics:
+
+```
+          [ 🌲 Enchanted Forest ]  ───────►  Whispering Woods (Letter Island)
+                     │
+                     ▼
+          [ 🌊 Sunlit Lagoon ]     ───────►  Phonics Waves (Sound Safari)
+                     │
+                     ▼
+          [ 🏰 Crystal Citadel ]   ───────►  Word Castle (Spelling & Traps)
+```
+
+| Realm / Island | Game Module | Target Skill & Remediation |
+|---|---|---|
+| **🌲 Whispering Forest**<br>`Letter Island` | 🦅 **Letter Hunter** (*Eagle Eye Radar*) | 3D Sonar Bubble Grid targeting mirror letter discrimination (`b` vs `d`, `p` vs `q`, `ब` vs `भ`, `ব` vs `র`). |
+| | ✍️ **Magic Wand Tracing** | Clinical 4-line magnetic waypoint vector canvas with real-time directionality correction. |
+| **🌊 Sunlit Lagoon**<br>`Sound Safari` | 🧩 **Word Snapper** | Holographic Phonics Pod with magnetic slot receptors and 3D candy letter tiles. |
+| | 🚂 **Alphabet Train Express** | Missing sequential wagon sorting for auditory phonological ordering. |
+| **🏰 Crystal Citadel**<br>`Word Castle` | ⚡ **Spelling Trap Spotter** | Rapid visual transposition buster catching letter reversals (`FROM` vs `FORM`, `WAS` vs `SAW`, `जल` vs `लज`). |
+| | 🧠 **Memory Spell Clinic** | 3-step Look-Cover-Spell workflow + clinical dysgraphia 4-line stroke guidance. |
+
+---
+
+## 🧪 3-Step Non-Stigmatizing Screening Quest
+
+Instead of an intimidating test, learners embark on a **3-minute diagnostic adventure**:
+
+```mermaid
+graph LR
+    A[🎮 1. Mirror Letter Quest] --> B[🎵 2. Rhyme Beats Pod]
+    B --> C[🎙️ 3. Read Aloud Safari]
+    C --> D[✨ AI Cross-Signal Engine]
+    D --> E[📊 Child & Teacher Insights]
+```
+
+1. **Mirror Letter Quest (Visual-Spatial Signal)**:
+   - Evaluates rotational confusion, mirror symmetry discrimination, and letter orientation hesitation.
+2. **Rhyme Beats Pod (Auditory-Phonological Signal)**:
+   - Interactive rhythm drum pads testing phoneme isolation, onset-rime blending, and auditory distinction.
+3. **Read Aloud Safari (Fluency & Rapid Naming Signal)**:
+   - Real-time continuous speech recognition measuring Words Per Minute (WPM), hesitation pauses, and phonetic substitution patterns.
+
+---
+
+## 👩‍🏫 Multi-Portal Role Architecture
+
+AksharMitra is built with **strict window separation** tailored for three core users:
+
+```
+┌─────────────────────────── AksharMitra ───────────────────────────┐
+│                                                                   │
+│   🎒 Student Kingdom           👩‍🏫 Educator Cockpit       👨‍👩‍👧 Parent Portal    │
+│   • 3D Clubhouse & Avatars     • Classroom Student Roster • Reading Milestones │
+│   • 3D Adventure Trail Map     • Screening Risk Badges    • Daily Practice Log │
+│   • Candy Letter Phonics       • 1-Click Student Link     • Home Guidance Tips │
+│   • Daily Reward Stars         • Diagnostic Analytics     • Dyslexia Settings  │
+│                                                                   │
+└───────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 🌐 Multilingual Phonics Architecture
+
+AksharMitra natively processes phonological and script structures across three languages:
+
+| Feature | 🇬🇧 English | 🇮🇳 Bengali (বাংলা) | 🇮🇳 Hindi (हिन्दी) |
+|---|---|---|---|
+| **Script Family** | Latin Alphabet | Eastern Nagari (বাংলা লিপি) | Devanagari (देवनागरी) |
+| **Reversal Pairs** | `b` ⟷ `d`, `p` ⟷ `q`, `m` ⟷ `w` | `ব` ⟷ `র`, `দ` ⟷ `ধ`, `ন` ⟷ `ম` | `ब` ⟷ `भ`, `द` ⟷ `ध`, `प` ⟷ `ष` |
+| **Transpositions** | `was` ⟷ `saw`, `from` ⟷ `form` | `জল` ⟷ `লজ`, `ফল` ⟷ `লফ` | `जल` ⟷ `लज`, `कमल` ⟷ `कलम` |
+| **Audio TTS Engine** | `en-US` / `en-IN` | `bn-IN` | `hi-IN` |
+| **Font Rendering** | Lexend & Inter | Noto Sans Bengali | Noto Sans Devanagari |
+
+---
+
+## ♿ Dyslexia & Accessibility First-Class Features
+
+- 👓 **Reading Ruler**: Movable spotlight guide overlay reducing visual crowding and line-skipping.
+- 🔤 **Lexend & OpenDyslexic Typography**: Wider letter apertures and bottom-weighted baselines.
+- 🎨 **Anti-Glare Color Themes**: Pastel Parchment, Sage Forest, and Velvet Lagoon avoiding harsh bright white contrasts.
+- 🔊 **Zero-Latency Web Audio & TTS**: Oscillator-based acoustic reward cues with instant speech synthesis.
 
 ---
 
 ## 🗂️ Monorepo Structure
 
-This project is organized as an **npm workspace monorepo** with four separate packages:
-
 ```
 AksharMitra/
-├── frontend/          ← React + Vite PWA (UI components, games, screening, context)
+├── frontend/               ← React 19 + Vite 6 Progressive Web App (PWA)
 │   ├── src/
-│   │   ├── components/   (auth, common, dashboard, landing, screening)
-│   │   ├── context/      (AudioContext, DyslexiaContext, ProfileContext)
-│   │   ├── games/        (GamesHub, WordSnapper, LetterHunter, SpellingClinic …)
-│   │   └── screening/    (LetterTracingQuest, MirrorLetterQuest, ReadAloudQuest …)
+│   │   ├── components/
+│   │   │   ├── auth/       (AuthPage, Student Pass, Teacher Registration)
+│   │   │   ├── common/     (Header HUD, BottomNav, ReadingRuler, GameWorldBackdrop)
+│   │   │   ├── dashboard/  (CompanionDashboard, Student Hero Telemetry Cards)
+│   │   │   ├── landing/    (LandingHero 3D Clubhouse, Daily Mini-Quests)
+│   │   │   └── screening/  (ScreeningContainer, 3-Step Quest Flow)
+│   │   ├── context/        (ProfileContext, AudioContext, DyslexiaContext)
+│   │   ├── games/          (GamesHub Trail Map, WordSnapper, LetterHunter, SpellingClinic)
+│   │   ├── littleExplorer/ (Preschool Sound Match, Rhyme Party, Picture Naming)
+│   │   ├── index.css       (3D Candy Tokens, Biome Themes, Gloss Highlights)
+│   │   └── App.jsx         (Adaptive Routing & Play Environment)
 │   ├── vite.config.js
 │   └── package.json
 │
-├── ai/                ← AI & adaptive learning logic
+├── ai/                     ← Cross-signal AI & adaptive scaffolding engine
 │   ├── src/
 │   │   ├── adaptiveLearningStrategy.js
 │   │   ├── crossSignalIntelligence.js
@@ -29,186 +156,68 @@ AksharMitra/
 │   │   └── tracingValidation.js
 │   └── package.json
 │
-├── database/          ← Supabase client + all data services
+├── database/               ← Cloud-native Supabase PostgreSQL & offline queue
 │   ├── src/
 │   │   ├── lib/supabaseClient.js
-│   │   └── services/  (activity, learner, profile, offline, parent, progress)
-│   ├── migrations/    (SQL migration files)
+│   │   └── services/       (learner, activity, parent observation, offline sync)
+│   ├── migrations/         (SQL Schema migrations)
 │   └── package.json
 │
-├── backend/           ← Shared data, content & utility modules
+├── backend/                ← Shared multilingual data & utilities
 │   ├── src/
-│   │   ├── data/      (languages, translations, game data, demo profiles)
+│   │   ├── data/           (languages, translations, demo profiles)
 │   │   └── streakUtils.js
 │   └── package.json
 │
-└── package.json       ← Root workspace (npm workspaces)
-```
-
-### Quick Start
-```bash
-# Install all workspace dependencies
-npm install
-
-# Run the frontend dev server
-npm run dev
-
-# Or from the frontend folder directly
-cd frontend && npm run dev
+└── package.json            ← Monorepo root workspace configuration
 ```
 
 ---
 
-## 🌟 Overview
+## 🛠️ Technology Stack
 
-**AksharMitra** is an offline-first, student-centric Progressive Web App (PWA) designed to provide early, playful, and non-stigmatizing literacy screening alongside targeted phonics and graphomotor remediation across **English**, **Bengali (বাংলা)**, and **Hindi (हिन्दी)**.
-
-Instead of stressful clinical assessment sheets that cause anxiety in young learners, AksharMitra embeds formative learning signals directly into joyful mini-quests guided by **Mitra**, an interactive companion mascot.
-
----
-
-## 🏗️ System Architecture
-
-### 📊 Data Architecture
-
-```
-                    CHILD / PARENT UI (React 19 PWA)
-                                  │
-                  ┌───────────────┴───────────────┐
-                  ▼                               ▼
-       Local Cache (localStorage)         Supabase Client
-      (Instant sub-50ms hydrate)        (@supabase/supabase-js)
-                  │                               │
-                  │ (Offline queue fallback)      ▼
-                  └─────────────────────► Supabase PostgreSQL Database
-                                          • Row Level Security (RLS)
-                                          • Strictly Isolated User Context
-```
-
-### 🔄 Closed-Loop Learning Architecture
-
-```
-            Child Activity Data  +  Parent Observation
-                                 │
-                                 ▼
-                     Cross-Signal Intelligence
-                   (crossSignalIntelligence.js)
-                                 │
-                                 ▼
-                          Learning Profile
-                       (Non-clinical pattern)
-                                 │
-                                 ▼
-                     Adaptive Learning Strategy
-                    (adaptiveLearningStrategy.js)
-                                 │
-                                 ▼
-                       Personalized Practice
-                (Dynamic Scaffolding & Missions)
-                                 │
-                                 ▼
-                            Reassessment
-                          (Adapt Again)
-```
-
-### 💾 Storage & Data Flow
-- **PostgreSQL Database**: Persistent source of truth hosted via Supabase.
-- **Row Level Security (RLS)**: Strictly isolates data per account (`auth.uid() = user_id`). No learner record or parent observation can ever be accessed by another account.
-- **Offline Cache**: Browser `localStorage` serves as a high-speed cache and offline fallback. Mutations made offline are queued and replayed upon reconnection.
-- **Demo Profile Isolation**: Benchmark judge profiles (`Aarav` and `Priya`) are strictly held in memory and never pollute user database tables.
-
----
-
-## 🌐 Multilingual Support
-
-AksharMitra natively supports three major languages:
-- 🇬🇧 **English** (`en`)
-- 🇮🇳 **Bengali (বাংলা)** (`bn`)
-- 🇮🇳 **Hindi (हिन्दी)** (`hi`)
-
-The database records store the learner's ISO language preference code (`en`, `bn`, `hi`) alongside activity attempts, enabling multi-language progress tracking without duplicating UI translation strings.
-
----
-
-## 🔒 Privacy & Non-Clinical Transparency
-
-> [!NOTE]
-> **Important Privacy Notice**:
-> AksharMitra is an educational support and early risk-screening tool. It **does not provide clinical or medical diagnoses of dyslexia**.
-> - Collects only the minimal information needed for personalized learning (first name/nickname, grade level, avatar, and language preference).
-> - Parent observations remain categorical (`needs_support`, `developing`, `comfortable`, `null`).
-> - Microphone unavailability is treated as `null` and **never fabricated as a 0% score**.
-> - Cross-signal reasoning uses a deterministic rule-based keyword classifier. (The @xenova/transformers package is imported experimentally but its output is not used in scoring).
-
----
-
-## 🛠️ Tech Stack
-
-| Layer | Technology | Purpose |
+| Component | Technology | Description |
 |---|---|---|
-| **Framework** | **React 19 + Vite 6** | Modern component-driven UI with instant HMR and lightweight bundle |
-| **Database** | **Supabase (PostgreSQL 15+)** | Cloud-native relational database with Row Level Security |
-| **Client ORM** | **@supabase/supabase-js** | Official JavaScript client for authentication and PostgreSQL access |
-| **Styling** | **Modern Vanilla CSS** | Custom design tokens, glassmorphism, sensory color palette |
-| **Audio Engine** | **Web Audio API** | Zero-latency on-device oscillator chimes, pops, and fanfares |
-| **Speech Engine** | **Web Speech API & TTS** | Multilingual continuous streaming speech recognition & narration |
-| **Canvas** | **HTML5 Canvas 2D** | Real-time stroke vector analysis & magnetic waypoint tracing |
-| **PWA & Offline** | **Service Worker & Manifest** | Fullscreen mobile/tablet installability and offline caching |
-| **Particles** | **Canvas Confetti** | Hardware-accelerated celebratory confetti bursts |
-| **Icons** | **Lucide React** | Clean, accessible SVG iconography |
+| **Frontend Framework** | **React 19 + Vite 6** | Ultra-responsive component architecture with sub-second HMR |
+| **Database & Auth** | **Supabase (PostgreSQL 15)** | Cloud-native relational store with strict Row Level Security (RLS) |
+| **Offline Architecture** | **Service Workers + IndexedDB/LocalStorage** | Autonomous offline queue with auto-replay on reconnect |
+| **Acoustic Engine** | **Web Audio API** | Real-time synthetic pitch oscillators and spatial audio cues |
+| **Speech Processing** | **Web Speech API & TTS** | Continuous multilingual streaming speech recognition |
+| **Vector Canvas** | **HTML5 2D Canvas** | Real-time stroke interpolation and magnetic snapping algorithms |
+| **Visual Effects** | **Canvas Confetti & CSS 3D** | Hardware-accelerated celebrate bursts, specular gloss, and drop shadows |
+| **Icons & Typography** | **Lucide React + Google Fonts** | Crisp SVG vector glyphs with Lexend, Outfit, and Noto families |
 
 ---
 
-## 🗄️ Database Tables (Supabase PostgreSQL)
-
-1. `learners` — Student profile records (avatar, grade, language, stars, streak).
-2. `parent_observations` — 4-axis categorical observations (reading, sounds, writing, understanding).
-3. `activity_attempts` — Summary records of completed game and quest attempts.
-4. `reading_results` — Granular reading cadence (WPM, words completed, hesitation).
-5. `speech_results` — Auditory rhyme and phonological scores (strict null preservation).
-6. `tracing_results` — Letter stroke accuracy and reversal index (*b/d/p/q*).
-7. `game_results` — In-game mistakes, accuracy, and hints used.
-8. `learning_profiles` — Synthesized developmental patterns and actionable practice recommendations.
-9. `learner_progress` — Activity completion milestones and cumulative stars.
-10. `language_preferences` — Language selection per learner.
-
----
-
-## 🚀 Getting Started Locally
+## 🚀 Quick Start
 
 ### 1. Prerequisites
-- [Node.js](https://nodejs.org/) (v18.x or later)
+- [Node.js](https://nodejs.org/) (v18.x or v20.x+)
 - `npm`
 
-### 2. Installation
+### 2. Clone & Install
 ```bash
 # Clone the repository
 git clone https://github.com/Biraj021/AksharMitra.git
 cd AksharMitra
 
-# Install dependencies
+# Install all monorepo workspace dependencies
 npm install
 ```
 
-### 3. Configure Supabase (Optional for offline/demo use)
-1. Copy `.env.example` to `.env`:
-   ```bash
-   cp .env.example .env
-   ```
-2. In your [Supabase Dashboard](https://supabase.com):
-   - Go to **Project Settings** → **API**.
-   - Copy **Project URL** to `VITE_SUPABASE_URL`.
-   - Copy **anon public key** to `VITE_SUPABASE_ANON_KEY`.
-   - Run the SQL migration located at `supabase/migrations/001_initial_schema.sql` in the **SQL Editor**.
-
-*(Note: If Supabase credentials are not provided, AksharMitra automatically falls back to local cache mode seamlessly).*
+### 3. Environment Variables (Optional for Supabase Cloud Sync)
+Create a `.env` file in `frontend/` (or root):
+```env
+VITE_SUPABASE_URL=your_supabase_project_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_public_key
+```
+*(If no Supabase credentials are provided, AksharMitra automatically runs in seamless local offline mode).*
 
 ### 4. Run Development Server
 ```bash
 npm run dev
 ```
-Open https:https://akshar-mitra-17wqhq5jn-biraj021s-projects.vercel.app in Google Chrome or Microsoft Edge.
-
+Open **[http://localhost:3000](http://localhost:3000)** in Google Chrome or Microsoft Edge.
 
 ### 5. Production Build
 ```bash
@@ -217,5 +226,7 @@ npm run build
 
 ---
 
-## 👥 Team
-*Developed with ❤️ for Hacksynthesis UEM 30-Hour Hackathon.*
+## 👥 Team & Acknowledgments
+
+*Crafted with ❤️ for **Hacksynthesis UEM 30-Hour Hackathon**.*  
+*Empowering every young learner to discover the joy of reading without fear or stigma.*
