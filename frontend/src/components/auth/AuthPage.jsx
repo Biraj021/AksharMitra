@@ -21,6 +21,7 @@ import {
 import { useProfile, getAvatarEmoji, AVATAR_MAP } from '../../context/ProfileContext';
 import { useAudio } from '../../context/AudioContext';
 import { SUPPORTED_LANGUAGES } from '@backend/data/languages';
+import GameWorldBackdrop from '../common/GameWorldBackdrop';
 
 export default function AuthPage() {
   const navigate = useNavigate();
@@ -238,14 +239,16 @@ export default function AuthPage() {
     <div
       style={{
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #F8FAFC 0%, #EEF2FF 50%, #FAF5FF 100%)',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '1.5rem 1rem 3rem'
+        padding: '1.5rem 1rem 3.5rem',
+        position: 'relative'
       }}
     >
+      <GameWorldBackdrop />
+
       {/* Top Identity & Language Bar */}
       <div
         style={{
@@ -254,27 +257,29 @@ export default function AuthPage() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          marginBottom: '1.25rem'
+          marginBottom: '1.25rem',
+          position: 'relative',
+          zIndex: 1
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <div
             style={{
-              width: '46px',
-              height: '46px',
+              width: '48px',
+              height: '48px',
               borderRadius: '16px',
               background: 'linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '1.6rem',
-              boxShadow: '0 6px 14px rgba(79, 70, 229, 0.28)'
+              fontSize: '1.8rem',
+              boxShadow: '0 8px 18px rgba(79, 70, 229, 0.35)'
             }}
           >
             🦉
           </div>
           <div>
-            <h1 style={{ fontSize: '1.35rem', fontWeight: 900, color: '#1E293B', margin: 0, letterSpacing: '-0.02em' }}>
+            <h1 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#1E293B', margin: 0, letterSpacing: '-0.02em' }}>
               AksharMitra
             </h1>
             <p style={{ fontSize: '0.75rem', color: '#6366F1', margin: 0, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
@@ -318,12 +323,14 @@ export default function AuthPage() {
           width: '100%',
           maxWidth: '580px',
           background: '#FFFFFF',
-          borderRadius: '32px',
-          boxShadow: '0 20px 45px -10px rgba(99, 102, 241, 0.18), 0 0 0 1px rgba(226, 232, 240, 0.9)',
+          borderRadius: '34px',
+          boxShadow: '0 24px 50px -10px rgba(99, 102, 241, 0.2), 0 0 0 1px rgba(226, 232, 240, 0.9)',
           padding: '2.25rem 2rem',
           display: 'flex',
           flexDirection: 'column',
-          gap: '1.4rem'
+          gap: '1.4rem',
+          position: 'relative',
+          zIndex: 1
         }}
       >
         {/* 1. Portal Role Switcher Tabs */}
@@ -345,7 +352,7 @@ export default function AuthPage() {
             <span>Select Portal Role / पोर्टल भूमिका चुनें</span>
           </label>
 
-          {/* Role Pill Switcher */}
+          {/* Role Pill Switcher with 3D buttons */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem' }}>
             <button
               type="button"
@@ -452,23 +459,19 @@ export default function AuthPage() {
         {selectedRole === 'student' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.35rem' }}>
             <div
+              className="holo-explorer-card"
               style={{
-                background: 'linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%)',
-                border: '2px solid #86EFAC',
-                borderRadius: '24px',
-                padding: '1.25rem 1.4rem',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '1.15rem',
-                boxShadow: '0 6px 16px rgba(16, 185, 129, 0.1)'
+                gap: '1.15rem'
               }}
             >
-              <div style={{ fontSize: '2.8rem' }}>🦁</div>
+              <div style={{ fontSize: '3rem', filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))' }}>🦁</div>
               <div>
-                <h3 style={{ margin: '0 0 0.25rem', color: '#14532D', fontSize: '1.25rem', fontWeight: 900 }}>
-                  Kid's Play & Quest Zone
+                <h3 style={{ margin: '0 0 0.25rem', color: '#FDE047', fontSize: '1.3rem', fontWeight: 900 }}>
+                  Kid's Play & Quest Kingdom
                 </h3>
-                <p style={{ margin: 0, color: '#166534', fontSize: '0.88rem', fontWeight: 700 }}>
+                <p style={{ margin: 0, color: '#E0E7FF', fontSize: '0.88rem', fontWeight: 700, lineHeight: 1.4 }}>
                   Enter with your Kid ID to play games, letter hunts, and phonics quests!
                 </p>
               </div>
@@ -617,12 +620,12 @@ export default function AuthPage() {
                           }}
                           className="btn-3d"
                           style={{
-                            width: '48px',
-                            height: '48px',
+                            width: '50px',
+                            height: '50px',
                             borderRadius: '16px',
                             border: selectedAvatar === k ? '3px solid #16A34A' : '2px solid #E2E8F0',
                             background: selectedAvatar === k ? '#DCFCE7' : '#FFFFFF',
-                            fontSize: '1.7rem',
+                            fontSize: '1.8rem',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
@@ -698,7 +701,7 @@ export default function AuthPage() {
                   marginTop: '0.5rem'
                 }}
               >
-                <span>{studentMode === 'id' ? '🚀 Enter Play & Screening Zone' : '✨ Get Kid ID & Start Adventure'}</span>
+                <span>{studentMode === 'id' ? '🚀 Enter Play & Screening Kingdom' : '✨ Get Kid ID & Start Adventure'}</span>
                 <ArrowRight size={18} />
               </button>
             </form>
@@ -712,46 +715,46 @@ export default function AuthPage() {
                 <button
                   type="button"
                   onClick={() => handleQuickStudentDemo('AM-1001', 'Aarav')}
-                  className="quest-island-card"
+                  className="biome-realm-card"
                   style={{
                     display: 'flex',
                     alignItems: 'center',
                     gap: '0.65rem',
-                    padding: '0.8rem 0.9rem',
-                    borderRadius: '18px',
+                    padding: '0.85rem 0.95rem',
+                    borderRadius: '20px',
                     border: '2px solid #FDE68A',
                     background: '#FFFBEB',
                     cursor: 'pointer',
                     textAlign: 'left'
                   }}
                 >
-                  <span style={{ fontSize: '1.8rem' }}>🦁</span>
+                  <span style={{ fontSize: '2rem' }}>🦁</span>
                   <div>
-                    <div style={{ fontWeight: 900, fontSize: '0.9rem', color: '#92400E' }}>Aarav (AM-1001)</div>
-                    <div style={{ fontSize: '0.74rem', color: '#B45309' }}>Class 2 • Screening Flagged</div>
+                    <div style={{ fontWeight: 900, fontSize: '0.92rem', color: '#92400E' }}>Aarav (AM-1001)</div>
+                    <div style={{ fontSize: '0.76rem', color: '#B45309' }}>Class 2 • Screening Flagged</div>
                   </div>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleQuickStudentDemo('AM-1002', 'Priya')}
-                  className="quest-island-card"
+                  className="biome-realm-card"
                   style={{
                     display: 'flex',
                     alignItems: 'center',
                     gap: '0.65rem',
-                    padding: '0.8rem 0.9rem',
-                    borderRadius: '18px',
+                    padding: '0.85rem 0.95rem',
+                    borderRadius: '20px',
                     border: '2px solid #BAE6FD',
                     background: '#F0F9FF',
                     cursor: 'pointer',
                     textAlign: 'left'
                   }}
                 >
-                  <span style={{ fontSize: '1.8rem' }}>🦚</span>
+                  <span style={{ fontSize: '2rem' }}>🦚</span>
                   <div>
-                    <div style={{ fontWeight: 900, fontSize: '0.9rem', color: '#075985' }}>Priya (AM-1002)</div>
-                    <div style={{ fontSize: '0.74rem', color: '#0369A1' }}>Class 3 • Fluent Reader</div>
+                    <div style={{ fontWeight: 900, fontSize: '0.92rem', color: '#075985' }}>Priya (AM-1002)</div>
+                    <div style={{ fontSize: '0.76rem', color: '#0369A1' }}>Class 3 • Fluent Reader</div>
                   </div>
                 </button>
               </div>
@@ -763,23 +766,25 @@ export default function AuthPage() {
         {(selectedRole === 'teacher' || selectedRole === 'parent') && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.35rem' }}>
             <div
+              className="biome-realm-card"
               style={{
-                background: selectedRole === 'teacher' ? 'linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%)' : 'linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%)',
-                border: selectedRole === 'teacher' ? '2px solid #C7D2FE' : '2px solid #BAE6FD',
-                borderRadius: '24px',
-                padding: '1.25rem 1.4rem',
+                background: selectedRole === 'teacher' ? 'linear-gradient(135deg, #312E81 0%, #4338CA 100%)' : 'linear-gradient(135deg, #0369A1 0%, #0284C7 100%)',
+                border: selectedRole === 'teacher' ? '2.5px solid #A5B4FC' : '2.5px solid #7DD3FC',
+                borderRadius: '26px',
+                padding: '1.35rem 1.5rem',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '1.15rem',
-                boxShadow: '0 6px 16px rgba(79, 70, 229, 0.1)'
+                color: 'white',
+                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.15)'
               }}
             >
-              <div style={{ fontSize: '2.8rem' }}>{selectedRole === 'teacher' ? '👩‍🏫' : '👨‍👩‍👧'}</div>
+              <div style={{ fontSize: '3rem' }}>{selectedRole === 'teacher' ? '👩‍🏫' : '👨‍👩‍👧'}</div>
               <div>
-                <h3 style={{ margin: '0 0 0.25rem', color: selectedRole === 'teacher' ? '#312E81' : '#075985', fontSize: '1.25rem', fontWeight: 900 }}>
+                <h3 style={{ margin: '0 0 0.25rem', color: '#FDE047', fontSize: '1.3rem', fontWeight: 900 }}>
                   {selectedRole === 'teacher' ? 'Educator Diagnostics Portal' : 'Parent Companion Portal'}
                 </h3>
-                <p style={{ margin: 0, color: selectedRole === 'teacher' ? '#4338CA' : '#0369A1', fontSize: '0.88rem', fontWeight: 700 }}>
+                <p style={{ margin: 0, color: '#E0E7FF', fontSize: '0.88rem', fontWeight: 700, lineHeight: 1.45 }}>
                   {selectedRole === 'teacher'
                     ? 'Classroom roster, diagnostic screening reports & student linking tools.'
                     : 'Track your child\'s reading fluency, milestones, and daily practice.'}

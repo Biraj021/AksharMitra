@@ -588,13 +588,9 @@ export default function MirrorLetterQuest({ onCompleteQuest }) {
 
   return (
     <div
-      className="glass-card"
+      className="holo-explorer-card"
       style={{
-        padding: '1.75rem',
-        borderRadius: '28px',
-        background: '#FFFFFF',
-        border: '2px solid #C7D2FE',
-        boxShadow: '0 12px 32px rgba(79, 70, 229, 0.12)',
+        padding: '2rem 1.75rem',
         display: 'flex',
         flexDirection: 'column',
         gap: '1.3rem',
@@ -603,72 +599,54 @@ export default function MirrorLetterQuest({ onCompleteQuest }) {
     >
       {/* Question Header & Audio Prompt */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <span
-          style={{
-            fontSize: '0.82rem',
-            fontWeight: 900,
-            color: '#4F46E5',
-            background: '#EEF2FF',
-            padding: '0.3rem 0.85rem',
-            borderRadius: '9999px',
-            border: '1px solid #C7D2FE'
-          }}
-        >
+        <span className="hud-chip hud-chip-indigo" style={{ fontSize: '0.85rem' }}>
           {isHindi ? `राउंड 1: अक्षर और दृष्टि दिशा (${currentIdx + 1}/${questions.length})` : (isBengali ? `পর্ব ১: বর্ণ ও দৃষ্টিগত দিক (${currentIdx + 1}/${questions.length})` : `Round 1: Visual Orientation (${currentIdx + 1}/${questions.length})`)}
         </span>
         <button
           onClick={() => speakText(currentQ.audioPrompt, speechLang)}
+          className="btn-3d-indigo"
           style={{
-            background: '#F8FAFC',
-            border: '1.5px solid #CBD5E1',
+            width: '42px',
+            height: '42px',
             borderRadius: '50%',
-            width: '36px',
-            height: '36px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            cursor: 'pointer',
-            color: '#4F46E5'
+            padding: 0
           }}
           title="Hear instruction"
         >
-          <Volume2 size={18} />
+          <Volume2 size={19} />
         </button>
       </div>
 
       <div>
-        <h3 style={{ fontSize: '1.25rem', color: '#1E293B', margin: '0 0 0.35rem', fontWeight: 900, lineHeight: 1.4 }}>
+        <h3 style={{ fontSize: '1.35rem', color: '#1E293B', margin: '0 0 0.35rem', fontWeight: 900, lineHeight: 1.4 }}>
           {currentQ.instruction}
         </h3>
         {currentQ.ruleText && (
-          <p style={{ fontSize: '0.85rem', color: '#4338CA', background: '#EEF2FF', padding: '0.4rem 0.9rem', borderRadius: '12px', display: 'inline-block', margin: '0.35rem 0 0', fontWeight: 800, border: '1px solid #C7D2FE' }}>
+          <div style={{ fontSize: '0.9rem', color: '#92400E', background: '#FEF3C7', padding: '0.45rem 1.25rem', borderRadius: '9999px', display: 'inline-block', margin: '0.35rem 0 0', fontWeight: 800, border: '1.5px solid #FDE68A' }}>
             💡 {currentQ.ruleText}
-          </p>
+          </div>
         )}
       </div>
 
-      {/* Mode 1 & 2: Letter Grid Selection with 3D tactile buttons */}
+      {/* Mode 1 & 2: Letter Grid Selection with 3D tactile candy buttons */}
       {currentQ.type === 'pick_target' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.85rem', maxWidth: '360px', margin: '0 auto', width: '100%' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', maxWidth: '380px', margin: '0 auto', width: '100%' }}>
           {currentQ.options.map((opt) => {
             const isPicked = selectedIds.has(opt.id);
             return (
               <button
                 key={opt.id}
                 onClick={() => handlePickOption(opt)}
+                className={`candy-tile-3d ${isPicked ? (opt.isTarget ? 'is-hint-target' : 'incorrect') : ''}`}
                 style={{
-                  height: '78px',
-                  borderRadius: '20px',
-                  fontSize: '2.4rem',
-                  fontWeight: 900,
-                  fontFamily: isBengali ? 'var(--font-bengali)' : (isHindi ? 'var(--font-devanagari)' : "'Lexend', sans-serif"),
-                  border: isPicked ? (opt.isTarget ? '3.5px solid #10B981' : '3.5px solid #F59E0B') : '2px solid #E2E8F0',
-                  background: isPicked ? (opt.isTarget ? '#D1FAE5' : '#FEF3C7') : '#F8FAFC',
-                  color: isPicked ? (opt.isTarget ? '#047857' : '#B45309') : '#1E293B',
-                  cursor: 'pointer',
-                  transform: isPicked ? 'scale(1.06)' : 'scale(1)',
-                  transition: 'all 0.15s ease',
-                  boxShadow: isPicked ? (opt.isTarget ? '0 6px 16px rgba(16, 185, 129, 0.3)' : '0 6px 16px rgba(245, 158, 11, 0.3)') : '0 4px 8px rgba(0,0,0,0.03)'
+                  width: '100%',
+                  height: '84px',
+                  borderRadius: '22px',
+                  fontSize: '2.5rem',
+                  fontFamily: isBengali ? 'var(--font-bengali)' : (isHindi ? 'var(--font-devanagari)' : "'Fredoka', 'Lexend', sans-serif")
                 }}
               >
                 {opt.char}
@@ -687,20 +665,15 @@ export default function MirrorLetterQuest({ onCompleteQuest }) {
               <button
                 key={opt.id}
                 onClick={() => handlePickOption(opt)}
+                className={isPicked ? (opt.isTarget ? 'btn-3d-mint' : 'btn-3d-coral') : 'btn-3d-indigo'}
                 style={{
                   flex: 1,
-                  maxWidth: '170px',
-                  padding: '1.35rem 1rem',
-                  borderRadius: '22px',
-                  fontSize: '1.8rem',
+                  maxWidth: '190px',
+                  padding: '1.4rem 1rem',
+                  borderRadius: '24px',
+                  fontSize: '2rem',
                   fontWeight: 900,
-                  fontFamily: isBengali ? 'var(--font-bengali)' : (isHindi ? 'var(--font-devanagari)' : "'Lexend', sans-serif"),
-                  border: isPicked ? (opt.isTarget ? '3.5px solid #10B981' : '3.5px solid #F59E0B') : '2px solid #E2E8F0',
-                  background: isPicked ? (opt.isTarget ? '#D1FAE5' : '#FEF3C7') : '#F8FAFC',
-                  color: isPicked ? (opt.isTarget ? '#047857' : '#B45309') : '#1E293B',
-                  cursor: 'pointer',
-                  transform: isPicked ? 'scale(1.05)' : 'scale(1)',
-                  boxShadow: isPicked ? (opt.isTarget ? '0 6px 16px rgba(16, 185, 129, 0.3)' : '0 6px 16px rgba(245, 158, 11, 0.3)') : '0 4px 10px rgba(0,0,0,0.03)'
+                  fontFamily: isBengali ? 'var(--font-bengali)' : (isHindi ? 'var(--font-devanagari)' : "'Fredoka', 'Lexend', sans-serif")
                 }}
               >
                 {opt.word}

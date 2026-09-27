@@ -285,22 +285,20 @@ export default function LetterHunter({ onBack, adaptiveConfig }) {
   // =========================================================================
   if (session.isComplete) {
     return (
-      <div className="game-viewport" style={{ maxWidth: '640px' }}>
+      <div className="game-viewport" style={{ maxWidth: '640px', padding: '1rem 0' }}>
         <div
-          className="glass-card"
+          className="holo-explorer-card"
           style={{
             padding: '2.5rem 1.75rem',
             textAlign: 'center',
-            borderRadius: '28px',
-            background: 'white',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             gap: '1.5rem',
-            boxShadow: '0 16px 40px rgba(99, 102, 241, 0.15)'
+            width: '100%'
           }}
         >
-          {/* Celebrating Mascot with Distinct Natural Praise */}
+          {/* Celebrating Mascot */}
           <MascotMitra
             state="celebrating"
             speechText={
@@ -315,15 +313,15 @@ export default function LetterHunter({ onBack, adaptiveConfig }) {
           />
 
           <div>
-            <h2 style={{ fontSize: '2.2rem', color: '#4F46E5', margin: '0 0 0.4rem', fontWeight: 900 }}>
+            <h2 style={{ fontSize: '2.2rem', color: '#4338CA', margin: '0 0 0.4rem', fontWeight: 900 }}>
               {content.completion.title}
             </h2>
-            <p style={{ fontSize: '1.05rem', color: '#64748B', margin: 0, fontWeight: 600 }}>
+            <p style={{ fontSize: '1.05rem', color: '#475569', margin: 0, fontWeight: 700 }}>
               {content.completion.subtitle}
             </p>
           </div>
 
-          {/* Key Stat Badges - Unified 3-Tier Grid for Equivalent Layout & Alignment */}
+          {/* Key Stat Badges - Unified 3D Tier Grid */}
           <div
             style={{
               display: 'grid',
@@ -336,23 +334,22 @@ export default function LetterHunter({ onBack, adaptiveConfig }) {
             {/* Card 1: Stars */}
             <div
               style={{
-                background: '#FEF3C7',
-                padding: '0.9rem 0.5rem',
-                borderRadius: '20px',
-                border: '1.5px solid #FDE68A',
+                background: 'linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%)',
+                padding: '1.1rem 0.5rem',
+                borderRadius: '22px',
+                border: '2px solid #FDE68A',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
                 textAlign: 'center',
-                minHeight: '105px',
-                boxShadow: '0 4px 12px rgba(217, 119, 6, 0.08)'
+                boxShadow: '0 6px 0 #D97706, 0 10px 18px rgba(245, 158, 11, 0.2)'
               }}
             >
-              <div style={{ fontSize: '1.6rem', lineHeight: 1 }}>⭐</div>
+              <div style={{ fontSize: '1.8rem', lineHeight: 1 }}>⭐</div>
               <div
                 style={{
-                  fontSize: '1.45rem',
+                  fontSize: '1.5rem',
                   fontWeight: 900,
                   color: '#B45309',
                   margin: '0.35rem 0 0.2rem',
@@ -376,25 +373,24 @@ export default function LetterHunter({ onBack, adaptiveConfig }) {
             {/* Card 2: Letters Found */}
             <div
               style={{
-                background: '#EEF2FF',
-                padding: '0.9rem 0.5rem',
-                borderRadius: '20px',
-                border: '1.5px solid #C7D2FE',
+                background: 'linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%)',
+                padding: '1.1rem 0.5rem',
+                borderRadius: '22px',
+                border: '2px solid #C7D2FE',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
                 textAlign: 'center',
-                minHeight: '105px',
-                boxShadow: '0 4px 12px rgba(79, 70, 229, 0.08)'
+                boxShadow: '0 6px 0 #4F46E5, 0 10px 18px rgba(79, 70, 229, 0.2)'
               }}
             >
-              <div style={{ fontSize: '1.6rem', lineHeight: 1 }}>🎯</div>
+              <div style={{ fontSize: '1.8rem', lineHeight: 1 }}>🎯</div>
               <div
                 style={{
-                  fontSize: '1.45rem',
+                  fontSize: '1.5rem',
                   fontWeight: 900,
-                  color: '#4338CA',
+                  color: '#3730A3',
                   margin: '0.35rem 0 0.2rem',
                   whiteSpace: 'nowrap'
                 }}
@@ -405,7 +401,7 @@ export default function LetterHunter({ onBack, adaptiveConfig }) {
                 style={{
                   fontSize: '0.75rem',
                   fontWeight: 800,
-                  color: '#3730A3',
+                  color: '#312E81',
                   lineHeight: 1.2
                 }}
               >
@@ -416,23 +412,22 @@ export default function LetterHunter({ onBack, adaptiveConfig }) {
             {/* Card 3: Accuracy */}
             <div
               style={{
-                background: '#D1FAE5',
-                padding: '0.9rem 0.5rem',
-                borderRadius: '20px',
-                border: '1.5px solid #A7F3D0',
+                background: 'linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%)',
+                padding: '1.1rem 0.5rem',
+                borderRadius: '22px',
+                border: '2px solid #A7F3D0',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
                 textAlign: 'center',
-                minHeight: '105px',
-                boxShadow: '0 4px 12px rgba(5, 150, 105, 0.08)'
+                boxShadow: '0 6px 0 #059669, 0 10px 18px rgba(16, 185, 129, 0.2)'
               }}
             >
-              <div style={{ fontSize: '1.6rem', lineHeight: 1 }}>✨</div>
+              <div style={{ fontSize: '1.8rem', lineHeight: 1 }}>✨</div>
               <div
                 style={{
-                  fontSize: '1.45rem',
+                  fontSize: '1.5rem',
                   fontWeight: 900,
                   color: '#065F46',
                   margin: '0.35rem 0 0.2rem',
@@ -457,16 +452,16 @@ export default function LetterHunter({ onBack, adaptiveConfig }) {
           {/* Practiced Concepts Box */}
           <div
             style={{
-              background: '#F8FAFC',
-              border: '1.5px solid #E2E8F0',
-              borderRadius: '20px',
+              background: 'rgba(248, 250, 252, 0.9)',
+              border: '2px solid #E2E8F0',
+              borderRadius: '22px',
               padding: '1.2rem 1.5rem',
               width: '100%',
               maxWidth: '460px',
               textAlign: 'left'
             }}
           >
-            <div style={{ fontWeight: 800, fontSize: '0.95rem', color: '#1E293B', marginBottom: '0.65rem' }}>
+            <div style={{ fontWeight: 800, fontSize: '0.98rem', color: '#1E293B', marginBottom: '0.65rem' }}>
               {content.completion.practicedTitle}
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
@@ -477,12 +472,12 @@ export default function LetterHunter({ onBack, adaptiveConfig }) {
                     display: 'flex',
                     alignItems: 'center',
                     gap: '0.55rem',
-                    fontSize: '0.86rem',
+                    fontSize: '0.88rem',
                     color: '#475569',
                     fontWeight: 600
                   }}
                 >
-                  <span style={{ color: '#10B981', fontWeight: 900, fontSize: '1rem' }}>✓</span>
+                  <span style={{ color: '#10B981', fontWeight: 900, fontSize: '1.1rem' }}>✓</span>
                   <span>{item.replace(/^✓\s*/, '')}</span>
                 </div>
               ))}
@@ -490,11 +485,11 @@ export default function LetterHunter({ onBack, adaptiveConfig }) {
           </div>
 
           {/* Action Buttons: Practice Again | Continue Learning | Back Home */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', width: '100%', maxWidth: '380px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', width: '100%', maxWidth: '460px' }}>
             <button
               onClick={handlePracticeAgain}
-              className="btn btn-amber animate-pulse-glow"
-              style={{ width: '100%', borderRadius: '9999px', padding: '0.85rem' }}
+              className="btn-3d-amber"
+              style={{ width: '100%', padding: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', fontSize: '1rem' }}
             >
               <Sparkles size={18} />
               <span>{content.completion.btnPracticeAgain}</span>
@@ -506,8 +501,8 @@ export default function LetterHunter({ onBack, adaptiveConfig }) {
                 if (onBack) onBack();
                 else setCurrentView('games');
               }}
-              className="btn btn-primary"
-              style={{ width: '100%', borderRadius: '9999px', padding: '0.85rem' }}
+              className="btn-3d-indigo"
+              style={{ width: '100%', padding: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', fontSize: '1rem' }}
             >
               <BookOpen size={18} />
               <span>{content.completion.btnContinueLearning}</span>
@@ -518,8 +513,8 @@ export default function LetterHunter({ onBack, adaptiveConfig }) {
                 playPop();
                 setCurrentView('landing');
               }}
-              className="btn btn-secondary"
-              style={{ width: '100%', borderRadius: '9999px', padding: '0.75rem' }}
+              className="btn-3d-mint"
+              style={{ width: '100%', padding: '0.8rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', fontSize: '0.95rem' }}
             >
               <Home size={18} />
               <span>{content.completion.btnBackHome}</span>
@@ -548,14 +543,14 @@ export default function LetterHunter({ onBack, adaptiveConfig }) {
   return (
     <div className="game-viewport">
       {/* Top Header & Progress Indicators */}
-      <div className="game-top-bar">
+      <div className="game-top-bar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
         <button
           onClick={() => {
             playPop();
             onBack ? onBack() : setCurrentView('games');
           }}
-          className="btn-secondary btn-pill"
-          style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+          className="btn-3d-indigo"
+          style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.5rem 1.1rem', fontSize: '0.85rem' }}
         >
           <ArrowLeft size={16} />
           <span>{isBengali ? 'গেমস হাব' : 'Games Hub'}</span>
@@ -563,41 +558,29 @@ export default function LetterHunter({ onBack, adaptiveConfig }) {
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
           {session.streak > 1 && (
-            <div className="combo-badge">
-              <Zap size={14} />
+            <div className="hud-chip hud-chip-flame">
+              <Zap size={15} />
               <span>{content.comboLabel(session.streak)}</span>
             </div>
           )}
 
           {/* Finite Progress Tracker: Challenge X of Y */}
-          <div className="game-stat-pill" style={{ color: '#4338CA', background: '#EEF2FF', borderColor: '#C7D2FE' }}>
+          <div className="hud-chip hud-chip-indigo">
             <span>
               {content.progressLabel(session.currentChallengeIndex + 1, session.challenges.length)}
             </span>
           </div>
 
           {/* Star Counter */}
-          <div className="game-stat-pill" style={{ color: '#B45309', background: '#FEF3C7', borderColor: '#FDE68A' }}>
+          <div className="hud-chip hud-chip-amber">
             <Star size={16} fill="#F59E0B" color="#F59E0B" />
             <span>{(activeProfile?.stars || 0) + session.starsEarned}</span>
           </div>
         </div>
       </div>
 
-      {/* Main Play Card */}
-      <div
-        className="glass-card"
-        style={{
-          padding: '2rem 1.5rem',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '1.25rem',
-          borderRadius: '28px',
-          background: 'white',
-          position: 'relative'
-        }}
-      >
+      {/* Main Sonar Radar Pod */}
+      <div className="sonar-radar-stage">
         {/* Mitra Mascot Live Guidance */}
         <MascotMitra
           state={isRoundFinished ? 'celebrating' : 'talking'}
@@ -607,86 +590,65 @@ export default function LetterHunter({ onBack, adaptiveConfig }) {
         />
 
         {/* Target Letter Spotlight Banner */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '1rem',
-            background: 'linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%)',
-            padding: '1rem 1.75rem',
-            borderRadius: '20px',
-            border: '2px solid #C7D2FE',
-            width: '100%',
-            maxWidth: '440px'
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <div
-              style={{
-                width: '56px',
-                height: '56px',
-                borderRadius: '16px',
-                background: '#4F46E5',
-                color: 'white',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '2.4rem',
-                fontWeight: '800',
-                boxShadow: '0 4px 12px rgba(79, 70, 229, 0.35)'
-              }}
-            >
-              {currentChallenge.target}
+        <div className="arcade-hologram-pod" style={{ padding: '1.25rem 1.5rem', maxWidth: '480px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', gap: '1rem', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+              <div
+                className="candy-tile-3d is-hint-target"
+                style={{
+                  width: '56px',
+                  height: '56px',
+                  fontSize: '2.2rem'
+                }}
+              >
+                {currentChallenge.target}
+              </div>
+              <div>
+                <div style={{ fontSize: '0.78rem', fontWeight: 900, color: '#4338CA', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                  {content.targetLabel}
+                </div>
+                <div style={{ fontSize: '0.95rem', color: '#1E293B', fontWeight: 800 }}>
+                  {remainingTargets > 0 
+                    ? content.findMore(remainingTargets, currentChallenge.target)
+                    : content.allFound}
+                </div>
+              </div>
             </div>
-            <div>
-              <div style={{ fontSize: '0.8rem', fontWeight: '800', color: '#4338CA', textTransform: 'uppercase' }}>
-                {content.targetLabel}
-              </div>
-              <div style={{ fontSize: '0.9rem', color: '#1E293B', fontWeight: '600' }}>
-                {remainingTargets > 0 
-                  ? content.findMore(remainingTargets, currentChallenge.target)
-                  : content.allFound}
-              </div>
+
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <button
+                onClick={() => {
+                  playPop();
+                  speakText(currentChallenge.target, speechLang);
+                }}
+                className="btn-3d-mint"
+                style={{ padding: '0.45rem 0.9rem', display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.85rem' }}
+                title="Hear sound"
+              >
+                <Volume2 size={16} />
+                <span>{content.hearBtn}</span>
+              </button>
+
+              <button
+                onClick={handleOpenHelp}
+                className="btn-3d-amber"
+                style={{ padding: '0.45rem 0.85rem', display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.85rem' }}
+                title="Help Me"
+              >
+                <HelpCircle size={16} />
+                <span>{content.helpBtn}</span>
+              </button>
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: '0.4rem' }}>
-            <button
-              onClick={() => {
-                playPop();
-                speakText(currentChallenge.target, speechLang);
-              }}
-              className="btn-primary btn-pill"
-              style={{ padding: '0.4rem 0.75rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}
-              title="Hear sound"
-            >
-              <Volume2 size={16} />
-              <span>{content.hearBtn}</span>
-            </button>
-
-            <button
-              onClick={handleOpenHelp}
-              className="btn-secondary btn-pill"
-              style={{ padding: '0.4rem 0.65rem', display: 'flex', alignItems: 'center', gap: '0.3rem', borderColor: '#FDE68A', background: '#FFFBEB' }}
-              title="Help Me"
-            >
-              <HelpCircle size={16} color="#D97706" />
-              <span style={{ color: '#B45309', fontWeight: '700' }}>{content.helpBtn}</span>
-            </button>
+          {/* Hint Mnemonic Badge */}
+          <div style={{ fontSize: '0.88rem', color: '#92400E', background: '#FEF3C7', padding: '0.45rem 1.25rem', borderRadius: '9999px', border: '1.5px solid #FDE68A', fontWeight: 700, width: '100%', textAlign: 'center' }}>
+            💡 {currentChallenge.hint}
           </div>
         </div>
 
-        {/* Hint Mnemonic Badge */}
-        <div style={{ fontSize: '0.84rem', color: '#92400E', background: '#FEF3C7', padding: '0.4rem 1.15rem', borderRadius: '9999px', border: '1px solid #FDE68A' }}>
-          💡 {currentChallenge.hint}
-        </div>
-
-        {/* 4x4 Interactive Letter Grid */}
-        <div
-          className="hunter-grid-container"
-          style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}
-        >
+        {/* 4x4 Sonar Radar 3D Bubble Grid */}
+        <div className="sonar-radar-grid">
           {gridTiles.map((tile, index) => {
             const isFound = foundIndices.includes(index);
             const isMistake = mistakeIndex === index;
@@ -694,7 +656,7 @@ export default function LetterHunter({ onBack, adaptiveConfig }) {
             return (
               <div
                 key={tile.id}
-                className={`hunter-tile ${isFound ? 'found' : ''} ${isMistake ? 'gentle-mistake' : ''}`}
+                className={`bubble-tile-3d ${isFound ? 'found' : ''} ${isMistake ? 'mistake' : ''}`}
                 onClick={() => handleTileClick(tile, index)}
               >
                 {isFound ? '⭐' : tile.char}
@@ -717,18 +679,17 @@ export default function LetterHunter({ onBack, adaptiveConfig }) {
           >
             <button
               onClick={handleNextChallenge}
-              className="btn btn-amber animate-pulse-glow"
+              className="btn-3d-amber"
               style={{
-                fontSize: '1.2rem',
-                padding: '0.85rem 2.25rem',
-                borderRadius: '9999px',
+                fontSize: '1.25rem',
+                padding: '0.85rem 2.5rem',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.6rem'
               }}
             >
               <span>{content.nextChallengeBtn}</span>
-              <ChevronRight size={22} />
+              <ChevronRight size={24} />
             </button>
           </div>
         )}

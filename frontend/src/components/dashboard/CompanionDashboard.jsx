@@ -386,42 +386,72 @@ export default function CompanionDashboard() {
               const isExplorer = p.ageBand === '2-4';
               
               return (
-                <div key={p.id} onClick={() => {
-                  setActiveProfile(p);
-                  setDashboardTab('individual');
-                }} className="glass-card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1.25rem', background: 'white', borderRadius: '20px', cursor: 'pointer', transition: 'transform 0.15s ease' }} onMouseEnter={e => e.currentTarget.style.transform = 'translateX(4px)'} onMouseLeave={e => e.currentTarget.style.transform = 'translateX(0)'}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <div style={{ fontSize: '2rem', width: '56px', height: '56px', borderRadius: '16px', background: isExplorer ? '#ECFDF5' : '#F1F5F9', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div
+                  key={p.id}
+                  onClick={() => {
+                    playPop();
+                    setActiveProfile(p);
+                    setDashboardTab('individual');
+                  }}
+                  className="student-hero-card"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1.1rem' }}>
+                    <div
+                      style={{
+                        fontSize: '2.2rem',
+                        width: '60px',
+                        height: '60px',
+                        borderRadius: '20px',
+                        background: isExplorer
+                          ? 'linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%)'
+                          : 'linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%)',
+                        border: isExplorer ? '2px solid #A7F3D0' : '2px solid #C7D2FE',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: '0 4px 12px rgba(99, 102, 241, 0.15)'
+                      }}
+                    >
                       {getAvatarEmoji(p.avatarEmoji || p.avatar)}
                     </div>
                     <div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-                        <h4 style={{ margin: 0, fontSize: '1.1rem', color: '#1E293B', fontWeight: 800 }}>{p.name}</h4>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', flexWrap: 'wrap' }}>
+                        <h4 style={{ margin: 0, fontSize: '1.2rem', color: '#1E293B', fontWeight: 900 }}>{p.name}</h4>
                         {p.kidCode && (
-                          <span style={{ background: '#EEF2FF', color: '#4F46E5', padding: '0.15rem 0.5rem', borderRadius: '6px', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.04em' }}>
+                          <span className="hud-chip hud-chip-indigo" style={{ padding: '0.15rem 0.6rem', fontSize: '0.75rem' }}>
                             🆔 {p.kidCode}
                           </span>
                         )}
                         {p.isLinked && (
-                          <span style={{ background: '#F0FDF4', color: '#16A34A', padding: '0.15rem 0.5rem', borderRadius: '6px', fontSize: '0.7rem', fontWeight: 700 }}>
+                          <span className="hud-chip hud-chip-mint" style={{ padding: '0.15rem 0.6rem', fontSize: '0.72rem' }}>
                             🔗 Linked
                           </span>
                         )}
                       </div>
-                      <div style={{ fontSize: '0.8rem', color: '#64748B', marginTop: '0.2rem' }}>{isExplorer ? 'Little Explorer (2-4)' : p.gradeLabel || 'Grade 2'}</div>
+                      <div style={{ fontSize: '0.85rem', color: '#64748B', marginTop: '0.25rem', fontWeight: 600 }}>
+                        {isExplorer ? 'Little Explorer (2-4)' : p.gradeLabel || 'Grade 2'}
+                      </div>
                     </div>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                     {isExplorer ? (
-                       <span style={{ background: '#D1FAE5', color: '#065F46', padding: '0.3rem 0.8rem', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: 700 }}>Play Only</span>
+                      <span className="hud-chip hud-chip-mint" style={{ fontSize: '0.78rem' }}>Play Only</span>
                     ) : !isCompleted ? (
-                       <span style={{ background: '#FEF3C7', color: '#92400E', padding: '0.3rem 0.8rem', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: 700 }}>Pending Screening</span>
+                      <span className="hud-chip hud-chip-amber" style={{ fontSize: '0.78rem' }}>Pending Screening</span>
                     ) : isElevated ? (
-                       <span style={{ background: '#FEE2E2', color: '#991B1B', padding: '0.3rem 0.8rem', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: 700 }}>Elevated Risk</span>
+                      <span className="hud-chip hud-chip-flame" style={{ fontSize: '0.78rem' }}>Elevated Risk</span>
                     ) : (
-                       <span style={{ background: '#DCFCE7', color: '#166534', padding: '0.3rem 0.8rem', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: 700 }}>Typical</span>
+                      <span className="hud-chip hud-chip-mint" style={{ fontSize: '0.78rem' }}>Typical Progression</span>
                     )}
-                    <ArrowRight size={18} color="#94A3B8" />
+                    <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#F1F5F9', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <ArrowRight size={18} color="#4F46E5" />
+                    </div>
                   </div>
                 </div>
               );
@@ -525,7 +555,7 @@ export default function CompanionDashboard() {
       {/* ─────────────────────────────────────────────────────────────
           EDUCATOR DIAGNOSTIC & CLINICAL IEP REPORT
          ───────────────────────────────────────────────────────────── */}
-      <div className="glass-card" style={{ padding: '2rem 1.75rem', background: 'white', borderRadius: '24px' }}>
+      <div className="glass-telemetry-panel" style={{ padding: '2.25rem 2rem' }}>
           {/* Header with Avatar & Risk Badge */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', borderBottom: '2px solid #F1F5F9', paddingBottom: '1.25rem', marginBottom: '1.5rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', minWidth: 0 }}>

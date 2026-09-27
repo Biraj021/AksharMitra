@@ -24,6 +24,7 @@ import ExplorerHome from './littleExplorer/ExplorerHome';
 import SoundMatchPlay from './littleExplorer/SoundMatchPlay';
 import RhymeParty from './littleExplorer/RhymeParty';
 import NameThatPicture from './littleExplorer/NameThatPicture';
+import GameWorldBackdrop from './components/common/GameWorldBackdrop';
 
 import { useProfile } from './context/ProfileContext';
 import { getAdaptiveLearningConfig } from '@ai/adaptiveLearningStrategy';
@@ -35,8 +36,8 @@ export default function App() {
     <div
       className={`app-container ${activeLanguage?.id === 'hindi' ? 'lang-hindi' : (activeLanguage?.id === 'bengali' ? 'lang-bengali' : 'lang-english')}`}
       lang={activeLanguage?.id === 'hindi' ? 'hi' : (activeLanguage?.id === 'bengali' ? 'bn' : 'en')}
-      style={{ minHeight: '100vh', background: '#F8FAFC' }}
     >
+      <GameWorldBackdrop />
       <AppRouter />
     </div>
   );

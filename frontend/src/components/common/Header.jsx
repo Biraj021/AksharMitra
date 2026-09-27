@@ -55,8 +55,8 @@ export default function Header() {
   };
 
   return (
-    <header className="header-nav" style={{ padding: '0.65rem 1rem', background: '#FFFFFF', borderBottom: '1px solid #E2E8F0', position: 'sticky', top: 0, zIndex: 100 }}>
-      <div className="header-container" style={{ maxWidth: '1080px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+    <header className="floating-hud-header">
+      <div className="hud-island-pill">
         
         {/* Brand Logo & Context Title */}
         <div
@@ -68,31 +68,25 @@ export default function Header() {
               navigate('/dashboard');
             }
           }}
-          style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}
+          className="hud-brand-badge"
         >
           <div
+            className="hud-avatar-orb"
             style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '13px',
               background: isPlayRoute
                 ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)'
                 : 'linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '1.4rem',
-              boxShadow: isPlayRoute ? '0 4px 10px rgba(16, 185, 129, 0.25)' : '0 4px 10px rgba(79, 70, 229, 0.25)'
+              color: 'white'
             }}
           >
             🦉
           </div>
           <div>
-            <h1 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0, color: '#1E293B', letterSpacing: '-0.01em' }}>
+            <h1 style={{ fontSize: '1.2rem', fontWeight: 900, margin: 0, color: '#1E293B', letterSpacing: '-0.02em' }}>
               AksharMitra
             </h1>
-            <p style={{ fontSize: '0.72rem', color: isPlayRoute ? '#059669' : '#4F46E5', margin: 0, fontWeight: 700 }}>
-              {isPlayRoute ? '🎮 Student Game Zone' : (isDashboardRoute ? '👩‍🏫 Educator Dashboard' : t('appSubtitle'))}
+            <p style={{ fontSize: '0.74rem', color: isPlayRoute ? '#059669' : '#4F46E5', margin: 0, fontWeight: 800 }}>
+              {isPlayRoute ? '🎮 Game Adventure Hub' : (isDashboardRoute ? '👩‍🏫 Educator Command Center' : t('appSubtitle'))}
             </p>
           </div>
         </div>

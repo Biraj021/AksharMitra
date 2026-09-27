@@ -389,19 +389,17 @@ export default function WordSnapper({ onBack, adaptiveConfig }) {
   // ─────────────────────────────────────────────────────────────────────────
   if (isSessionComplete) {
     return (
-      <div className="game-viewport" style={{ maxWidth: '640px' }}>
+      <div className="game-viewport" style={{ maxWidth: '640px', padding: '1rem 0' }}>
         <div
-          className="glass-card"
+          className="holo-explorer-card"
           style={{
             padding: '2.5rem 1.75rem',
             textAlign: 'center',
-            borderRadius: '28px',
-            background: 'white',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             gap: '1.5rem',
-            boxShadow: '0 16px 40px rgba(99, 102, 241, 0.15)'
+            width: '100%'
           }}
         >
           <MascotMitra
@@ -418,60 +416,58 @@ export default function WordSnapper({ onBack, adaptiveConfig }) {
           />
 
           <div>
-            <h2 style={{ fontSize: '2.2rem', color: '#4F46E5', margin: '0 0 0.4rem', fontWeight: 900 }}>
+            <h2 style={{ fontSize: '2.2rem', color: '#4338CA', margin: '0 0 0.4rem', fontWeight: 900 }}>
               {ui.completionTitle}
             </h2>
-            <p style={{ fontSize: '1.05rem', color: '#64748B', margin: 0, fontWeight: 600 }}>
+            <p style={{ fontSize: '1.05rem', color: '#475569', margin: 0, fontWeight: 700 }}>
               {ui.completionSub}
             </p>
           </div>
 
-          {/* Stats - Unified 3-Tier Grid for Equivalent Layout & Alignment */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', width: '100%', maxWidth: '380px' }}>
+          {/* Stats - Unified 3D Tier Grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', width: '100%', maxWidth: '400px' }}>
             <div
               style={{
-                background: '#FEF3C7',
-                padding: '0.9rem 0.5rem',
-                borderRadius: '20px',
-                border: '1.5px solid #FDE68A',
+                background: 'linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%)',
+                padding: '1.1rem 0.75rem',
+                borderRadius: '24px',
+                border: '2px solid #FDE68A',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
                 textAlign: 'center',
-                minHeight: '105px',
-                boxShadow: '0 4px 12px rgba(217, 119, 6, 0.08)'
+                boxShadow: '0 6px 0 #D97706, 0 10px 20px rgba(245, 158, 11, 0.2)'
               }}
             >
-              <div style={{ fontSize: '1.6rem', lineHeight: 1 }}>⭐</div>
-              <div style={{ fontSize: '1.45rem', fontWeight: 900, color: '#B45309', margin: '0.35rem 0 0.2rem', whiteSpace: 'nowrap' }}>
+              <div style={{ fontSize: '2rem', lineHeight: 1 }}>⭐</div>
+              <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#B45309', margin: '0.35rem 0 0.2rem', whiteSpace: 'nowrap' }}>
                 +{sessionStars}
               </div>
-              <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#92400E', lineHeight: 1.2 }}>
+              <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#92400E', lineHeight: 1.2 }}>
                 {ui.starsEarnedLabel}
               </div>
             </div>
 
             <div
               style={{
-                background: '#EEF2FF',
-                padding: '0.9rem 0.5rem',
-                borderRadius: '20px',
-                border: '1.5px solid #C7D2FE',
+                background: 'linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%)',
+                padding: '1.1rem 0.75rem',
+                borderRadius: '24px',
+                border: '2px solid #C7D2FE',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
                 textAlign: 'center',
-                minHeight: '105px',
-                boxShadow: '0 4px 12px rgba(79, 70, 229, 0.08)'
+                boxShadow: '0 6px 0 #4F46E5, 0 10px 20px rgba(79, 70, 229, 0.2)'
               }}
             >
-              <div style={{ fontSize: '1.6rem', lineHeight: 1 }}>🧩</div>
-              <div style={{ fontSize: '1.45rem', fontWeight: 900, color: '#4338CA', margin: '0.35rem 0 0.2rem', whiteSpace: 'nowrap' }}>
+              <div style={{ fontSize: '2rem', lineHeight: 1 }}>🧩</div>
+              <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#3730A3', margin: '0.35rem 0 0.2rem', whiteSpace: 'nowrap' }}>
                 {wordsBuiltCount}
               </div>
-              <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#3730A3', lineHeight: 1.2 }}>
+              <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#312E81', lineHeight: 1.2 }}>
                 {ui.wordsBuiltLabel}
               </div>
             </div>
@@ -479,24 +475,24 @@ export default function WordSnapper({ onBack, adaptiveConfig }) {
 
           {/* What they practiced */}
           <div style={{
-            background: '#F8FAFC', border: '1.5px solid #E2E8F0',
-            borderRadius: '18px', padding: '1.25rem 1.5rem',
-            width: '100%', maxWidth: '380px', textAlign: 'left'
+            background: 'rgba(248, 250, 252, 0.9)', border: '2px solid #E2E8F0',
+            borderRadius: '22px', padding: '1.25rem 1.5rem',
+            width: '100%', maxWidth: '400px', textAlign: 'left'
           }}>
-            <div style={{ fontWeight: '700', fontSize: '0.95rem', color: '#1E293B', marginBottom: '0.5rem' }}>
+            <div style={{ fontWeight: '800', fontSize: '0.98rem', color: '#1E293B', marginBottom: '0.5rem' }}>
               {ui.practicedTitle}
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', fontSize: '0.85rem', color: '#64748B' }}>
-              {ui.practiceItems.map((item, i) => <div key={i}>{item}</div>)}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', fontSize: '0.88rem', color: '#475569', fontWeight: 600 }}>
+              {ui.practiceItems.map((item, i) => <div key={i}>✨ {item}</div>)}
             </div>
           </div>
 
           {/* Action buttons */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', width: '100%', maxWidth: '380px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', width: '100%', maxWidth: '400px' }}>
             <button
               onClick={handlePracticeAgain}
-              className="btn btn-amber animate-pulse-glow"
-              style={{ width: '100%', borderRadius: '9999px', padding: '0.85rem' }}
+              className="btn-3d-amber"
+              style={{ width: '100%', padding: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', fontSize: '1rem' }}
             >
               <Sparkles size={18} />
               <span>{ui.btnPracticeAgain}</span>
@@ -504,8 +500,8 @@ export default function WordSnapper({ onBack, adaptiveConfig }) {
 
             <button
               onClick={() => { playPop(); onBack ? onBack() : setCurrentView('games'); }}
-              className="btn btn-primary"
-              style={{ width: '100%', borderRadius: '9999px', padding: '0.85rem' }}
+              className="btn-3d-indigo"
+              style={{ width: '100%', padding: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', fontSize: '1rem' }}
             >
               <BookOpen size={18} />
               <span>{ui.btnContinueLearning}</span>
@@ -513,8 +509,8 @@ export default function WordSnapper({ onBack, adaptiveConfig }) {
 
             <button
               onClick={() => { playPop(); setCurrentView('landing'); }}
-              className="btn btn-secondary"
-              style={{ width: '100%', borderRadius: '9999px', padding: '0.75rem' }}
+              className="btn-3d-mint"
+              style={{ width: '100%', padding: '0.8rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', fontSize: '0.95rem' }}
             >
               <Home size={18} />
               <span>{ui.btnBackHome}</span>
@@ -536,30 +532,30 @@ export default function WordSnapper({ onBack, adaptiveConfig }) {
   return (
     <div className="game-viewport">
       {/* ── Top bar ── */}
-      <div className="game-top-bar">
+      <div className="game-top-bar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
         <button
           onClick={() => { playPop(); onBack ? onBack() : setCurrentView('games'); }}
-          className="btn-secondary btn-pill"
-          style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+          className="btn-3d-indigo"
+          style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.5rem 1.1rem', fontSize: '0.85rem' }}
         >
           <ArrowLeft size={16} />
           <span>{ui.backBtn}</span>
         </button>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-          <div className="game-stat-pill" style={{ color: '#B45309', background: '#FEF3C7', borderColor: '#FDE68A' }}>
+          <div className="hud-chip hud-chip-amber">
             <Star size={16} fill="#F59E0B" color="#F59E0B" />
             <span>{(activeProfile?.stars || 0)} {ui.starsLabel}</span>
           </div>
-          {/* Finite progress indicator — localised */}
-          <div className="game-stat-pill" style={{ color: '#4338CA', background: '#EEF2FF', borderColor: '#C7D2FE' }}>
+          {/* Finite progress indicator */}
+          <div className="hud-chip hud-chip-indigo">
             <span>{ui.wordOf(currentWordIndex + 1, sessionWords.length)}</span>
           </div>
         </div>
       </div>
 
-      {/* ── Main phonics stage ── */}
-      <div className="phonics-stage">
+      {/* ── Main Phonics Arcade Stage ── */}
+      <div className="arcade-phonics-stage">
         {/* Mascot */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <MascotMitra
@@ -570,24 +566,20 @@ export default function WordSnapper({ onBack, adaptiveConfig }) {
           />
         </div>
 
-        {/* Word card */}
-        <div style={{
-          display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem',
-          background: 'linear-gradient(180deg, #F8FAFC 0%, #EEF2FF 100%)',
-          padding: '1.25rem 2rem', borderRadius: '24px', border: '2px solid #E0E7FF',
-          width: '100%', maxWidth: '480px'
-        }}>
-          <div style={{ fontSize: '4.5rem', lineHeight: 1, filter: 'drop-shadow(0 4px 10px rgba(0,0,0,0.1))' }}>
+        {/* Holographic Phonics Pod */}
+        <div className="arcade-hologram-pod">
+          {/* 3D Floating Emoji Sphere */}
+          <div className="emoji-floating-sphere">
             {currentWord.emoji}
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginTop: '0.25rem', flexWrap: 'wrap', justifyContent: 'center' }}>
-            {/* Hear Sound / Audio unavailable */}
+            {/* Hear Sound */}
             {audioAvailable ? (
               <button
                 onClick={() => { playPop(); speak(currentWord.word); }}
-                className="btn-primary btn-pill"
-                style={{ padding: '0.4rem 1rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+                className="btn-3d-mint"
+                style={{ padding: '0.45rem 1.1rem', display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.88rem' }}
               >
                 <Volume2 size={18} />
                 <span>{ui.hearSoundBtn}</span>
@@ -601,32 +593,31 @@ export default function WordSnapper({ onBack, adaptiveConfig }) {
 
             <button
               onClick={() => { playPop(); setShowMnemonic(v => !v); }}
-              className="btn-secondary btn-pill"
-              style={{ padding: '0.4rem 0.8rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}
+              className="btn-3d-amber"
+              style={{ padding: '0.45rem 1rem', display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.88rem' }}
             >
-              <Lightbulb size={16} color="#F59E0B" />
+              <Lightbulb size={16} />
               <span>{showMnemonic ? ui.hideHintBtn : ui.showHintBtn}</span>
             </button>
 
             <button
               onClick={() => { playPop(); setShowHelpModal(true); }}
-              className="btn-secondary btn-pill"
-              style={{ padding: '0.4rem 0.8rem', display: 'flex', alignItems: 'center', gap: '0.35rem',
-                borderColor: '#FDE68A', background: '#FFFBEB' }}
+              className="btn-3d-coral"
+              style={{ padding: '0.45rem 0.9rem', display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.88rem' }}
             >
-              <HelpCircle size={16} color="#D97706" />
-              <span style={{ color: '#B45309', fontWeight: 700 }}>{ui.helpBtn}</span>
+              <HelpCircle size={16} />
+              <span>{ui.helpBtn}</span>
             </button>
           </div>
 
-          <p style={{ fontSize: '0.85rem', color: '#64748B', margin: '0.25rem 0 0', textAlign: 'center' }}>
+          <p style={{ fontSize: '0.95rem', color: '#475569', margin: '0.35rem 0 0', textAlign: 'center', fontWeight: 600 }}>
             {currentWord.meaning}
           </p>
         </div>
 
         {/* Mnemonic hint */}
         {showMnemonic && (
-          <div className="mnemonic-box">
+          <div className="mnemonic-box" style={{ width: '100%', maxWidth: '480px', borderRadius: '20px', border: '2px solid #FDE68A', background: '#FFFBEB' }}>
             <HelpCircle size={22} style={{ flexShrink: 0, color: '#B45309' }} />
             <div>
               <strong style={{ color: '#92400E' }}>{ui.hintLabel}</strong>{' '}
@@ -635,18 +626,17 @@ export default function WordSnapper({ onBack, adaptiveConfig }) {
           </div>
         )}
 
-        {/* Letter slots */}
-        <div className={`word-target-slots ${isWiggling ? 'animate-wiggle' : ''}`}>
-          {/* Highlight only the NEXT empty slot, not all target slots at once */}
+        {/* Magnetic Neon Receptor Slots */}
+        <div className={`magnetic-slots-row ${isWiggling ? 'animate-wiggle' : ''}`}>
           {(() => {
             const nextEmptyIndex = placedLetters.findIndex(s => s === null);
             return placedLetters.map((slot, index) => {
-              // Glow only the very next slot the child should fill
               const isActiveSlot = !isWordSolved && index === nextEmptyIndex;
+              const isFilled = Boolean(slot);
               return (
                 <div
                   key={index}
-                  className={`letter-slot ${slot ? 'filled' : ''} ${isActiveSlot ? 'highlight-reversal' : ''}`}
+                  className={`magnetic-receptor-slot ${isFilled ? 'filled' : ''} ${isActiveSlot ? 'active-target' : ''}`}
                   onClick={() => handleSlotClick(index)}
                   onDragOver={handleDragOver}
                   onDrop={(e) => handleDrop(e, index)}
@@ -655,7 +645,7 @@ export default function WordSnapper({ onBack, adaptiveConfig }) {
                   {slot ? (
                     <span>{slot.char}</span>
                   ) : (
-                    <span style={{ fontSize: '1rem', color: '#94A3B8', fontWeight: 600 }}>
+                    <span style={{ fontSize: '1.1rem', color: isActiveSlot ? '#D97706' : '#94A3B8', fontWeight: 800 }}>
                       {ui.slotEmpty(index)}
                     </span>
                   )}
@@ -665,27 +655,28 @@ export default function WordSnapper({ onBack, adaptiveConfig }) {
           })()}
         </div>
 
-        {/* Tile bank */}
+        {/* Candy 3D Tile Bank */}
         <div style={{ width: '100%', maxWidth: '520px' }}>
-          <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#64748B', marginBottom: '0.5rem', textAlign: 'center' }}>
+          <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#475569', marginBottom: '0.65rem', textAlign: 'center' }}>
             {ui.tilesInstruction}
           </div>
-          <div className="letter-tile-bank">
+          <div className="candy-tile-bank">
             {tileBank.map((tile) => {
               const isCurrent = tile.targetIndex === currentItemIndex && !tile.used;
-              const tileClass = tile.used ? 'used' : '';
               
               let stateClass = '';
-              if (incorrectTileId === tile.id) {
+              if (tile.used) {
+                stateClass = 'used';
+              } else if (incorrectTileId === tile.id) {
                 stateClass = 'incorrect';
               } else if (isCurrent && showHint) {
-                stateClass = 'is-target-letter';
+                stateClass = 'is-hint-target';
               }
 
               return (
                 <div
                   key={tile.id}
-                  className={`draggable-tile ${tileClass} ${stateClass}`}
+                  className={`candy-tile-3d ${stateClass}`}
                   draggable={!tile.used && !isWordSolved}
                   onDragStart={(e) => handleDragStart(e, tile)}
                   onClick={() => !tile.used && handleTileClick(tile)}
@@ -701,16 +692,15 @@ export default function WordSnapper({ onBack, adaptiveConfig }) {
         {isWordSolved && (
           <div style={{
             display: 'flex', alignItems: 'center', gap: '1rem',
-            animation: 'scale-up 0.3s ease-out', marginTop: '0.5rem'
+            animation: 'scale-up 0.3s ease-out', marginTop: '0.75rem'
           }}>
             <button
               onClick={handleNextWord}
-              className="btn btn-amber animate-pulse-glow"
-              style={{ fontSize: '1.25rem', padding: '0.85rem 2.25rem', borderRadius: '9999px',
-                display: 'flex', alignItems: 'center', gap: '0.6rem' }}
+              className="btn-3d-amber"
+              style={{ fontSize: '1.25rem', padding: '0.85rem 2.5rem', display: 'flex', alignItems: 'center', gap: '0.6rem' }}
             >
               <span>{ui.nextWordBtn}</span>
-              <ChevronRight size={22} />
+              <ChevronRight size={24} />
             </button>
           </div>
         )}

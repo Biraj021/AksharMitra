@@ -221,13 +221,9 @@ export default function RhymeBeatsQuest({ onCompleteQuest }) {
 
   return (
     <div
-      className="glass-card"
+      className="holo-explorer-card"
       style={{
-        padding: '1.75rem',
-        borderRadius: '28px',
-        background: '#FFFFFF',
-        border: '2px solid #BAE6FD',
-        boxShadow: '0 12px 32px rgba(2, 132, 199, 0.12)',
+        padding: '2rem 1.75rem',
         display: 'flex',
         flexDirection: 'column',
         gap: '1.4rem',
@@ -236,17 +232,7 @@ export default function RhymeBeatsQuest({ onCompleteQuest }) {
     >
       {/* Round Header & Audio Prompt */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <span
-          style={{
-            fontSize: '0.82rem',
-            fontWeight: 900,
-            color: '#0284C7',
-            background: '#E0F2FE',
-            padding: '0.3rem 0.85rem',
-            borderRadius: '9999px',
-            border: '1px solid #BAE6FD'
-          }}
-        >
+        <span className="hud-chip hud-chip-mint" style={{ fontSize: '0.85rem' }}>
           {isHindi ? `राउंड 2: तुकबंदी और ताल (${currentIdx + 1}/${questions.length})` : (isBengali ? `পর্ব ২: ছন্দ ও সুরের তাল (${currentIdx + 1}/${questions.length})` : `Round 2: Rhyme & Beats (${currentIdx + 1}/${questions.length})`)}
         </span>
         <button
@@ -331,46 +317,27 @@ export default function RhymeBeatsQuest({ onCompleteQuest }) {
         </div>
       )}
 
-      {/* Mode 2: Syllable Clapping Beat Numbers with 3D tactile pads */}
+      {/* Mode 2: Syllable Clapping Beat Numbers with 3D tactile candy pads */}
       {currentQ.type === 'syllable_beat' && (
-        <div style={{ display: 'flex', gap: '0.9rem', justifyContent: 'center', width: '100%' }}>
+        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', width: '100%' }}>
           {currentQ.options.map((num) => {
             const isSelected = selectedOptId === num;
             const isCorrect = num === currentQ.syllableCount;
+
+            let stateClass = '';
+            if (isSelected) {
+              stateClass = isCorrect ? 'is-hint-target' : 'incorrect';
+            }
 
             return (
               <button
                 key={num}
                 onClick={() => handlePickSyllable(num)}
+                className={`candy-tile-3d ${stateClass}`}
                 style={{
-                  width: '68px',
-                  height: '68px',
-                  borderRadius: '20px',
-                  fontSize: '1.8rem',
-                  fontWeight: 900,
-                  fontFamily: isBengali ? 'var(--font-bengali)' : "'Lexend', sans-serif",
-                  border: isSelected
-                    ? isCorrect
-                      ? '3px solid #10B981'
-                      : '3px solid #F59E0B'
-                    : '2px solid #CBD5E1',
-                  background: isSelected
-                    ? isCorrect
-                      ? '#D1FAE5'
-                      : '#FEF3C7'
-                    : '#FFFFFF',
-                  color: isSelected
-                    ? isCorrect
-                      ? '#047857'
-                      : '#92400E'
-                    : '#1E293B',
-                  cursor: 'pointer',
-                  transform: isSelected ? 'scale(1.08)' : 'scale(1)',
-                  boxShadow: isSelected
-                    ? isCorrect
-                      ? '0 6px 16px rgba(16, 185, 129, 0.3)'
-                      : '0 6px 16px rgba(245, 158, 11, 0.3)'
-                    : '0 4px 8px rgba(0,0,0,0.06)'
+                  width: '74px',
+                  height: '74px',
+                  fontSize: '2rem'
                 }}
               >
                 {num}
@@ -382,22 +349,22 @@ export default function RhymeBeatsQuest({ onCompleteQuest }) {
 
       {/* Next Step 3D Button */}
       {status === 'completed_step' && (
-        <div style={{ marginTop: '0.5rem' }}>
+        <div style={{ marginTop: '0.75rem' }}>
           <button
             onClick={handleNextStep}
-            className="btn-3d btn-3d-sky"
+            className="btn-3d-mint"
             style={{
               width: '100%',
-              padding: '0.85rem',
-              fontSize: '1.05rem',
+              padding: '0.9rem',
+              fontSize: '1.15rem',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '0.45rem'
+              gap: '0.5rem'
             }}
           >
             <span>{isBengali ? 'পরবর্তী ধাপে এগিয়ে যাও' : 'Continue to Next'}</span>
-            <ArrowRight size={18} />
+            <ArrowRight size={20} />
           </button>
         </div>
       )}
