@@ -14,12 +14,16 @@ import { createEmptyParentFeedback } from '../../../ai/src/parentFeedbackModel.j
  * Saves or updates a parent observation record for a learner in Supabase.
  */
 export async function saveParentObservation(learnerId, feedbackData) {
-  if (!learnerId || !feedbackData || isDemoProfile(learnerId)) {
+  if (!learnerId || !feedbackData) {
     return feedbackData;
   }
 
-  // Update local cache optimistically
+  // Update local cache optimistically for all profiles
   setLocalCache(`parent_obs_${learnerId}`, feedbackData);
+
+  if (isDemoProfile(learnerId)) {
+    return feedbackData;
+  }
 
   if (!isSupabaseConfigured() || !supabase) {
     return feedbackData;
@@ -68,11 +72,15 @@ export async function saveParentObservation(learnerId, feedbackData) {
  * Fetches the latest parent observation record for a learner.
  */
 export async function getParentObservation(learnerId) {
-  if (!learnerId || isDemoProfile(learnerId)) {
+  if (!learnerId) {
     return null;
   }
 
   const cached = getLocalCache(`parent_obs_${learnerId}`);
+
+  if (isDemoProfile(learnerId)) {
+    return cached;
+  }
 
   if (!isSupabaseConfigured() || !supabase) {
     return cached;

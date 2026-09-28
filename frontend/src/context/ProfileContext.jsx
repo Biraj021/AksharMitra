@@ -119,12 +119,17 @@ const normalizeProfile = (p) => {
 
   const isCompleted = Boolean(p.screeningCompleted || existingScreening?.screeningCompleted);
 
+  let cachedPf = null;
+  try {
+    if (p?.id) cachedPf = getLocalCache(`parent_obs_${p.id}`);
+  } catch (e) {}
+
   const normalized = {
     ...p,
     kidCode: p.kidCode || defaultKidCode,
     ageBand: p.ageBand || '5-7',
     avatarEmoji: getAvatarEmoji(p.avatarEmoji || p.avatar),
-    parentFeedback: p.parentFeedback || null,
+    parentFeedback: p.parentFeedback || cachedPf || null,
     attendanceHistory: history,
     streak: p.streak || calculateStreakStats(history).currentStreak || 1,
     screeningCompleted: isCompleted,
@@ -204,8 +209,8 @@ export function ProfileProvider({ children }) {
         if (saved) {
           const parsed = JSON.parse(saved);
           if (parsed?.id) {
-            if (parsed.id === 'aarav_demo' || parsed.id === 'demo_aarav') return normalizeProfile({ ...DEMO_PROFILES[0] });
-            if (parsed.id === 'priya_demo' || parsed.id === 'demo_priya') return normalizeProfile({ ...DEMO_PROFILES[1] });
+            if (parsed.id === 'aarav_demo' || parsed.id === 'demo_aarav') return normalizeProfile({ ...DEMO_PROFILES[0], ...parsed });
+            if (parsed.id === 'priya_demo' || parsed.id === 'demo_priya') return normalizeProfile({ ...DEMO_PROFILES[1], ...parsed });
             return normalizeProfile(parsed);
           }
         }
@@ -888,16 +893,33 @@ export function ProfileProvider({ children }) {
     updated.learningProfile = calculateLearningProfile(updated);
     setActiveProfile(updated);
 
-    // Asynchronously persist to Supabase
-    if (!isDemoProfile(activeProfile.id)) {
-      try {
-        await saveParentObservation(activeProfile.id, feedbackData);
-        if (updated.learningProfile) {
-          await saveLearningProfile(activeProfile.id, updated.learningProfile);
-        }
-      } catch (err) {
-        console.warn('[ProfileContext] Error saving observation to DB:', err);
+    // Synchronously update local storage & global learner registry
+    saveGlobalLearner(updated);
+    try {
+      localStorage.setItem('aksharmitra_active_student_profile', JSON.stringify(updated));
+      if (currentUser) {
+        localStorage.setItem(getActiveStorageKey(currentUser), JSON.stringify(updated));
       }
+    } catch (e) { }
+
+    setProfilesList((prev) => {
+      const newList = prev.map((p) => (p.id === activeProfile.id ? { ...p, parentFeedback: feedbackData, learningProfile: updated.learningProfile } : p));
+      if (currentUser) {
+        try {
+          localStorage.setItem(getProfilesStorageKey(currentUser), JSON.stringify(newList));
+        } catch (e) { }
+      }
+      return newList;
+    });
+
+    // Save observation (updates local cache and async Supabase if online)
+    try {
+      await saveParentObservation(activeProfile.id, feedbackData);
+      if (!isDemoProfile(activeProfile.id) && updated.learningProfile) {
+        await saveLearningProfile(activeProfile.id, updated.learningProfile);
+      }
+    } catch (err) {
+      console.warn('[ProfileContext] Error saving observation to DB:', err);
     }
 
     return updated;

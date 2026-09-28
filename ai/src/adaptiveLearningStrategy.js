@@ -4,6 +4,8 @@
  * direct routing, and deterministic teaching configurations.
  */
 
+import { calculateLearningProfile } from './crossSignalIntelligence.js';
+
 export const CHILD_ACTIVITY_METADATA = {
   'word-snapper': {
     icon: '🧩',
@@ -84,7 +86,7 @@ export const CHILD_ACTIVITY_METADATA = {
 export function getChildRecommendation(profile, languageId = 'english') {
   const isBengali = languageId === 'bengali';
   const isHindi = languageId === 'hindi';
-  const learningProfile = profile?.learningProfile;
+  const learningProfile = profile?.learningProfile || (profile ? calculateLearningProfile(profile) : null);
 
   const hasPersonalized = Boolean(
     learningProfile &&

@@ -353,7 +353,7 @@ export default function CompanionDashboard() {
             )}
 
             <div style={{ background: '#F8FAFC', padding: '0.75rem 1rem', borderRadius: '12px', fontSize: '0.8rem', color: '#64748B' }}>
-              💡 <strong>Quick Test Codes:</strong> Try linking <strong>AM-1001</strong> (Aarav - At-Risk Profile) or <strong>AM-1002</strong> (Priya - Typical Fluency).
+              💡 <strong>Quick Test Codes:</strong> Try linking <strong>AM-1001</strong> (Aarav - Learning Support Profile) or <strong>AM-1002</strong> (Priya - Typical Fluency).
             </div>
           </div>
         )}
@@ -445,7 +445,7 @@ export default function CompanionDashboard() {
                     ) : !isCompleted ? (
                       <span className="hud-chip hud-chip-amber" style={{ fontSize: '0.78rem' }}>Pending Screening</span>
                     ) : isElevated ? (
-                      <span className="hud-chip hud-chip-flame" style={{ fontSize: '0.78rem' }}>Elevated Risk</span>
+                      <span className="hud-chip hud-chip-flame" style={{ fontSize: '0.78rem' }}>Support Recommended</span>
                     ) : (
                       <span className="hud-chip hud-chip-mint" style={{ fontSize: '0.78rem' }}>Typical Progression</span>
                     )}
@@ -502,7 +502,7 @@ export default function CompanionDashboard() {
   const learningProfile = profile.learningProfile || (calculateLearningProfile ? calculateLearningProfile(profile) : null);
   const parentFeedback = profile.parentFeedback;
   const hasFeedback = hasParentFeedbackData(parentFeedback);
-  const parentSignals = learningProfile?.parentObservation || {};
+  const parentSignals = hasFeedback ? (learningProfile?.parentObservation || {}) : {};
 
   const getStatusBadge = (status) => {
     if (status === 'needs_support') {

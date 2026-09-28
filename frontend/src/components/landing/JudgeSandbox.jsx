@@ -71,8 +71,8 @@ export default function JudgeSandbox() {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.35rem' }}>
               <span style={{ fontSize: '1.3rem' }}>🦁 आरव (Aarav)</span>
-              <span style={{ fontSize: '0.7rem', padding: '0.2rem 0.5rem', background: '#DC2626', borderRadius: '9999px', fontWeight: 'bold' }}>
-                At-Risk Flagged
+              <span style={{ fontSize: '0.7rem', padding: '0.2rem 0.5rem', background: '#7C3AED', borderRadius: '9999px', fontWeight: 'bold' }}>
+                Learning Support Profile
               </span>
             </div>
             <p style={{ fontSize: '0.75rem', color: '#E0E7FF', margin: 0 }}>

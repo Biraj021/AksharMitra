@@ -36,6 +36,7 @@ export const DEMO_PROFILES = [
       dateCompleted: 'Today'
     },
     parentFeedback: {
+      lastUpdatedAt: new Date().toISOString(),
       reading: { comfort: 'needs_help', wordSkipping: 'often' },
       sounds: { letterSounds: 'often_help', blendingSounds: 'needs_help' },
       writing: { tracing: 'needs_help', letterShapeConfusion: 'often' },
@@ -66,7 +67,7 @@ export const DEMO_PROFILES = [
       ]
     },
     recommendation: 'Targeted tactile multisensory tracing for b/d discrimination and phonological rhyming games recommended.',
-    description: '⚠️ At-Risk Learning Profile (Letter Reversal & Reading Hesitation Flagged)'
+    description: '⚠️ Learning Support Profile (Letter Reversal & Reading Hesitation Flagged)'
   },
   {
     id: 'demo_priya',

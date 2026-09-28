@@ -507,10 +507,10 @@ export function calculateLearningProfile(profile) {
   let confidence = 0;
 
   if (!hasAppActivity && !hasParentFeedback) {
-    // TEST A: No data yet
+    // Case 1: No observation and no app activity
     return {
-      observedPattern: 'Not enough activity data yet.',
-      recommendedPractice: 'Complete the discovery screening quest to unlock personalized practice recommendations.',
+      observedPattern: 'No parent observations or activity data recorded yet.',
+      recommendedPractice: 'Provide parent observations or complete the discovery screening quest to receive personalized practice recommendations.',
       recommendedActivityId: 'screening',
       recommendedActivityTitle: 'Screening Island Quest',
       signalScores: {
@@ -536,9 +536,22 @@ export function calculateLearningProfile(profile) {
     const isTracingLowApp = activitySignals.tracing === 'low';
     const isTracingLowParent = parentObservationSignals.tracing === 'needs_support';
 
-    // Check for direct agreement on primary support areas
-    if (isReadingLowApp && isReadingLowParent) {
-      // TEST B: Agreement on Reading
+    // Check for multiple parent support areas
+    const parentNeedsCount = [isReadingLowParent, isSpeechLowParent, isTracingLowParent].filter(Boolean).length;
+
+    if (parentNeedsCount >= 2) {
+      const areas = [];
+      if (isTracingLowParent) areas.push('handwriting/letter tracing');
+      if (isReadingLowParent) areas.push('independent reading');
+      if (isSpeechLowParent) areas.push('phonics and letter sounds');
+
+      observedPattern = `Parent observations highlight support needed across multiple areas (${areas.join(' and ')}).`;
+      recommendedPractice = 'Combined multisensory letter tracing and guided word-building practice.';
+      recommendedActivityId = isTracingLowParent ? 'letter-tracing' : 'word-snapper';
+      recommendedActivityTitle = isTracingLowParent ? 'Letter Tracing Studio & Word Snapper' : 'Word Snapper & Sound Lab';
+      agreementStatus = 'agreement';
+      confidence = 88;
+    } else if (isReadingLowApp && isReadingLowParent) {
       observedPattern = 'Both app activity and parent observation suggest that independent reading may need additional practice.';
       recommendedPractice = 'Guided reading and word-building practice.';
       recommendedActivityId = 'word-snapper';
@@ -546,7 +559,6 @@ export function calculateLearningProfile(profile) {
       agreementStatus = 'agreement';
       confidence = 90;
     } else if (isSpeechLowApp && isSpeechLowParent) {
-      // TEST C: Agreement on Speech/Phonological
       observedPattern = 'Letter-sound and phonological practice may be helpful across home and learning activities.';
       recommendedPractice = 'Phonics Sound Lab and acoustic rhyme matching.';
       recommendedActivityId = 'word-snapper';
@@ -554,7 +566,6 @@ export function calculateLearningProfile(profile) {
       agreementStatus = 'agreement';
       confidence = 90;
     } else if (isTracingLowApp && isTracingLowParent) {
-      // TEST D: Agreement on Tracing/Writing
       observedPattern = 'Letter formation and fine-motor tracing practice may be helpful.';
       recommendedPractice = 'Tactile stroke-by-stroke letter tracing and visual orientation exercises.';
       recommendedActivityId = 'letter-tracing';
@@ -562,7 +573,6 @@ export function calculateLearningProfile(profile) {
       agreementStatus = 'agreement';
       confidence = 90;
     } else if (activitySignals.reading === 'high' && isReadingLowParent) {
-      // TEST E: Divergence — App strong vs Parent reports struggle at home
       observedPattern = "App performance is currently stronger than the parent's home observation. More reading practice may help confirm the child's consistency across settings.";
       recommendedPractice = 'Low-stress guided reading with visual aids and sight-word fluency challenges.';
       recommendedActivityId = 'spelling-traps';
@@ -570,32 +580,31 @@ export function calculateLearningProfile(profile) {
       agreementStatus = 'divergence';
       confidence = 70;
     } else if (activitySignals.reading === 'low' && parentObservationSignals.reading === 'comfortable') {
-      // Divergence — App low vs Parent reports comfortable
       observedPattern = 'Child demonstrates strong reading confidence at home, while in-app activities show slight hesitation. Continued supportive exploration is encouraged.';
       recommendedPractice = 'Confidence-building story reader and interactive word puzzles.';
       recommendedActivityId = 'word-snapper';
       recommendedActivityTitle = 'Interactive Word Builder';
       agreementStatus = 'divergence';
       confidence = 70;
+    } else if (isTracingLowParent) {
+      observedPattern = 'Home observations indicate handwriting and letter formation practice may be helpful.';
+      recommendedPractice = 'Tactile stroke-by-stroke letter tracing and fine-motor handwriting support.';
+      recommendedActivityId = 'letter-tracing';
+      recommendedActivityTitle = 'Letter Tracing Studio';
+      agreementStatus = 'parent_focused';
+      confidence = 75;
     } else if (isReadingLowParent) {
       observedPattern = 'Home observations highlight independent reading support as a key opportunity.';
       recommendedPractice = 'Guided reading and sight-word recognition practice.';
       recommendedActivityId = 'word-snapper';
-      recommendedActivityTitle = 'Word Snapper';
+      recommendedActivityTitle = 'Word Snapper & Guided Reading';
       agreementStatus = 'parent_focused';
       confidence = 75;
     } else if (isSpeechLowParent) {
       observedPattern = 'Home observations suggest phonological sound reinforcement would be beneficial.';
       recommendedPractice = 'Phoneme blending and sound-isolation activities.';
       recommendedActivityId = 'word-snapper';
-      recommendedActivityTitle = 'Sound Lab';
-      agreementStatus = 'parent_focused';
-      confidence = 75;
-    } else if (isTracingLowParent) {
-      observedPattern = 'Home observations indicate handwriting and letter formation practice may be helpful.';
-      recommendedPractice = 'Magnetic guide-dot letter tracing and tactile practice.';
-      recommendedActivityId = 'letter-tracing';
-      recommendedActivityTitle = 'Letter Tracing Studio';
+      recommendedActivityTitle = 'Phonics Sound Lab';
       agreementStatus = 'parent_focused';
       confidence = 75;
     } else {
@@ -637,21 +646,36 @@ export function calculateLearningProfile(profile) {
     agreementStatus = 'parent_only';
     confidence = 60;
 
-    if (parentObservationSignals.reading === 'needs_support') {
+    const isReadingLowParent = parentObservationSignals.reading === 'needs_support';
+    const isSpeechLowParent = parentObservationSignals.speech === 'needs_support';
+    const isTracingLowParent = parentObservationSignals.tracing === 'needs_support';
+    const parentNeedsCount = [isReadingLowParent, isSpeechLowParent, isTracingLowParent].filter(Boolean).length;
+
+    if (parentNeedsCount >= 2) {
+      const areas = [];
+      if (isTracingLowParent) areas.push('letter writing/tracing');
+      if (isReadingLowParent) areas.push('independent reading');
+      if (isSpeechLowParent) areas.push('phonics/letter sounds');
+
+      observedPattern = `Parent observations indicate support needed in both ${areas.join(' and ')}.`;
+      recommendedPractice = 'Combined multisensory letter tracing and guided reading practice.';
+      recommendedActivityId = isTracingLowParent ? 'letter-tracing' : 'word-snapper';
+      recommendedActivityTitle = isTracingLowParent ? 'Letter Tracing Studio & Word Snapper' : 'Word Snapper & Phonics Sound Lab';
+    } else if (isTracingLowParent) {
+      observedPattern = 'Parent observations suggest letter formation and handwriting practice may be helpful.';
+      recommendedPractice = 'Guided stroke-by-stroke letter tracing and fine-motor activities.';
+      recommendedActivityId = 'letter-tracing';
+      recommendedActivityTitle = 'Letter Tracing Studio';
+    } else if (isReadingLowParent) {
       observedPattern = 'Parent observations indicate independent reading needs additional home support.';
-      recommendedPractice = 'Guided reading and vocabulary exploration.';
+      recommendedPractice = 'Guided reading and vocabulary exploration practice.';
       recommendedActivityId = 'word-snapper';
-      recommendedActivityTitle = 'Word Snapper';
-    } else if (parentObservationSignals.speech === 'needs_support') {
+      recommendedActivityTitle = 'Word Snapper & Guided Reading';
+    } else if (isSpeechLowParent) {
       observedPattern = 'Parent observations suggest phonological sound reinforcement would be helpful.';
       recommendedPractice = 'Phonics Sound Lab and letter-sound exercises.';
       recommendedActivityId = 'word-snapper';
       recommendedActivityTitle = 'Phonics Sound Lab';
-    } else if (parentObservationSignals.tracing === 'needs_support') {
-      observedPattern = 'Parent observations suggest letter formation and handwriting practice may be helpful.';
-      recommendedPractice = 'Guided letter tracing and fine-motor activities.';
-      recommendedActivityId = 'letter-tracing';
-      recommendedActivityTitle = 'Letter Tracing Studio';
     } else {
       observedPattern = 'Parent observations reflect solid learning comfort at home.';
       recommendedPractice = 'Take the discovery screening quest to benchmark learning milestones.';
